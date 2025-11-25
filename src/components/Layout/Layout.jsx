@@ -56,6 +56,12 @@ const Layout = ({ children, currentView, onViewChange }) => {
                             active={currentView === 'workout'}
                             onClick={() => onViewChange('workout')}
                         />
+                        <NavItem
+                            icon={UserCircle2}
+                            label="Profile"
+                            active={currentView === 'profile'}
+                            onClick={() => onViewChange('profile')}
+                        />
                     </nav>
                 </div>
 
@@ -99,6 +105,10 @@ const Layout = ({ children, currentView, onViewChange }) => {
                             onClick={() => onViewChange('workout')}
                             className={clsx("p-2 rounded-lg", currentView === 'workout' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
                         ><Dumbbell size={24} /></button>
+                        <button
+                            onClick={() => onViewChange('profile')}
+                            className={clsx("p-2 rounded-lg", currentView === 'profile' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><UserCircle2 size={24} /></button>
                     </div>
                     <button
                         onClick={() => switchProfile(otherProfile.id)}

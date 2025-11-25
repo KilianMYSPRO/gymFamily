@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil } from 'lucide-react';
 import clsx from 'clsx';
 
 import ExerciseSelector from './ExerciseSelector';
 
 const Planner = () => {
-    const { workouts, addWorkout, deleteWorkout } = useStore();
+    const { workouts, addWorkout, updateWorkout, deleteWorkout } = useStore();
     const [isCreating, setIsCreating] = useState(false);
+    const [editingId, setEditingId] = useState(null);
     const [showSelector, setShowSelector] = useState(false);
     const [newWorkoutName, setNewWorkoutName] = useState('');
     const [exercises, setExercises] = useState([]);
@@ -19,8 +20,10 @@ const Planner = () => {
             sets: 3,
             reps: '10',
             weight: '',
+            restTime: '90',
             originalId: exercise.id
         }]);
+
         setShowSelector(false);
     };
 
@@ -34,11 +37,34 @@ const Planner = () => {
 
     const handleSave = () => {
         if (!newWorkoutName.trim()) return;
-        addWorkout({
+
+        const workoutData = {
             name: newWorkoutName,
             exercises: exercises
-        });
+        };
+
+        if (editingId) {
+            updateWorkout({ ...workoutData, id: editingId });
+        } else {
+            addWorkout(workoutData);
+        }
+
         setIsCreating(false);
+        setEditingId(null);
+        setNewWorkoutName('');
+        setExercises([]);
+    };
+
+    const handleEdit = (workout) => {
+        setNewWorkoutName(workout.name);
+        setExercises(workout.exercises);
+        setEditingId(workout.id);
+        setIsCreating(true);
+    };
+
+    const handleCancel = () => {
+        setIsCreating(false);
+        setEditingId(null);
         setNewWorkoutName('');
         setExercises([]);
     };
@@ -71,8 +97,8 @@ const Planner = () => {
             {isCreating ? (
                 <div className="glass-card animate-fade-in">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-xl font-bold text-white">Create New Routine</h3>
-                        <button onClick={() => setIsCreating(false)} className="text-slate-400 hover:text-white">
+                        <h3 className="text-xl font-bold text-white">{editingId ? 'Edit Routine' : 'Create New Routine'}</h3>
+                        <button onClick={handleCancel} className="text-slate-400 hover:text-white">
                             <X size={24} />
                         </button>
                     </div>
@@ -98,39 +124,58 @@ const Planner = () => {
                             </div>
 
                             {exercises.map((ex, idx) => (
-                                <div key={ex.id} className="grid grid-cols-12 gap-2 items-start bg-slate-800/30 p-3 rounded-lg border border-slate-700/30">
-                                    <div className="col-span-1 flex justify-center pt-3 text-slate-500 font-mono text-sm">{idx + 1}</div>
-                                    <div className="col-span-5 md:col-span-6">
-                                        <input
-                                            type="text"
-                                            placeholder="Exercise Name"
-                                            value={ex.name}
-                                            onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
-                                            className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
-                                        />
-                                    </div>
-                                    <div className="col-span-2">
-                                        <input
-                                            type="number"
-                                            placeholder="Sets"
-                                            value={ex.sets}
-                                            onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
-                                            className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
-                                        />
-                                    </div>
-                                    <div className="col-span-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Reps"
-                                            value={ex.reps}
-                                            onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
-                                            className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
-                                        />
-                                    </div>
-                                    <div className="col-span-2 md:col-span-1 flex justify-end">
-                                        <button onClick={() => removeExercise(ex.id)} className="text-slate-500 hover:text-red-400 p-1">
-                                            <Trash2 size={16} />
+                                <div key={ex.id} className="bg-slate-800/30 p-3 rounded-lg border border-slate-700/30 relative">
+                                    <div className="absolute top-3 left-3 text-slate-500 font-mono text-sm">{idx + 1}</div>
+                                    <div className="absolute top-2 right-2">
+                                        <button onClick={() => removeExercise(ex.id)} className="text-slate-500 hover:text-red-400 p-2">
+                                            <Trash2 size={18} />
                                         </button>
+                                    </div>
+
+                                    <div className="mt-6 md:mt-0 md:ml-8 md:mr-10 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-2 items-center">
+                                        <div className="md:col-span-5">
+                                            <label className="block text-xs text-slate-500 md:hidden mb-1">Exercise Name</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Exercise Name"
+                                                value={ex.name}
+                                                onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
+                                                className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-3 gap-4 md:col-span-7 md:grid-cols-7 md:gap-2">
+                                            <div className="md:col-span-2">
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Sets</label>
+                                                <input
+                                                    type="number"
+                                                    placeholder="Sets"
+                                                    value={ex.sets}
+                                                    onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-2">
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Reps</label>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Reps"
+                                                    value={ex.reps}
+                                                    onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                />
+                                            </div>
+                                            <div className="md:col-span-3">
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Rest (s)</label>
+                                                <input
+                                                    type="number"
+                                                    placeholder="Rest (s)"
+                                                    value={ex.restTime || '90'}
+                                                    onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -144,7 +189,7 @@ const Planner = () => {
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        <button onClick={() => setIsCreating(false)} className="btn btn-secondary">Cancel</button>
+                        <button onClick={handleCancel} className="btn btn-secondary">Cancel</button>
                         <button onClick={handleSave} className="btn btn-primary" disabled={!newWorkoutName}>
                             <Save size={18} /> Save Routine
                         </button>
@@ -154,7 +199,13 @@ const Planner = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {workouts.map(workout => (
                         <div key={workout.id} className="glass-card group relative">
-                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                <button
+                                    onClick={() => handleEdit(workout)}
+                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                >
+                                    <Pencil size={18} />
+                                </button>
                                 <button
                                     onClick={() => deleteWorkout(workout.id)}
                                     className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
@@ -177,7 +228,7 @@ const Planner = () => {
                                 {workout.exercises.slice(0, 3).map((ex, i) => (
                                     <div key={i} className="flex justify-between text-sm text-slate-300 border-b border-slate-800/50 pb-1 last:border-0">
                                         <span>{ex.name}</span>
-                                        <span className="text-slate-500">{ex.sets} x {ex.reps}</span>
+                                        <span className="text-slate-500">{ex.sets} x {ex.reps} • {ex.restTime || 90}s</span>
                                     </div>
                                 ))}
                                 {workout.exercises.length > 3 && (
