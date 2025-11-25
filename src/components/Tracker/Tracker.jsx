@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, CheckCircle2, Clock, ArrowLeft, Save } from 'lucide-react';
+import { Play, CheckCircle2, Clock, ArrowLeft, Save, X, Plus, Minus, SkipForward } from 'lucide-react';
 import clsx from 'clsx';
 
-const Tracker = () => {
+const Tracker = ({ initialWorkoutId }) => {
     const { workouts, logSession } = useStore();
     const [activeWorkout, setActiveWorkout] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completedSets, setCompletedSets] = useState({});
+    const [restTimer, setRestTimer] = useState({ active: false, time: 90 });
+
+    // Auto-start effect
+    useEffect(() => {
+        if (initialWorkoutId && !activeWorkout && workouts.length > 0) {
+            const workoutToStart = workouts.find(w => w.id === initialWorkoutId);
+            if (workoutToStart) {
+                setActiveWorkout(workoutToStart);
+            }
+        }
+    }, [initialWorkoutId, workouts]);
 
     useEffect(() => {
         let interval;
@@ -19,6 +30,18 @@ const Tracker = () => {
         return () => clearInterval(interval);
     }, [activeWorkout]);
 
+    useEffect(() => {
+        let interval;
+        if (restTimer.active && restTimer.time > 0) {
+            interval = setInterval(() => {
+                setRestTimer(prev => ({ ...prev, time: prev.time - 1 }));
+            }, 1000);
+        } else if (restTimer.time === 0) {
+            setRestTimer(prev => ({ ...prev, active: false }));
+        }
+        return () => clearInterval(interval);
+    }, [restTimer.active, restTimer.time]);
+
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
@@ -27,10 +50,24 @@ const Tracker = () => {
 
     const toggleSet = (exerciseId, setIndex) => {
         const key = `${exerciseId}-${setIndex}`;
+        if (completedSets[key]) return; // Prevent undoing
+
         setCompletedSets(prev => ({
             ...prev,
-            [key]: !prev[key]
+            [key]: true
         }));
+
+        const exercise = activeWorkout.exercises.find(e => e.id === exerciseId);
+        const restDuration = exercise?.restTime ? parseInt(exercise.restTime) : 90;
+        setRestTimer({ active: true, time: restDuration });
+    };
+
+    const adjustRestTime = (seconds) => {
+        setRestTimer(prev => ({ ...prev, time: Math.max(0, prev.time + seconds) }));
+    };
+
+    const skipRest = () => {
+        setRestTimer(prev => ({ ...prev, active: false }));
     };
 
     const finishWorkout = () => {
@@ -85,10 +122,11 @@ const Tracker = () => {
                                         <button
                                             key={i}
                                             onClick={() => toggleSet(ex.id, i)}
+                                            disabled={isCompleted}
                                             className={clsx(
                                                 "h-12 rounded-lg flex items-center justify-center font-bold transition-all duration-200 border",
                                                 isCompleted
-                                                    ? "bg-sky-500 border-sky-400 text-white shadow-[0_0_10px_rgba(14,165,233,0.4)]"
+                                                    ? "bg-sky-500 border-sky-400 text-white shadow-[0_0_10px_rgba(14,165,233,0.4)] cursor-default"
                                                     : "bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600"
                                             )}
                                         >
@@ -100,6 +138,50 @@ const Tracker = () => {
                         </div>
                     ))}
                 </div>
+
+                {restTimer.active && (
+                    <div className="fixed inset-x-0 bottom-0 p-4 z-[100] animate-fade-in">
+                        <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.7)] p-6">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                    <Clock className="text-sky-400" size={20} /> Rest Timer
+                                </h3>
+                                <button onClick={skipRest} className="text-slate-400 hover:text-white p-1">
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="text-5xl font-mono font-bold text-white tabular-nums tracking-wider">
+                                    {formatTime(restTimer.time)}
+                                </div>
+
+                                <div className="flex items-center gap-4 w-full justify-center">
+                                    <button
+                                        onClick={() => adjustRestTime(-10)}
+                                        className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                                    >
+                                        <Minus size={20} />
+                                    </button>
+
+                                    <button
+                                        onClick={skipRest}
+                                        className="btn btn-primary flex-1 max-w-[200px]"
+                                    >
+                                        <SkipForward size={20} /> Skip Rest
+                                    </button>
+
+                                    <button
+                                        onClick={() => adjustRestTime(30)}
+                                        className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                                    >
+                                        <Plus size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

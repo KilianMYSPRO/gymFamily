@@ -1,20 +1,23 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, X, Dumbbell } from 'lucide-react';
+import { Search, X, Filter, Dumbbell } from 'lucide-react';
+import { translateSearchTerm } from '../../utils/translations';
 import exercisesData from '../../data/exercises.json';
 
 const ExerciseSelector = ({ onSelect, onClose }) => {
     const [search, setSearch] = useState('');
-    const [filter, setFilter] = useState('all');
+    const [selectedMuscle, setSelectedMuscle] = useState('all');
 
     const filteredExercises = useMemo(() => {
+        const searchLower = translateSearchTerm(search);
         return exercisesData.filter(ex => {
-            const matchesSearch = ex.name.toLowerCase().includes(search.toLowerCase()) ||
-                ex.primaryMuscles.some(m => m.includes(search.toLowerCase()));
-            const matchesFilter = filter === 'all' || ex.primaryMuscles.includes(filter);
-            return matchesSearch && matchesFilter;
+            const matchesSearch = ex.name.toLowerCase().includes(searchLower) ||
+                ex.primaryMuscles.some(m => m.includes(searchLower)) ||
+                ex.equipment?.toLowerCase().includes(searchLower);
+            const matchesMuscle = selectedMuscle === 'all' || ex.primaryMuscles.includes(selectedMuscle);
+            return matchesSearch && matchesMuscle;
         }).slice(0, 50); // Limit results for performance
-    }, [search, filter]);
+    }, [search, selectedMuscle]);
 
     const muscleGroups = ['all', ...new Set(exercisesData.flatMap(ex => ex.primaryMuscles))].sort();
 
@@ -33,7 +36,7 @@ const ExerciseSelector = ({ onSelect, onClose }) => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                         <input
                             type="text"
-                            placeholder="Search by name or muscle..."
+                            placeholder="Search by name or muscle (EN/FR)..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
@@ -45,8 +48,8 @@ const ExerciseSelector = ({ onSelect, onClose }) => {
                         {muscleGroups.slice(0, 10).map(muscle => (
                             <button
                                 key={muscle}
-                                onClick={() => setFilter(muscle)}
-                                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap border transition-colors ${filter === muscle
+                                onClick={() => setSelectedMuscle(muscle)}
+                                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap border transition-colors ${selectedMuscle === muscle
                                     ? 'bg-sky-500 border-sky-500 text-white'
                                     : 'bg-slate-800 border-slate-700 text-slate-400 hover:border-slate-600'
                                     }`}
