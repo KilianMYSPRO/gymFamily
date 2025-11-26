@@ -127,103 +127,106 @@ const Tracker = ({ initialWorkoutId }) => {
 
     if (activeWorkout) {
         return (
-            <div className="space-y-6 animate-fade-in">
-                <header className="flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md py-4 z-10 border-b border-slate-800/50">
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setActiveWorkout(null)}
-                            className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
-                        >
-                            <ArrowLeft size={20} />
+            <>
+                <div className="space-y-6 animate-fade-in">
+                    <header className="flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md py-4 z-10 border-b border-slate-800/50">
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => setActiveWorkout(null)}
+                                className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
+                            >
+                                <ArrowLeft size={20} />
+                            </button>
+                            <div>
+                                <h2 className="text-xl font-bold text-white">{activeWorkout.name}</h2>
+                                <div className="flex items-center gap-2 text-sky-400 font-mono text-sm">
+                                    <Clock size={14} />
+                                    {formatTime(elapsedTime)}
+                                </div>
+                            </div>
+                        </div>
+                        <button onClick={finishWorkout} className="btn btn-primary py-2 px-4 text-sm">
+                            <Save size={16} /> Finish
                         </button>
-                        <div>
-                            <h2 className="text-xl font-bold text-white">{activeWorkout.name}</h2>
-                            <div className="flex items-center gap-2 text-sky-400 font-mono text-sm">
-                                <Clock size={14} />
-                                {formatTime(elapsedTime)}
-                            </div>
-                        </div>
-                    </div>
-                    <button onClick={finishWorkout} className="btn btn-primary py-2 px-4 text-sm">
-                        <Save size={16} /> Finish
-                    </button>
-                </header>
+                    </header>
 
-                <div className="space-y-4 pb-20">
-                    {activeWorkout.exercises.map((ex) => (
-                        <div key={ex.id} className="glass-card">
-                            <div className="flex justify-between items-baseline mb-4">
-                                <div className="flex items-center gap-2">
-                                    <h3 className="text-lg font-bold text-white">{ex.name}</h3>
-                                    {(ex.description || ex.link) && (
-                                        <button
-                                            onClick={() => setActiveInfo(ex)}
-                                            className="text-sky-400 hover:text-sky-300 transition-colors"
-                                        >
-                                            <Info size={18} />
-                                        </button>
-                                    )}
+                    <div className="space-y-4 pb-20">
+                        {activeWorkout.exercises.map((ex) => (
+                            <div key={ex.id} className="glass-card">
+                                <div className="flex justify-between items-baseline mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="text-lg font-bold text-white">{ex.name}</h3>
+                                        {(ex.description || ex.link) && (
+                                            <button
+                                                onClick={() => setActiveInfo(ex)}
+                                                className="text-sky-400 hover:text-sky-300 transition-colors"
+                                            >
+                                                <Info size={18} />
+                                            </button>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {ex.isOptional && (
+                                            <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                                Optional
+                                            </span>
+                                        )}
+                                        <span className="text-slate-400 text-sm">{ex.weight}</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                    {ex.isOptional && (
-                                        <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                                            Optional
-                                        </span>
-                                    )}
-                                    <span className="text-slate-400 text-sm">{ex.weight}</span>
-                                </div>
-                            </div>
 
-                            {ex.isOptional && !Array.from({ length: parseInt(ex.sets) }).every((_, i) => completedSets[`${ex.id}-${i}`]?.completed) && (
-                                <button
-                                    onClick={() => skipExercise(ex.id)}
-                                    className="w-full mb-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700/50 hover:border-slate-700"
-                                >
-                                    Skip Optional Exercise
-                                </button>
-                            )}
+                                {ex.isOptional && !Array.from({ length: parseInt(ex.sets) }).every((_, i) => completedSets[`${ex.id}-${i}`]?.completed) && (
+                                    <button
+                                        onClick={() => skipExercise(ex.id)}
+                                        className="w-full mb-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700/50 hover:border-slate-700"
+                                    >
+                                        Skip Optional Exercise
+                                    </button>
+                                )}
 
-                            <div className="space-y-3">
-                                {Array.from({ length: parseInt(ex.sets) }).map((_, i) => {
-                                    const key = `${ex.id}-${i}`;
-                                    const isCompleted = completedSets[key]?.completed;
-                                    const currentWeight = setWeights[key] !== undefined ? setWeights[key] : (ex.weight || '');
+                                <div className="space-y-3">
+                                    {Array.from({ length: parseInt(ex.sets) }).map((_, i) => {
+                                        const key = `${ex.id}-${i}`;
+                                        const isCompleted = completedSets[key]?.completed;
+                                        const currentWeight = setWeights[key] !== undefined ? setWeights[key] : (ex.weight || '');
 
-                                    return (
-                                        <div key={i} className="flex items-center justify-between bg-slate-800/30 p-3 rounded-xl border border-slate-800">
-                                            <span className="text-slate-400 font-mono text-sm w-12">Set {i + 1}</span>
+                                        return (
+                                            <div key={i} className="flex items-center justify-between bg-slate-800/30 p-3 rounded-xl border border-slate-800">
+                                                <span className="text-slate-400 font-mono text-sm w-12">Set {i + 1}</span>
 
-                                            <div className="flex items-center gap-3">
-                                                <div className="relative">
-                                                    <input
-                                                        type="text"
-                                                        value={currentWeight}
-                                                        onChange={(e) => handleWeightChange(ex.id, i, e.target.value)}
-                                                        placeholder="0"
-                                                        className="w-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-right text-white focus:outline-none focus:border-sky-500 transition-colors"
-                                                    />
-                                                    <span className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
+                                                <div className="flex items-center gap-3">
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            value={currentWeight}
+                                                            onChange={(e) => handleWeightChange(ex.id, i, e.target.value)}
+                                                            placeholder="0"
+                                                            className="w-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-right text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                                        />
+                                                        <span className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={() => toggleSet(ex.id, i)}
+                                                        disabled={isCompleted}
+                                                        className={clsx(
+                                                            "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
+                                                            isCompleted
+                                                                ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                                                                : "bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white"
+                                                        )}
+                                                    >
+                                                        {isCompleted ? <CheckCircle2 size={24} /> : <span className="font-bold">{ex.reps}</span>}
+                                                    </button>
                                                 </div>
-
-                                                <button
-                                                    onClick={() => toggleSet(ex.id, i)}
-                                                    disabled={isCompleted}
-                                                    className={clsx(
-                                                        "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
-                                                        isCompleted
-                                                            ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
-                                                            : "bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white"
-                                                    )}
-                                                >
-                                                    {isCompleted ? <CheckCircle2 size={24} /> : <span className="font-bold">{ex.reps}</span>}
-                                                </button>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+
                 </div>
 
                 {restTimer.active && (
@@ -270,7 +273,6 @@ const Tracker = ({ initialWorkoutId }) => {
                     </div>
                 )}
 
-
                 {/* Info Modal */}
                 {
                     activeInfo && (
@@ -311,7 +313,7 @@ const Tracker = ({ initialWorkoutId }) => {
                         </div>
                     )
                 }
-            </div >
+            </>
         );
     }
 

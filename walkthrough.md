@@ -37,6 +37,10 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Delete Entries**: Added a delete button (trash icon) to remove incorrect weight entries.
 - **Improved Feedback**: The "Changes saved successfully!" message is now more prominent.
 
+### 7. Fixed Modal Positioning
+- Fixed an issue where the "Exercise Info" modal and "Rest Timer" would appear in the wrong position (forcing scrolling) on some devices.
+- They are now correctly positioned relative to the screen (viewport) regardless of scroll position.
+
 ## Verification Results
 
 ### Manual Verification
@@ -48,3 +52,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Optional Exercises**: Verified that the "Optional" toggle works in the Planner and the badge/skip button appear in the Tracker.
 - **Weight Tracking**: Verified that logging weight adds an entry to history and the chart renders correctly in Analytics.
 - **Weight UX**: Verified that recent entries are listed, can be deleted, and the success message is clearly visible.
+- **Modal Positioning**: Verified that modals (Info, Rest Timer, Summary) are now direct children of the root fragment, avoiding transform stacking contexts.
