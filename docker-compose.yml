@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   duo-gym:
     build: .
     container_name: duo-gym
     restart: always
     ports:
-      - "80:80"
+      - "8081:80"
     depends_on:
       - backend
     environment:
