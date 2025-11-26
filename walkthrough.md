@@ -1,34 +1,25 @@
-# DuoGym Walkthrough
+# Import Feature Improvements
 
-DuoGym is a premium, 2-user workout tracker designed with a sleek glassmorphism aesthetic.
+I have improved the JSON import feature in the Workout Planner to provide better feedback and validation.
 
-## Features
+## Changes
 
-### 1. Dual Profile System
-- **Switching Users**: Use the profile switcher in the sidebar (desktop) or bottom bar (mobile) to toggle between User A and User B.
-- **Data Isolation**: Each user has their own set of workout routines and history.
+### 1. Improved Error Handling
+- The app now catches specific JSON parsing errors and displays them to the user.
+- Added validation for:
+    - Missing `name` field.
+    - Missing or invalid `exercises` array.
+    - Empty `exercises` array.
+    - Missing `name` in individual exercises.
 
-### 2. Dashboard
-- **Overview**: See your total completed workouts, active plans, and current streak at a glance.
-- **Visuals**: Glass cards with gradient text for a premium feel.
+### 2. "Format JSON" Button
+- Added a "Format JSON" button to the import modal.
+- This allows you to paste minified or messy JSON and format it for readability.
+- If the JSON is invalid, clicking this button will show the specific syntax error.
 
-### 3. Workout Planner
-- **Create Routines**: Click "New Plan" to design a workout.
-- **Exercise Library**: Click "Add Exercise" to search over 800+ exercises by name or muscle group.
-- **Manage**: Delete old routines easily.
+## Verification Results
 
-### 4. Active Tracker
-- **Start Workout**: Select a routine from the list.
-- **Track Progress**: Check off sets as you complete them.
-- **Timer**: View elapsed time for your session.
-- **Finish**: Save your session to the history.
-
-## Tech Stack
-- **React + Vite**: Fast, modern frontend.
-- **Tailwind-like CSS**: Custom CSS variables for consistent theming.
-- **LocalStorage**: Data persistence without a backend.
-
-## How to Run
-1. Navigate to the project folder: `cd duo-gym`
-2. Install dependencies: `npm install`
-3. Start the dev server: `npm run dev`
+### Manual Verification
+- **Valid JSON**: Importing a valid JSON structure works as expected.
+- **Invalid JSON Syntax**: Pasting invalid JSON (e.g., missing quotes) and clicking "Import" or "Format JSON" shows a syntax error.
+- **Invalid Schema**: Importing JSON with missing required fields (like `name`) shows a specific validation error.

@@ -100,24 +100,58 @@ const Planner = () => {
     };
 
     // Import Logic
+    const handleFormat = () => {
+        try {
+            const parsed = JSON.parse(importJson);
+            setImportJson(JSON.stringify(parsed, null, 2));
+            setImportError(null);
+        } catch (e) {
+            setImportError(`Format Error: ${e.message}`);
+        }
+    };
+
     const handleImport = () => {
         try {
-            const data = JSON.parse(importJson);
-            if (!data.name || !Array.isArray(data.exercises)) {
-                throw new Error("Invalid format: Missing name or exercises array.");
+            if (!importJson.trim()) {
+                setImportError("Please paste your JSON code first.");
+                return;
+            }
+
+            let data;
+            try {
+                data = JSON.parse(importJson);
+            } catch (e) {
+                throw new Error(`Invalid JSON syntax: ${e.message}`);
+            }
+
+            if (!data.name || typeof data.name !== 'string') {
+                throw new Error("Invalid format: Missing or invalid 'name' field.");
+            }
+
+            if (!Array.isArray(data.exercises)) {
+                throw new Error("Invalid format: 'exercises' must be an array.");
+            }
+
+            if (data.exercises.length === 0) {
+                throw new Error("Invalid format: 'exercises' array is empty.");
             }
 
             // Sanitize and add IDs
-            const sanitizedExercises = data.exercises.map(ex => ({
-                id: crypto.randomUUID(),
-                name: ex.name || 'Unknown Exercise',
-                sets: ex.sets || 3,
-                reps: ex.reps || '10',
-                restTime: ex.restTime || '90',
-                weight: ex.weight || '',
-                link: ex.link || '',
-                description: ex.description || ''
-            }));
+            const sanitizedExercises = data.exercises.map((ex, index) => {
+                if (!ex.name) {
+                    throw new Error(`Exercise at index ${index} is missing a 'name'.`);
+                }
+                return {
+                    id: crypto.randomUUID(),
+                    name: ex.name,
+                    sets: ex.sets || 3,
+                    reps: ex.reps || '10',
+                    restTime: ex.restTime || '90',
+                    weight: ex.weight || '',
+                    link: ex.link || '',
+                    description: ex.description || ''
+                };
+            });
 
             addWorkout({
                 name: data.name,
@@ -128,7 +162,7 @@ const Planner = () => {
             setImportJson('');
             setImportError(null);
         } catch (e) {
-            setImportError("Invalid JSON code. Please check your input.");
+            setImportError(e.message);
         }
     };
 
@@ -187,6 +221,9 @@ const Planner = () => {
                         )}
 
                         <div className="flex justify-end gap-3">
+                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 mr-auto">
+                                Format JSON
+                            </button>
                             <button onClick={() => setShowImportModal(false)} className="btn btn-secondary">Cancel</button>
                             <button onClick={handleImport} className="btn btn-primary" disabled={!importJson.trim()}>
                                 <Download size={18} /> Import
