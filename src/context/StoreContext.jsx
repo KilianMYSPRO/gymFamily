@@ -58,9 +58,129 @@ export const StoreProvider = ({ children }) => {
         return INITIAL_DATA;
     });
 
+    const [token, setToken] = useState(() => localStorage.getItem('duogym-token'));
+    const [user, setUser] = useState(() => {
+        try {
+            return JSON.parse(localStorage.getItem('duogym-user'));
+        } catch {
+            return null;
+        }
+    });
+    const [syncStatus, setSyncStatus] = useState('idle'); // idle, syncing, error, success
+
     useEffect(() => {
         localStorage.setItem('duogym-data', JSON.stringify(data));
     }, [data]);
+
+    useEffect(() => {
+        if (token) {
+            localStorage.setItem('duogym-token', token);
+        } else {
+            localStorage.removeItem('duogym-token');
+        }
+    }, [token]);
+
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('duogym-user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('duogym-user');
+        }
+    }, [user]);
+
+    // Sync Logic
+    const syncData = async (authToken = token) => {
+        if (!authToken) return;
+        setSyncStatus('syncing');
+
+        try {
+            // 1. Fetch latest from server
+            const response = await fetch('/api/sync', {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            if (!response.ok) throw new Error('Sync failed');
+
+            const { data: serverData } = await response.json();
+
+            if (serverData && Object.keys(serverData).length > 0) {
+                // Merge/Replace strategy: Server wins for now to ensure consistency
+                setData(prev => ({
+                    ...prev,
+                    ...serverData,
+                    // Ensure arrays are arrays
+                    profiles: Array.isArray(serverData.profiles) ? serverData.profiles : prev.profiles,
+                    history: Array.isArray(serverData.history) ? serverData.history : prev.history,
+                    weightHistory: Array.isArray(serverData.weightHistory) ? serverData.weightHistory : prev.weightHistory,
+                }));
+            } else {
+                // If server is empty, push local data
+                await pushData(authToken);
+            }
+            setSyncStatus('success');
+            setTimeout(() => setSyncStatus('idle'), 2000);
+        } catch (error) {
+            console.error('Sync error:', error);
+            setSyncStatus('error');
+        }
+    };
+
+    const pushData = async (authToken = token) => {
+        if (!authToken) return;
+
+        try {
+            await fetch('/api/sync', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({ data: data })
+            });
+        } catch (error) {
+            console.error('Push error:', error);
+        }
+    };
+
+    // Initial Sync on Mount/Login
+    useEffect(() => {
+        if (token) {
+            syncData(token);
+        }
+    }, [token]);
+
+    // Auto-push on change (debounced)
+    useEffect(() => {
+        if (!token) return;
+
+        const timeout = setTimeout(() => {
+            pushData(token);
+        }, 2000); // Debounce 2s
+
+        return () => clearTimeout(timeout);
+    }, [data, token]);
+
+    // Polling every 30s
+    useEffect(() => {
+        if (!token) return;
+
+        const interval = setInterval(() => {
+            syncData(token);
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [token]);
+
+    const login = (authData) => {
+        setToken(authData.token);
+        setUser(authData.user);
+    };
+
+    const logout = () => {
+        setToken(null);
+        setUser(null);
+        setSyncStatus('idle');
+    };
 
     const activeProfile = (Array.isArray(data.profiles) ? data.profiles.find(p => p.id === activeProfileId) : null) || INITIAL_DATA.profiles[0];
 
@@ -217,7 +337,12 @@ export const StoreProvider = ({ children }) => {
             updateProfileDetails,
             updateProfileName,
             exportData,
-            importData
+            importData,
+            token,
+            user,
+            login,
+            logout,
+            syncStatus
         }}>
             {children}
         </StoreContext.Provider>
