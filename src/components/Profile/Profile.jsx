@@ -5,7 +5,7 @@ import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
 
 const Profile = () => {
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,
@@ -134,14 +134,29 @@ const Profile = () => {
                             <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
                                 <Weight size={16} /> Weight (kg)
                             </label>
-                            <input
-                                type="number"
-                                name="weight"
-                                value={formData.weight}
-                                onChange={handleChange}
-                                placeholder="kg"
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                            />
+                            <div className="flex gap-2">
+                                <input
+                                    type="number"
+                                    name="weight"
+                                    value={formData.weight}
+                                    onChange={handleChange}
+                                    placeholder="kg"
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (formData.weight) {
+                                            logWeight(formData.weight);
+                                            setIsSaved(true);
+                                            setTimeout(() => setIsSaved(false), 3000);
+                                        }
+                                    }}
+                                    className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-colors whitespace-nowrap"
+                                >
+                                    Log Entry
+                                </button>
+                            </div>
                         </div>
 
                         <div className="space-y-2">

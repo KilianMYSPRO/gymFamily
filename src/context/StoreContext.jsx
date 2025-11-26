@@ -12,6 +12,7 @@ const INITIAL_DATA = {
         user1: [],
         user2: []
     },
+    weightHistory: [],
     history: [],
     profileDetails: {
         user1: {
@@ -46,7 +47,9 @@ export const StoreProvider = ({ children }) => {
                     profiles: Array.isArray(parsed.profiles) ? parsed.profiles : INITIAL_DATA.profiles,
                     workouts: { ...INITIAL_DATA.workouts, ...(parsed.workouts || {}) },
                     profileDetails: { ...INITIAL_DATA.profileDetails, ...(parsed.profileDetails || {}) },
-                    history: Array.isArray(parsed.history) ? parsed.history : INITIAL_DATA.history
+                    profileDetails: { ...INITIAL_DATA.profileDetails, ...(parsed.profileDetails || {}) },
+                    history: Array.isArray(parsed.history) ? parsed.history : INITIAL_DATA.history,
+                    weightHistory: Array.isArray(parsed.weightHistory) ? parsed.weightHistory : INITIAL_DATA.weightHistory
                 };
             }
         } catch (e) {
@@ -111,6 +114,24 @@ export const StoreProvider = ({ children }) => {
         }));
     };
 
+    const logWeight = (weight) => {
+        const newEntry = {
+            id: generateUUID(),
+            profileId: activeProfileId,
+            date: new Date().toISOString(),
+            weight: parseFloat(weight)
+        };
+
+        setData(prev => ({
+            ...prev,
+            weightHistory: [...(prev.weightHistory || []), newEntry],
+            profileDetails: {
+                ...prev.profileDetails,
+                [activeProfileId]: { ...prev.profileDetails[activeProfileId], weight: weight }
+            }
+        }));
+    };
+
     const updateProfileDetails = (details) => {
         setData(prev => ({
             ...prev,
@@ -146,6 +167,8 @@ export const StoreProvider = ({ children }) => {
             deleteWorkout,
             logSession,
             deleteLog,
+            logWeight,
+            weightHistory: Array.isArray(data.weightHistory) ? data.weightHistory.filter(h => h.profileId === activeProfileId) : [],
             profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
             updateProfileDetails,
             updateProfileName
