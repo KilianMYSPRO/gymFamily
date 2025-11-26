@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2 } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X } from 'lucide-react';
+import Portal from '../common/Portal';
 import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
 
 const Profile = () => {
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,
@@ -17,6 +18,9 @@ const Profile = () => {
         weeklyGoal: 3
     });
     const [isSaved, setIsSaved] = useState(false);
+    const [showImportConfirm, setShowImportConfirm] = useState(false);
+    const [importFile, setImportFile] = useState(null);
+    const [importError, setImportError] = useState(null);
 
     useEffect(() => {
         setFormData(prev => ({
@@ -39,6 +43,47 @@ const Profile = () => {
         updateProfileDetails(details);
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
+    };
+
+    const handleExport = () => {
+        const jsonString = exportData();
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `duogym_backup_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImportFile(file);
+            setShowImportConfirm(true);
+            setImportError(null);
+        }
+    };
+
+    const confirmImport = async () => {
+        if (!importFile) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const content = e.target.result;
+            const result = importData(content);
+            if (result.success) {
+                setShowImportConfirm(false);
+                setImportFile(null);
+                alert('Data restored successfully!');
+                window.location.reload(); // Reload to ensure fresh state
+            } else {
+                setImportError(result.error);
+            }
+        };
+        reader.readAsText(importFile);
     };
 
     return (
@@ -244,10 +289,115 @@ const Profile = () => {
                         </button>
                     </div>
                 </form>
-            ) : (
-                <Analytics />
+
+                <div className="glass-card space-y-6 animate-fade-in">
+                    <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
+                        <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                            <Save size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-white">Data Management</h3>
+                            <p className="text-slate-400">Backup or restore your data.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
+                            <div className="flex items-center gap-3 text-sky-400 mb-2">
+                                <FileDown size={20} />
+                                <h4 className="font-bold text-white">Export Backup</h4>
+                            </div>
+                            <p className="text-sm text-slate-400">
+                                Download a copy of all your profiles, workouts, and history to your device.
+                            </p>
+                            <button
+                                onClick={handleExport}
+                                className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <FileDown size={16} /> Download JSON
+                            </button>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
+                            <div className="flex items-center gap-3 text-emerald-400 mb-2">
+                                <Upload size={20} />
+                                <h4 className="font-bold text-white">Import Backup</h4>
+                            </div>
+                            <p className="text-sm text-slate-400">
+                                Restore your data from a backup file. This will overwrite current data.
+                            </p>
+                            <label className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                                <Upload size={16} /> Select File
+                                <input
+                                    type="file"
+                                    accept=".json"
+                                    onChange={handleFileSelect}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {showImportConfirm && (
+                <Portal>
+                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
+                            <button
+                                onClick={() => {
+                                    setShowImportConfirm(false);
+                                    setImportFile(null);
+                                    setImportError(null);
+                                }}
+                                className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                            >
+                                <X size={24} />
+                            </button>
+
+                            <div className="flex flex-col items-center text-center mb-6">
+                                <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mb-4">
+                                    <AlertTriangle size={32} />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2">Warning: Overwrite Data?</h3>
+                                <p className="text-slate-400 text-sm">
+                                    Importing <strong>{importFile?.name}</strong> will completely replace your current profiles, workouts, and history. This action cannot be undone.
+                                </p>
+                            </div>
+
+                            {importError && (
+                                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
+                                    {importError}
+                                </div>
+                            )}
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowImportConfirm(false);
+                                        setImportFile(null);
+                                        setImportError(null);
+                                    }}
+                                    className="flex-1 py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmImport}
+                                    className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
+                                >
+                                    Yes, Overwrite
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Portal>
             )}
-        </div>
+        </>
+    ) : (
+        <Analytics />
+    )
+}
+        </div >
     );
 };
 

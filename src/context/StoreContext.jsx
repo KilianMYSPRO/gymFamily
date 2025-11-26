@@ -170,7 +170,32 @@ export const StoreProvider = ({ children }) => {
         }));
     };
 
+    const exportData = () => {
+        const exportPayload = {
+            version: 1,
+            timestamp: new Date().toISOString(),
+            data: data // Export the entire data state
+        };
+        return JSON.stringify(exportPayload, null, 2);
+    };
 
+    const importData = (jsonData) => {
+        try {
+            const parsed = JSON.parse(jsonData);
+
+            // Basic validation
+            if (!parsed.data || !parsed.data.profiles) {
+                throw new Error("Invalid backup file format");
+            }
+
+            // Restore data
+            setData(parsed.data);
+            return { success: true };
+        } catch (error) {
+            console.error("Import failed:", error);
+            return { success: false, error: error.message };
+        }
+    };
 
     return (
         <StoreContext.Provider value={{
@@ -183,7 +208,6 @@ export const StoreProvider = ({ children }) => {
             addWorkout,
             updateWorkout,
             deleteWorkout,
-            deleteWorkout,
             logSession,
             deleteLog,
             logWeight,
@@ -191,7 +215,9 @@ export const StoreProvider = ({ children }) => {
             weightHistory: Array.isArray(data.weightHistory) ? data.weightHistory.filter(h => h.profileId === activeProfileId) : [],
             profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
             updateProfileDetails,
-            updateProfileName
+            updateProfileName,
+            exportData,
+            importData
         }}>
             {children}
         </StoreContext.Provider>
