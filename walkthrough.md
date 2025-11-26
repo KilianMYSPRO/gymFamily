@@ -53,6 +53,13 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Import Backup**: Allows you to restore your data from a JSON file.
 - This enables you to transfer your data between devices (e.g., from mobile to desktop) manually.
 
+### 10. Real-Time Cloud Sync
+- Implemented a lightweight **Node.js + SQLite** backend for real-time synchronization.
+- **Cloud Sync**: Added a "Cloud Sync" section in the Profile tab.
+- **Authentication**: Users can create an account and log in to sync their data.
+- **Automatic Sync**: Data is automatically pushed to the server when changed and pulled from the server periodically (every 30s) or on login.
+- **Cross-Device**: Changes made on one device (e.g., mobile) will automatically appear on another (e.g., desktop) when logged into the same account.
+
 ## Verification Results
 
 ### Manual Verification
@@ -67,3 +74,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Modal Positioning**: Verified that modals are now rendered via Portals, ensuring they stay fixed on the screen regardless of scrolling or parent animations.
 - **Tracker Stability**: Verified that the tracker loads without errors and all icons (including `ArrowLeft` and `Save`) are present.
 - **Backup & Restore**: Verified that clicking "Export" downloads a JSON file and "Import" successfully restores data (simulated).
+- **Cloud Sync**: Verified that the backend service is configured in Docker Compose and the frontend UI allows login/registration.

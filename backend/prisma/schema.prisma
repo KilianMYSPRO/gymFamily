@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  data      UserData[]
+}
+
+model UserData {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // e.g., 'workouts', 'history', 'profiles', 'weightHistory'
+  data      String   // JSON string
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+}

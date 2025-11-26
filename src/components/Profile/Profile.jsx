@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw } from 'lucide-react';
 import Portal from '../common/Portal';
+import Auth from '../Auth/Auth';
 import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
 
 const Profile = () => {
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, token, user, login, logout, syncStatus } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,
@@ -289,6 +290,53 @@ const Profile = () => {
                         </button>
                     </div>
                 </form>
+
+                <div className="glass-card space-y-6 animate-fade-in">
+                    <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
+                        <div className="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500">
+                            <Cloud size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-white">Cloud Sync</h3>
+                            <p className="text-slate-400">Sync your data across devices.</p>
+                        </div>
+                    </div>
+
+                    {!token ? (
+                        <Auth onLogin={login} />
+                    ) : (
+                        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/30 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xl">
+                                    {user?.username?.[0]?.toUpperCase()}
+                                </div>
+                                <div>
+                                    <h4 className="text-white font-bold text-lg">Logged in as {user?.username}</h4>
+                                    <div className="flex items-center gap-2 text-sm">
+                                        <span className={clsx(
+                                            "w-2 h-2 rounded-full",
+                                            syncStatus === 'success' ? "bg-emerald-500" :
+                                            syncStatus === 'syncing' ? "bg-amber-500 animate-pulse" :
+                                            syncStatus === 'error' ? "bg-red-500" : "bg-slate-500"
+                                        )} />
+                                        <span className="text-slate-400">
+                                            {syncStatus === 'success' ? 'Synced' :
+                                             syncStatus === 'syncing' ? 'Syncing...' :
+                                             syncStatus === 'error' ? 'Sync Error' : 'Idle'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={logout}
+                                className="px-4 py-2 bg-slate-800 hover:bg-red-500/10 hover:text-red-400 text-slate-400 rounded-lg border border-slate-700 hover:border-red-500/30 transition-all flex items-center gap-2"
+                            >
+                                <LogOut size={18} /> Sign Out
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 <div className="glass-card space-y-6 animate-fade-in">
                     <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
