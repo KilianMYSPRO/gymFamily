@@ -60,6 +60,11 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Automatic Sync**: Data is automatically pushed to the server when changed and pulled from the server periodically (every 30s) or on login.
 - **Cross-Device**: Changes made on one device (e.g., mobile) will automatically appear on another (e.g., desktop) when logged into the same account.
 
+### 11. Enforced Authentication
+- Added a **Landing Page** that appears for unauthenticated users.
+- Users are now **required** to Log In or Create an Account to access the application.
+- This ensures all data is synced and secure from the start.
+
 ## Verification Results
 
 ### Manual Verification
@@ -75,3 +80,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Tracker Stability**: Verified that the tracker loads without errors and all icons (including `ArrowLeft` and `Save`) are present.
 - **Backup & Restore**: Verified that clicking "Export" downloads a JSON file and "Import" successfully restores data (simulated).
 - **Cloud Sync**: Verified that the backend service is configured in Docker Compose and the frontend UI allows login/registration.
+- **Enforced Auth**: Verified that `App.jsx` conditionally renders the `Landing` component if no token is present, effectively blocking access to the dashboard.
