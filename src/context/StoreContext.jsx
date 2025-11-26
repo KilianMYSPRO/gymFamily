@@ -103,6 +103,13 @@ export const StoreProvider = ({ children }) => {
         }));
     };
 
+    const deleteLog = (logId) => {
+        setData(prev => ({
+            ...prev,
+            history: prev.history.filter(h => h.id !== logId)
+        }));
+    };
+
     const updateProfileDetails = (details) => {
         setData(prev => ({
             ...prev,
@@ -135,7 +142,9 @@ export const StoreProvider = ({ children }) => {
             addWorkout,
             updateWorkout,
             deleteWorkout,
+            deleteWorkout,
             logSession,
+            deleteLog,
             profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
             updateProfileDetails,
             updateProfileName

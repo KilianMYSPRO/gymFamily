@@ -4,6 +4,7 @@ import Layout from './components/Layout/Layout';
 import Dashboard from './components/Dashboard/Dashboard';
 import Planner from './components/Planner/Planner';
 import Tracker from './components/Tracker/Tracker';
+import History from './components/History/History';
 import Profile from './components/Profile/Profile';
 
 function AppContent() {
@@ -23,6 +24,8 @@ function AppContent() {
         return <Planner />;
       case 'workout':
         return <Tracker initialWorkoutId={viewData?.initialWorkoutId} />;
+      case 'history':
+        return <History />;
       case 'profile':
         return <Profile />;
       default:

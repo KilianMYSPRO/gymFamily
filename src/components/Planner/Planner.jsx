@@ -123,6 +123,16 @@ const Planner = () => {
                                 </button>
                             </div>
 
+                            {/* Desktop Headers */}
+                            <div className="hidden md:grid md:grid-cols-12 gap-2 px-3 mb-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                <div className="md:col-span-5 pl-8">Exercise</div>
+                                <div className="md:col-span-7 grid grid-cols-7 gap-2 text-center">
+                                    <div className="col-span-2">Sets</div>
+                                    <div className="col-span-2">Reps</div>
+                                    <div className="col-span-3">Rest (s)</div>
+                                </div>
+                            </div>
+
                             {exercises.map((ex, idx) => (
                                 <div key={ex.id} className="bg-slate-800/30 p-3 rounded-lg border border-slate-700/30 relative">
                                     <div className="absolute top-3 left-3 text-slate-500 font-mono text-sm">{idx + 1}</div>
@@ -159,7 +169,7 @@ const Planner = () => {
                                                 <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Reps</label>
                                                 <input
                                                     type="text"
-                                                    placeholder="Reps"
+                                                    placeholder="e.g. 8-12"
                                                     value={ex.reps}
                                                     onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
@@ -173,6 +183,23 @@ const Planner = () => {
                                                     value={ex.restTime || '90'}
                                                     onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                />
+                                            </div>
+
+                                            <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="External Link (YouTube/Image)"
+                                                    value={ex.link || ''}
+                                                    onChange={(e) => updateExercise(ex.id, 'link', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    placeholder="Instructions / Description"
+                                                    value={ex.description || ''}
+                                                    onChange={(e) => updateExercise(ex.id, 'description', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
                                                 />
                                             </div>
                                         </div>
@@ -228,7 +255,7 @@ const Planner = () => {
                                 {workout.exercises.slice(0, 3).map((ex, i) => (
                                     <div key={i} className="flex justify-between text-sm text-slate-300 border-b border-slate-800/50 pb-1 last:border-0">
                                         <span>{ex.name}</span>
-                                        <span className="text-slate-500">{ex.sets} x {ex.reps} • {ex.restTime || 90}s</span>
+                                        <span className="text-slate-500 text-xs">{ex.sets} sets • {ex.reps} reps • {ex.restTime || 90}s</span>
                                     </div>
                                 ))}
                                 {workout.exercises.length > 3 && (

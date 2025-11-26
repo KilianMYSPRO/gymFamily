@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, CheckCircle2, Clock, ArrowLeft, Save, X, Plus, Minus, SkipForward } from 'lucide-react';
+import { Play, CheckCircle2, Clock, ArrowLeft, Save, X, Plus, Minus, SkipForward, Info, ExternalLink } from 'lucide-react';
 import clsx from 'clsx';
 
 const Tracker = ({ initialWorkoutId }) => {
@@ -8,7 +8,9 @@ const Tracker = ({ initialWorkoutId }) => {
     const [activeWorkout, setActiveWorkout] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completedSets, setCompletedSets] = useState({});
+    const [setWeights, setSetWeights] = useState({});
     const [restTimer, setRestTimer] = useState({ active: false, time: 90 });
+    const [activeInfo, setActiveInfo] = useState(null);
 
     // Auto-start effect
     useEffect(() => {
@@ -48,13 +50,22 @@ const Tracker = ({ initialWorkoutId }) => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
+    const handleWeightChange = (exerciseId, setIndex, value) => {
+        setSetWeights(prev => ({
+            ...prev,
+            [`${exerciseId}-${setIndex}`]: value
+        }));
+    };
+
     const toggleSet = (exerciseId, setIndex) => {
         const key = `${exerciseId}-${setIndex}`;
-        if (completedSets[key]) return; // Prevent undoing
+        if (completedSets[key]?.completed) return; // Prevent undoing
+
+        const weight = setWeights[key] !== undefined ? setWeights[key] : (activeWorkout.exercises.find(e => e.id === exerciseId)?.weight || '');
 
         setCompletedSets(prev => ({
             ...prev,
-            [key]: true
+            [key]: { completed: true, weight }
         }));
 
         const exercise = activeWorkout.exercises.find(e => e.id === exerciseId);
@@ -71,16 +82,29 @@ const Tracker = ({ initialWorkoutId }) => {
     };
 
     const finishWorkout = () => {
+        // Merge completed sets with latest weight values
+        const finalSets = {};
+        Object.keys(completedSets).forEach(key => {
+            if (completedSets[key]?.completed) {
+                finalSets[key] = {
+                    completed: true,
+                    weight: setWeights[key] !== undefined ? setWeights[key] : completedSets[key].weight
+                };
+            }
+        });
+
         logSession({
             workoutId: activeWorkout.id,
             workoutName: activeWorkout.name,
             duration: elapsedTime,
-            completedSets: Object.keys(completedSets).length,
-            totalSets: activeWorkout.exercises.reduce((acc, ex) => acc + parseInt(ex.sets), 0)
+            completedSets: Object.keys(finalSets).length,
+            totalSets: activeWorkout.exercises.reduce((acc, ex) => acc + parseInt(ex.sets), 0),
+            detailedSets: finalSets
         });
         setActiveWorkout(null);
         setElapsedTime(0);
         setCompletedSets({});
+        setSetWeights({});
     };
 
     if (activeWorkout) {
@@ -111,27 +135,56 @@ const Tracker = ({ initialWorkoutId }) => {
                     {activeWorkout.exercises.map((ex) => (
                         <div key={ex.id} className="glass-card">
                             <div className="flex justify-between items-baseline mb-4">
-                                <h3 className="text-lg font-bold text-white">{ex.name}</h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-lg font-bold text-white">{ex.name}</h3>
+                                    {(ex.description || ex.link) && (
+                                        <button
+                                            onClick={() => setActiveInfo(ex)}
+                                            className="text-sky-400 hover:text-sky-300 transition-colors"
+                                        >
+                                            <Info size={18} />
+                                        </button>
+                                    )}
+                                </div>
                                 <span className="text-slate-400 text-sm">{ex.weight}</span>
                             </div>
 
-                            <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                            <div className="space-y-3">
                                 {Array.from({ length: parseInt(ex.sets) }).map((_, i) => {
-                                    const isCompleted = completedSets[`${ex.id}-${i}`];
+                                    const key = `${ex.id}-${i}`;
+                                    const isCompleted = completedSets[key]?.completed;
+                                    const currentWeight = setWeights[key] !== undefined ? setWeights[key] : (ex.weight || '');
+
                                     return (
-                                        <button
-                                            key={i}
-                                            onClick={() => toggleSet(ex.id, i)}
-                                            disabled={isCompleted}
-                                            className={clsx(
-                                                "h-12 rounded-lg flex items-center justify-center font-bold transition-all duration-200 border",
-                                                isCompleted
-                                                    ? "bg-sky-500 border-sky-400 text-white shadow-[0_0_10px_rgba(14,165,233,0.4)] cursor-default"
-                                                    : "bg-slate-800/50 border-slate-700 text-slate-400 hover:border-slate-600"
-                                            )}
-                                        >
-                                            {isCompleted ? <CheckCircle2 size={20} /> : <span>{ex.reps}</span>}
-                                        </button>
+                                        <div key={i} className="flex items-center justify-between bg-slate-800/30 p-3 rounded-xl border border-slate-800">
+                                            <span className="text-slate-400 font-mono text-sm w-12">Set {i + 1}</span>
+
+                                            <div className="flex items-center gap-3">
+                                                <div className="relative">
+                                                    <input
+                                                        type="text"
+                                                        value={currentWeight}
+                                                        onChange={(e) => handleWeightChange(ex.id, i, e.target.value)}
+                                                        placeholder="0"
+                                                        className="w-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-right text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                                    />
+                                                    <span className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => toggleSet(ex.id, i)}
+                                                    disabled={isCompleted}
+                                                    className={clsx(
+                                                        "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
+                                                        isCompleted
+                                                            ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                                                            : "bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white"
+                                                    )}
+                                                >
+                                                    {isCompleted ? <CheckCircle2 size={24} /> : <span className="font-bold">{ex.reps}</span>}
+                                                </button>
+                                            </div>
+                                        </div>
                                     );
                                 })}
                             </div>
@@ -182,7 +235,49 @@ const Tracker = ({ initialWorkoutId }) => {
                         </div>
                     </div>
                 )}
-            </div>
+
+
+                {/* Info Modal */}
+                {
+                    activeInfo && (
+                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
+                                <button
+                                    onClick={() => setActiveInfo(null)}
+                                    className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                                >
+                                    <X size={24} />
+                                </button>
+
+                                <h3 className="text-xl font-bold text-white mb-4 pr-8">{activeInfo.name}</h3>
+
+                                <div className="space-y-4">
+                                    {activeInfo.description && (
+                                        <div>
+                                            <h4 className="text-sm font-medium text-slate-400 mb-1">Instructions</h4>
+                                            <p className="text-slate-200 text-sm leading-relaxed">{activeInfo.description}</p>
+                                        </div>
+                                    )}
+
+                                    {activeInfo.link && (
+                                        <div>
+                                            <h4 className="text-sm font-medium text-slate-400 mb-1">External Resource</h4>
+                                            <a
+                                                href={activeInfo.link}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-2 text-sky-400 hover:text-sky-300 text-sm"
+                                            >
+                                                <ExternalLink size={16} /> Open Link
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )
+                }
+            </div >
         );
     }
 

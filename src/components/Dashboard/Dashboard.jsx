@@ -1,9 +1,10 @@
 import React from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight } from 'lucide-react';
+import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2 } from 'lucide-react';
+import clsx from 'clsx';
 
 const Dashboard = ({ onViewChange }) => {
-    const { activeProfile, workouts = [], history = [] } = useStore();
+    const { activeProfile, workouts = [], history = [], deleteLog } = useStore();
 
     const formatDuration = (seconds) => {
         if (!seconds) return '0m';
@@ -16,13 +17,18 @@ const Dashboard = ({ onViewChange }) => {
     const getWeeklyActivity = () => {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const today = new Date();
-        const last7Days = Array.from({ length: 7 }, (_, i) => {
-            const d = new Date(today);
-            d.setDate(d.getDate() - (6 - i));
+        const currentDay = today.getDay(); // 0-6
+        const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1); // adjust when day is sunday
+        const monday = new Date(today);
+        monday.setDate(diff);
+
+        const weekDays = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(monday);
+            d.setDate(d.getDate() + i);
             return d;
         });
 
-        return last7Days.map(date => {
+        return weekDays.map(date => {
             try {
                 const dayStr = date.toISOString().split('T')[0];
                 const count = Array.isArray(history) ? history.filter(h =>
@@ -105,16 +111,22 @@ const Dashboard = ({ onViewChange }) => {
             {/* Quick Actions & Recent */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Weekly Activity Chart */}
-                <div className="lg:col-span-2 bg-slate-900/50 p-6 rounded-2xl border border-slate-800">
-                    <h3 className="text-lg font-bold text-white mb-6">Weekly Activity</h3>
-                    <div className="flex items-end justify-between h-48 gap-2">
+                <div className="lg:col-span-2 bg-slate-900/50 p-4 rounded-2xl border border-slate-800">
+                    <h3 className="text-md font-bold text-white mb-4">Weekly Schedule</h3>
+                    <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
                         {weeklyActivity.map((day, i) => (
                             <div key={i} className="flex flex-col items-center gap-2 flex-1">
+                                <span className="text-xs text-slate-500 font-medium uppercase">{day.day}</span>
                                 <div
-                                    className={`w-full max-w-[40px] rounded-t-lg transition-all duration-500 ${day.count > 0 ? 'bg-sky-500' : 'bg-slate-800'}`}
-                                    style={{ height: `${(day.count / maxActivity) * 100}%`, minHeight: '4px' }}
-                                />
-                                <span className="text-xs text-slate-500 font-medium">{day.day}</span>
+                                    className={clsx(
+                                        "w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
+                                        day.count > 0
+                                            ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                                            : "bg-slate-800/50 text-slate-600 border border-slate-700/50"
+                                    )}
+                                >
+                                    {day.count > 0 ? <CheckCircle2 size={20} /> : <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -152,14 +164,23 @@ const Dashboard = ({ onViewChange }) => {
                         <h3 className="text-lg font-bold text-white mb-4">Recent History</h3>
                         <div className="space-y-4">
                             {recentHistory.map(h => (
-                                <div key={h.id || Math.random()} className="flex items-center justify-between border-b border-slate-800 pb-3 last:border-0 last:pb-0">
+                                <div key={h.id || Math.random()} className="flex items-center justify-between border-b border-slate-800 pb-3 last:border-0 last:pb-0 group">
                                     <div>
                                         <p className="font-medium text-white">{h.workoutName || 'Unknown Workout'}</p>
                                         <p className="text-xs text-slate-500">{new Date(h.date).toLocaleDateString()}</p>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-sm text-sky-400 font-mono">{formatDuration(h.duration)}</p>
-                                        <p className="text-xs text-slate-500">{h.completedSets || 0} sets</p>
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-right">
+                                            <p className="text-sm text-sky-400 font-mono">{formatDuration(h.duration)}</p>
+                                            <p className="text-xs text-slate-500">{h.completedSets || 0} sets</p>
+                                        </div>
+                                        <button
+                                            onClick={() => deleteLog(h.id)}
+                                            className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            title="Delete Log"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     </div>
                                 </div>
                             ))}
