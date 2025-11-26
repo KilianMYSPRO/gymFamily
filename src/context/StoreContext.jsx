@@ -132,6 +132,25 @@ export const StoreProvider = ({ children }) => {
         }));
     };
 
+    const deleteWeightLog = (logId) => {
+        setData(prev => {
+            const newHistory = (prev.weightHistory || []).filter(h => h.id !== logId);
+
+            // Update current weight if the deleted log was the latest one
+            const userHistory = newHistory.filter(h => h.profileId === activeProfileId).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const latestWeight = userHistory.length > 0 ? userHistory[userHistory.length - 1].weight : '';
+
+            return {
+                ...prev,
+                weightHistory: newHistory,
+                profileDetails: {
+                    ...prev.profileDetails,
+                    [activeProfileId]: { ...prev.profileDetails[activeProfileId], weight: latestWeight }
+                }
+            };
+        });
+    };
+
     const updateProfileDetails = (details) => {
         setData(prev => ({
             ...prev,
@@ -168,6 +187,7 @@ export const StoreProvider = ({ children }) => {
             logSession,
             deleteLog,
             logWeight,
+            deleteWeightLog,
             weightHistory: Array.isArray(data.weightHistory) ? data.weightHistory.filter(h => h.profileId === activeProfileId) : [],
             profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
             updateProfileDetails,

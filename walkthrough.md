@@ -33,6 +33,9 @@ I have improved the JSON import feature in the Workout Planner to provide better
 ### 6. Weight Tracking
 - Added a "Log Entry" button in the Profile tab to track your body weight over time.
 - Added a "Body Weight" chart in the Analytics tab to visualize your progress (loss or gain).
+- **Recent History**: You can now see your last 5 weight entries in the Profile tab.
+- **Delete Entries**: Added a delete button (trash icon) to remove incorrect weight entries.
+- **Improved Feedback**: The "Changes saved successfully!" message is now more prominent.
 
 ## Verification Results
 
@@ -44,3 +47,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Mobile Layout**: Verified code changes to ensure buttons stack on mobile (`flex-col-reverse`) and align horizontally on desktop (`md:flex-row`).
 - **Optional Exercises**: Verified that the "Optional" toggle works in the Planner and the badge/skip button appear in the Tracker.
 - **Weight Tracking**: Verified that logging weight adds an entry to history and the chart renders correctly in Analytics.
+- **Weight UX**: Verified that recent entries are listed, can be deleted, and the success message is clearly visible.

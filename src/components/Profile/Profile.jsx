@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2 } from 'lucide-react';
 import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
 
 const Profile = () => {
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,
@@ -157,6 +157,31 @@ const Profile = () => {
                                     Log Entry
                                 </button>
                             </div>
+
+                            {/* Recent History */}
+                            {weightHistory && weightHistory.length > 0 && (
+                                <div className="mt-3 space-y-2">
+                                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Recent Entries</p>
+                                    <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
+                                        {[...weightHistory].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map(entry => (
+                                            <div key={entry.id} className="flex justify-between items-center bg-slate-800/30 px-3 py-2 rounded-lg border border-slate-700/30 group">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm text-white font-mono">{entry.weight} kg</span>
+                                                    <span className="text-xs text-slate-500">{new Date(entry.date).toLocaleDateString()}</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => deleteWeightLog(entry.id)}
+                                                    className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-1"
+                                                    title="Delete Entry"
+                                                >
+                                                    <Trash2 size={14} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-2">
@@ -207,11 +232,14 @@ const Profile = () => {
                         </div>
                     </div>
 
-                    <div className="pt-4 flex items-center justify-between">
-                        <div className="text-green-400 text-sm font-medium transition-opacity duration-300" style={{ opacity: isSaved ? 1 : 0 }}>
-                            Changes saved successfully!
-                        </div>
-                        <button type="submit" className="btn btn-primary">
+                    <div className="pt-4 flex items-center justify-between relative">
+                        {isSaved && (
+                            <div className="absolute left-0 -top-12 md:static md:top-auto flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-lg border border-emerald-500/20 animate-fade-in shadow-lg shadow-emerald-500/10">
+                                <CheckCircle2 size={18} />
+                                <span className="text-sm font-medium">Changes saved successfully!</span>
+                            </div>
+                        )}
+                        <button type="submit" className="btn btn-primary ml-auto">
                             <Save size={18} /> Save Changes
                         </button>
                     </div>
