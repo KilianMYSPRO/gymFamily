@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, CheckCircle2, Clock, ArrowLeft, Save, X, Plus, Minus, SkipForward, Info, ExternalLink } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock } from 'lucide-react';
+import Portal from '../common/Portal';
 import clsx from 'clsx';
 
 const Tracker = ({ initialWorkoutId }) => {
@@ -226,91 +227,96 @@ const Tracker = ({ initialWorkoutId }) => {
                             </div>
                         ))}
                     </div>
-
                 </div>
 
-                {restTimer.active && (
-                    <div className="fixed inset-x-0 bottom-0 p-4 z-[100] animate-fade-in">
-                        <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.7)] p-6">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                    <Clock className="text-sky-400" size={20} /> Rest Timer
-                                </h3>
-                                <button onClick={skipRest} className="text-slate-400 hover:text-white p-1">
-                                    <X size={24} />
-                                </button>
-                            </div>
+                {
+                    restTimer.active && (
+                        <Portal>
+                            <div className="fixed inset-x-0 bottom-0 p-4 z-[100] animate-fade-in">
+                                <div className="bg-slate-950 border border-slate-800 rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.7)] p-6">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                            <Clock className="text-sky-400" size={20} /> Rest Timer
+                                        </h3>
+                                        <button onClick={skipRest} className="text-slate-400 hover:text-white p-1">
+                                            <X size={24} />
+                                        </button>
+                                    </div>
 
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="text-5xl font-mono font-bold text-white tabular-nums tracking-wider">
-                                    {formatTime(restTimer.time)}
+                                    <div className="flex flex-col items-center gap-4">
+                                        <div className="text-5xl font-mono font-bold text-white tabular-nums tracking-wider">
+                                            {formatTime(restTimer.time)}
+                                        </div>
+
+                                        <div className="flex items-center gap-4 w-full justify-center">
+                                            <button
+                                                onClick={() => adjustRestTime(-10)}
+                                                className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                                            >
+                                                <Minus size={20} />
+                                            </button>
+
+                                            <button
+                                                onClick={skipRest}
+                                                className="btn btn-primary flex-1 max-w-[200px]"
+                                            >
+                                                <SkipForward size={20} /> Skip Rest
+                                            </button>
+
+                                            <button
+                                                onClick={() => adjustRestTime(30)}
+                                                className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                                            >
+                                                <Plus size={20} />
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div className="flex items-center gap-4 w-full justify-center">
-                                    <button
-                                        onClick={() => adjustRestTime(-10)}
-                                        className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
-                                    >
-                                        <Minus size={20} />
-                                    </button>
-
-                                    <button
-                                        onClick={skipRest}
-                                        className="btn btn-primary flex-1 max-w-[200px]"
-                                    >
-                                        <SkipForward size={20} /> Skip Rest
-                                    </button>
-
-                                    <button
-                                        onClick={() => adjustRestTime(30)}
-                                        className="p-3 rounded-full bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
-                                    >
-                                        <Plus size={20} />
-                                    </button>
-                                </div>
                             </div>
-                        </div>
-                    </div>
-                )}
+                        </Portal>
+                    )
+                }
 
                 {/* Info Modal */}
                 {
                     activeInfo && (
-                        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
-                            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
-                                <button
-                                    onClick={() => setActiveInfo(null)}
-                                    className="absolute top-4 right-4 text-slate-400 hover:text-white"
-                                >
-                                    <X size={24} />
-                                </button>
+                        <Portal>
+                            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
+                                    <button
+                                        onClick={() => setActiveInfo(null)}
+                                        className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                                    >
+                                        <X size={24} />
+                                    </button>
 
-                                <h3 className="text-xl font-bold text-white mb-4 pr-8">{activeInfo.name}</h3>
+                                    <h3 className="text-xl font-bold text-white mb-4 pr-8">{activeInfo.name}</h3>
 
-                                <div className="space-y-4">
-                                    {activeInfo.description && (
-                                        <div>
-                                            <h4 className="text-sm font-medium text-slate-400 mb-1">Instructions</h4>
-                                            <p className="text-slate-200 text-sm leading-relaxed">{activeInfo.description}</p>
-                                        </div>
-                                    )}
+                                    <div className="space-y-4">
+                                        {activeInfo.description && (
+                                            <div>
+                                                <h4 className="text-sm font-medium text-slate-400 mb-1">Instructions</h4>
+                                                <p className="text-slate-200 text-sm leading-relaxed">{activeInfo.description}</p>
+                                            </div>
+                                        )}
 
-                                    {activeInfo.link && (
-                                        <div>
-                                            <h4 className="text-sm font-medium text-slate-400 mb-1">External Resource</h4>
-                                            <a
-                                                href={activeInfo.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="flex items-center gap-2 text-sky-400 hover:text-sky-300 text-sm"
-                                            >
-                                                <ExternalLink size={16} /> Open Link
-                                            </a>
-                                        </div>
-                                    )}
+                                        {activeInfo.link && (
+                                            <div>
+                                                <h4 className="text-sm font-medium text-slate-400 mb-1">External Resource</h4>
+                                                <a
+                                                    href={activeInfo.link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-2 text-sky-400 hover:text-sky-300 text-sm"
+                                                >
+                                                    <ExternalLink size={16} /> Open Link
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </Portal>
                     )
                 }
             </>
