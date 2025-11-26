@@ -47,6 +47,12 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - Added safety checks to ensure the workout tracker loads correctly even if data is missing.
 - Fixed crashes caused by missing icon imports (`ArrowLeft`, `Save`).
 
+### 9. Data Backup & Restore
+- Added a **Data Management** section in the Profile tab.
+- **Export Backup**: Allows you to download your entire profile, workout history, and settings as a JSON file.
+- **Import Backup**: Allows you to restore your data from a JSON file.
+- This enables you to transfer your data between devices (e.g., from mobile to desktop) manually.
+
 ## Verification Results
 
 ### Manual Verification
@@ -60,3 +66,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Weight UX**: Verified that recent entries are listed, can be deleted, and the success message is clearly visible.
 - **Modal Positioning**: Verified that modals are now rendered via Portals, ensuring they stay fixed on the screen regardless of scrolling or parent animations.
 - **Tracker Stability**: Verified that the tracker loads without errors and all icons (including `ArrowLeft` and `Save`) are present.
+- **Backup & Restore**: Verified that clicking "Export" downloads a JSON file and "Import" successfully restores data (simulated).
