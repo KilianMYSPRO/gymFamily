@@ -25,6 +25,11 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - Adjusted the "Import Routine" modal buttons to stack vertically on mobile devices.
 - This prevents the "Format JSON" button from overflowing the screen on small displays.
 
+### 5. Optional Exercises
+- You can now mark exercises as "Optional" in the Planner.
+- In the Tracker, optional exercises have a distinct badge.
+- A "Skip Optional Exercise" button allows you to quickly skip them during a workout.
+
 ## Verification Results
 
 ### Manual Verification
@@ -33,3 +38,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Invalid Schema**: Importing JSON with missing required fields (like `name`) shows a specific validation error.
 - **UUID Generation**: Verified that the new UUID generator works correctly in the environment.
 - **Mobile Layout**: Verified code changes to ensure buttons stack on mobile (`flex-col-reverse`) and align horizontally on desktop (`md:flex-row`).
+- **Optional Exercises**: Verified that the "Optional" toggle works in the Planner and the badge/skip button appear in the Tracker.

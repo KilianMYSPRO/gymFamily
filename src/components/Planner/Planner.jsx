@@ -32,6 +32,7 @@ const Planner = () => {
             reps: '10',
             weight: '',
             restTime: '90',
+            isOptional: false,
             originalId: exercise.id
         }]);
 
@@ -91,7 +92,8 @@ const Planner = () => {
                 restTime: ex.restTime,
                 weight: ex.weight,
                 link: ex.link,
-                description: ex.description
+                description: ex.description,
+                isOptional: ex.isOptional || false
             }))
         };
 
@@ -150,7 +152,8 @@ const Planner = () => {
                     restTime: ex.restTime || '90',
                     weight: ex.weight || '',
                     link: ex.link || '',
-                    description: ex.description || ''
+                    description: ex.description || '',
+                    isOptional: ex.isOptional || false
                 };
             });
 
@@ -178,7 +181,8 @@ const Planner = () => {
             restTime: ex.restTime,
             weight: '',
             link: '',
-            description: ''
+            description: '',
+            isOptional: false
         })));
         setShowTemplateModal(false);
     };
@@ -359,13 +363,27 @@ const Planner = () => {
                                     <div className="mt-6 md:mt-0 md:ml-8 md:mr-10 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-2 items-center">
                                         <div className="md:col-span-5">
                                             <label className="block text-xs text-slate-500 md:hidden mb-1">Exercise Name</label>
-                                            <input
-                                                type="text"
-                                                placeholder="Exercise Name"
-                                                value={ex.name}
-                                                onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
-                                                className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
-                                            />
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Exercise Name"
+                                                    value={ex.name}
+                                                    onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
+                                                    className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
+                                                />
+                                                <button
+                                                    onClick={() => updateExercise(ex.id, 'isOptional', !ex.isOptional)}
+                                                    className={clsx(
+                                                        "px-2 py-1 rounded text-xs font-medium border transition-colors whitespace-nowrap",
+                                                        ex.isOptional
+                                                            ? "bg-amber-500/10 text-amber-500 border-amber-500/50 hover:bg-amber-500/20"
+                                                            : "bg-slate-800 text-slate-500 border-slate-700 hover:text-slate-300"
+                                                    )}
+                                                    title="Toggle Optional"
+                                                >
+                                                    {ex.isOptional ? 'Optional' : 'Required'}
+                                                </button>
+                                            </div>
                                         </div>
 
                                         <div className="grid grid-cols-3 gap-4 md:col-span-7 md:grid-cols-7 md:gap-2">

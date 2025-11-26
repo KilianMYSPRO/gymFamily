@@ -108,6 +108,23 @@ const Tracker = ({ initialWorkoutId }) => {
         setSetWeights({});
     };
 
+    const skipExercise = (exerciseId) => {
+        const exercise = activeWorkout.exercises.find(e => e.id === exerciseId);
+        if (!exercise) return;
+
+        const newCompletedSets = { ...completedSets };
+        const newSetWeights = { ...setWeights };
+
+        for (let i = 0; i < parseInt(exercise.sets); i++) {
+            const key = `${exerciseId}-${i}`;
+            newCompletedSets[key] = { completed: true, weight: 'Skipped' };
+            newSetWeights[key] = '0';
+        }
+
+        setCompletedSets(newCompletedSets);
+        setSetWeights(newSetWeights);
+    };
+
     if (activeWorkout) {
         return (
             <div className="space-y-6 animate-fade-in">
@@ -147,8 +164,24 @@ const Tracker = ({ initialWorkoutId }) => {
                                         </button>
                                     )}
                                 </div>
-                                <span className="text-slate-400 text-sm">{ex.weight}</span>
+                                <div className="flex items-center gap-2">
+                                    {ex.isOptional && (
+                                        <span className="text-xs font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                            Optional
+                                        </span>
+                                    )}
+                                    <span className="text-slate-400 text-sm">{ex.weight}</span>
+                                </div>
                             </div>
+
+                            {ex.isOptional && !Array.from({ length: parseInt(ex.sets) }).every((_, i) => completedSets[`${ex.id}-${i}`]?.completed) && (
+                                <button
+                                    onClick={() => skipExercise(ex.id)}
+                                    className="w-full mb-4 py-2 text-sm text-slate-400 hover:text-white bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors border border-slate-700/50 hover:border-slate-700"
+                                >
+                                    Skip Optional Exercise
+                                </button>
+                            )}
 
                             <div className="space-y-3">
                                 {Array.from({ length: parseInt(ex.sets) }).map((_, i) => {
