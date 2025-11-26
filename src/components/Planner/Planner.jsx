@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen } from 'lucide-react';
 import clsx from 'clsx';
 
 import ExerciseSelector from './ExerciseSelector';
+import templates from '../../data/templates.json';
 
 const Planner = () => {
     const { workouts, addWorkout, updateWorkout, deleteWorkout } = useStore();
@@ -18,6 +19,9 @@ const Planner = () => {
     const [importJson, setImportJson] = useState('');
     const [importError, setImportError] = useState(null);
     const [copiedId, setCopiedId] = useState(null);
+
+    // Template State
+    const [showTemplateModal, setShowTemplateModal] = useState(false);
 
     const handleAddExercise = (exercise) => {
         setExercises([...exercises, {
@@ -128,6 +132,22 @@ const Planner = () => {
         }
     };
 
+    // Template Logic
+    const loadTemplate = (template) => {
+        setNewWorkoutName(template.name);
+        setExercises(template.exercises.map(ex => ({
+            id: crypto.randomUUID(),
+            name: ex.name,
+            sets: ex.sets,
+            reps: ex.reps,
+            restTime: ex.restTime,
+            weight: '',
+            link: '',
+            description: ''
+        })));
+        setShowTemplateModal(false);
+    };
+
     return (
         <div className="space-y-6">
             {showSelector && (
@@ -171,6 +191,46 @@ const Planner = () => {
                             <button onClick={handleImport} className="btn btn-primary" disabled={!importJson.trim()}>
                                 <Download size={18} /> Import
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Template Modal */}
+            {showTemplateModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-2xl relative max-h-[80vh] flex flex-col">
+                        <div className="flex justify-between items-center mb-4 shrink-0">
+                            <div>
+                                <h3 className="text-xl font-bold text-white">Template Library</h3>
+                                <p className="text-slate-400 text-sm">Choose a routine to get started.</p>
+                            </div>
+                            <button onClick={() => setShowTemplateModal(false)} className="text-slate-400 hover:text-white">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-y-auto pr-2">
+                            {templates.map(template => (
+                                <button
+                                    key={template.id}
+                                    onClick={() => loadTemplate(template)}
+                                    className="text-left bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-sky-500/50 p-4 rounded-xl transition-all group"
+                                >
+                                    <h4 className="font-bold text-white mb-1 group-hover:text-sky-400 transition-colors">{template.name}</h4>
+                                    <p className="text-xs text-slate-400 mb-3 line-clamp-2">{template.description}</p>
+                                    <div className="flex flex-wrap gap-1">
+                                        {template.exercises.slice(0, 3).map((ex, i) => (
+                                            <span key={i} className="text-[10px] bg-slate-900 text-slate-500 px-1.5 py-0.5 rounded border border-slate-800">
+                                                {ex.name}
+                                            </span>
+                                        ))}
+                                        {template.exercises.length > 3 && (
+                                            <span className="text-[10px] text-slate-500 px-1 py-0.5">+{template.exercises.length - 3}</span>
+                                        )}
+                                    </div>
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -226,9 +286,17 @@ const Planner = () => {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
                                 <label className="block text-sm font-medium text-slate-400">Exercises</label>
-                                <button onClick={() => setShowSelector(true)} className="text-sm text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1">
-                                    <Plus size={16} /> Add Exercise
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setShowTemplateModal(true)}
+                                        className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                                    >
+                                        <BookOpen size={16} /> Load Template
+                                    </button>
+                                    <button onClick={() => setShowSelector(true)} className="text-sm text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1 px-2 py-1">
+                                        <Plus size={16} /> Add Exercise
+                                    </button>
+                                </div>
                             </div>
 
                             {/* Desktop Headers */}
