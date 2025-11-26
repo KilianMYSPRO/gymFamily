@@ -221,12 +221,12 @@ const Planner = () => {
                             </p>
                         )}
 
-                        <div className="flex justify-end gap-3">
-                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 mr-auto">
+                        <div className="flex flex-col-reverse md:flex-row justify-end gap-3">
+                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 md:mr-auto w-full md:w-auto">
                                 Format JSON
                             </button>
-                            <button onClick={() => setShowImportModal(false)} className="btn btn-secondary">Cancel</button>
-                            <button onClick={handleImport} className="btn btn-primary" disabled={!importJson.trim()}>
+                            <button onClick={() => setShowImportModal(false)} className="btn btn-secondary w-full md:w-auto">Cancel</button>
+                            <button onClick={handleImport} className="btn btn-primary w-full md:w-auto" disabled={!importJson.trim()}>
                                 <Download size={18} /> Import
                             </button>
                         </div>
