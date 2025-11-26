@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save } from 'lucide-react';
 import Portal from '../common/Portal';
 import clsx from 'clsx';
 
