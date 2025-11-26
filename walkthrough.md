@@ -17,9 +17,14 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - This allows you to paste minified or messy JSON and format it for readability.
 - If the JSON is invalid, clicking this button will show the specific syntax error.
 
+### 3. Fixed UUID Generation Error
+- Replaced `crypto.randomUUID()` with a robust utility function.
+- This fixes the "crypto.randomUUID is not a function" error seen in some environments.
+
 ## Verification Results
 
 ### Manual Verification
 - **Valid JSON**: Importing a valid JSON structure works as expected.
 - **Invalid JSON Syntax**: Pasting invalid JSON (e.g., missing quotes) and clicking "Import" or "Format JSON" shows a syntax error.
 - **Invalid Schema**: Importing JSON with missing required fields (like `name`) shows a specific validation error.
+- **UUID Generation**: Verified that the new UUID generator works correctly in the environment.

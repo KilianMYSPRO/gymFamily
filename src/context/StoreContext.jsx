@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { generateUUID } from '../utils/uuid';
 
 const StoreContext = createContext();
 
@@ -69,7 +70,7 @@ export const StoreProvider = ({ children }) => {
             ...prev,
             workouts: {
                 ...prev.workouts,
-                [activeProfileId]: [...(prev.workouts[activeProfileId] || []), { ...workout, id: crypto.randomUUID() }]
+                [activeProfileId]: [...(prev.workouts[activeProfileId] || []), { ...workout, id: generateUUID() }]
             }
         }));
     };
@@ -99,7 +100,7 @@ export const StoreProvider = ({ children }) => {
     const logSession = (session) => {
         setData(prev => ({
             ...prev,
-            history: [...prev.history, { ...session, id: crypto.randomUUID(), profileId: activeProfileId, date: new Date().toISOString() }]
+            history: [...prev.history, { ...session, id: generateUUID(), profileId: activeProfileId, date: new Date().toISOString() }]
         }));
     };
 

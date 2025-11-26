@@ -3,6 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen } from 'lucide-react';
 import clsx from 'clsx';
 
+import { generateUUID } from '../../utils/uuid';
 import ExerciseSelector from './ExerciseSelector';
 import templates from '../../data/templates.json';
 
@@ -25,7 +26,7 @@ const Planner = () => {
 
     const handleAddExercise = (exercise) => {
         setExercises([...exercises, {
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             name: exercise.name,
             sets: 3,
             reps: '10',
@@ -142,7 +143,7 @@ const Planner = () => {
                     throw new Error(`Exercise at index ${index} is missing a 'name'.`);
                 }
                 return {
-                    id: crypto.randomUUID(),
+                    id: generateUUID(),
                     name: ex.name,
                     sets: ex.sets || 3,
                     reps: ex.reps || '10',
@@ -170,7 +171,7 @@ const Planner = () => {
     const loadTemplate = (template) => {
         setNewWorkoutName(template.name);
         setExercises(template.exercises.map(ex => ({
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             name: ex.name,
             sets: ex.sets,
             reps: ex.reps,
