@@ -129,7 +129,7 @@ const Tracker = ({ initialWorkoutId }) => {
     if (activeWorkout) {
         return (
             <>
-                <div className="space-y-6 animate-fade-in">
+                <div className="space-y-6">
                     <header className="flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md py-4 z-10 border-b border-slate-800/50">
                         <div className="flex items-center gap-4">
                             <button
@@ -152,7 +152,7 @@ const Tracker = ({ initialWorkoutId }) => {
                     </header>
 
                     <div className="space-y-4 pb-20">
-                        {activeWorkout.exercises.map((ex) => (
+                        {activeWorkout.exercises && activeWorkout.exercises.map((ex) => (
                             <div key={ex.id} className="glass-card">
                                 <div className="flex justify-between items-baseline mb-4">
                                     <div className="flex items-center gap-2">
