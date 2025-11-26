@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2 } from 'lucide-react';
+import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2 } from 'lucide-react';
 import clsx from 'clsx';
+import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
 
 const Dashboard = ({ onViewChange }) => {
     const { activeProfile, workouts = [], history = [], deleteLog } = useStore();
+    const [selectedSummary, setSelectedSummary] = useState(null);
 
     const formatDuration = (seconds) => {
         if (!seconds) return '0m';
@@ -76,6 +78,13 @@ const Dashboard = ({ onViewChange }) => {
 
     return (
         <div className="text-white p-8 space-y-8">
+            {selectedSummary && (
+                <WorkoutSummaryCard
+                    workout={selectedSummary}
+                    onClose={() => setSelectedSummary(null)}
+                />
+            )}
+
             <header>
                 <h1 className="text-3xl font-bold">Welcome, {activeProfile.name}</h1>
                 <p className="text-slate-400">Here's your activity overview.</p>
@@ -169,11 +178,18 @@ const Dashboard = ({ onViewChange }) => {
                                         <p className="font-medium text-white">{h.workoutName || 'Unknown Workout'}</p>
                                         <p className="text-xs text-slate-500">{new Date(h.date).toLocaleDateString()}</p>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-right">
+                                    <div className="flex items-center gap-2">
+                                        <div className="text-right mr-2">
                                             <p className="text-sm text-sky-400 font-mono">{formatDuration(h.duration)}</p>
                                             <p className="text-xs text-slate-500">{h.completedSets || 0} sets</p>
                                         </div>
+                                        <button
+                                            onClick={() => setSelectedSummary(h)}
+                                            className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            title="Share Summary"
+                                        >
+                                            <Share2 size={16} />
+                                        </button>
                                         <button
                                             onClick={() => deleteLog(h.id)}
                                             className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"

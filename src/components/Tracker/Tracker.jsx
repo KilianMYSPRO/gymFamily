@@ -99,7 +99,8 @@ const Tracker = ({ initialWorkoutId }) => {
             duration: elapsedTime,
             completedSets: Object.keys(finalSets).length,
             totalSets: activeWorkout.exercises.reduce((acc, ex) => acc + parseInt(ex.sets), 0),
-            detailedSets: finalSets
+            detailedSets: finalSets,
+            exercises: activeWorkout.exercises.map(e => ({ id: e.id, name: e.name })) // Snapshot for analytics
         });
         setActiveWorkout(null);
         setElapsedTime(0);

@@ -1,0 +1,176 @@
+[
+    {
+        "id": "template-full-body-a",
+        "name": "Full Body A (5x5)",
+        "description": "Classic strength building routine focusing on compound movements.",
+        "exercises": [
+            {
+                "name": "Squat",
+                "sets": 5,
+                "reps": "5",
+                "restTime": 180
+            },
+            {
+                "name": "Bench Press",
+                "sets": 5,
+                "reps": "5",
+                "restTime": 180
+            },
+            {
+                "name": "Barbell Row",
+                "sets": 5,
+                "reps": "5",
+                "restTime": 180
+            }
+        ]
+    },
+    {
+        "id": "template-full-body-b",
+        "name": "Full Body B (5x5)",
+        "description": "Alternate strength routine with overhead press and deadlifts.",
+        "exercises": [
+            {
+                "name": "Squat",
+                "sets": 5,
+                "reps": "5",
+                "restTime": 180
+            },
+            {
+                "name": "Overhead Press",
+                "sets": 5,
+                "reps": "5",
+                "restTime": 180
+            },
+            {
+                "name": "Deadlift",
+                "sets": 1,
+                "reps": "5",
+                "restTime": 180
+            }
+        ]
+    },
+    {
+        "id": "template-push",
+        "name": "Push Day (Hypertrophy)",
+        "description": "Focus on chest, shoulders, and triceps.",
+        "exercises": [
+            {
+                "name": "Bench Press",
+                "sets": 3,
+                "reps": "8-12",
+                "restTime": 90
+            },
+            {
+                "name": "Incline Dumbbell Press",
+                "sets": 3,
+                "reps": "10-12",
+                "restTime": 90
+            },
+            {
+                "name": "Lateral Raise",
+                "sets": 4,
+                "reps": "12-15",
+                "restTime": 60
+            },
+            {
+                "name": "Tricep Pushdown",
+                "sets": 3,
+                "reps": "12-15",
+                "restTime": 60
+            }
+        ]
+    },
+    {
+        "id": "template-pull",
+        "name": "Pull Day (Hypertrophy)",
+        "description": "Focus on back and biceps.",
+        "exercises": [
+            {
+                "name": "Pull Up",
+                "sets": 3,
+                "reps": "AMRAP",
+                "restTime": 120
+            },
+            {
+                "name": "Barbell Row",
+                "sets": 3,
+                "reps": "8-12",
+                "restTime": 90
+            },
+            {
+                "name": "Face Pull",
+                "sets": 3,
+                "reps": "12-15",
+                "restTime": 60
+            },
+            {
+                "name": "Bicep Curl",
+                "sets": 3,
+                "reps": "10-12",
+                "restTime": 60
+            }
+        ]
+    },
+    {
+        "id": "template-legs",
+        "name": "Leg Day (Hypertrophy)",
+        "description": "Focus on quads, hamstrings, and calves.",
+        "exercises": [
+            {
+                "name": "Squat",
+                "sets": 3,
+                "reps": "8-10",
+                "restTime": 120
+            },
+            {
+                "name": "Romanian Deadlift",
+                "sets": 3,
+                "reps": "10-12",
+                "restTime": 90
+            },
+            {
+                "name": "Leg Extension",
+                "sets": 3,
+                "reps": "12-15",
+                "restTime": 60
+            },
+            {
+                "name": "Calf Raise",
+                "sets": 4,
+                "reps": "15-20",
+                "restTime": 60
+            }
+        ]
+    },
+    {
+        "id": "template-bodyweight",
+        "name": "Bodyweight Basics",
+        "description": "No equipment needed. Great for home workouts.",
+        "exercises": [
+            {
+                "name": "Push Up",
+                "sets": 3,
+                "reps": "AMRAP",
+                "restTime": 60
+            },
+            {
+                "name": "Bodyweight Squat",
+                "sets": 3,
+                "reps": "20",
+                "restTime": 60
+            },
+            {
+                "name": "Lunge",
+                "sets": 3,
+                "reps": "12",
+                "restTime": 60
+            },
+            {
+                "name": "Plank",
+                "sets": 3,
+                "reps": "60s",
+                "restTime": 60
+            }
+        ]
+    }
+]
