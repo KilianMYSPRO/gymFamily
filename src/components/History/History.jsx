@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Calendar, Clock, Dumbbell, Trash2, Share2 } from 'lucide-react';
 import WorkoutSummaryCard from './WorkoutSummaryCard';
+import Portal from '../common/Portal';
 
 const History = () => {
     const { history, deleteLog } = useStore();
@@ -26,10 +27,12 @@ const History = () => {
     return (
         <>
             {selectedSummary && (
-                <WorkoutSummaryCard
-                    workout={selectedSummary}
-                    onClose={() => setSelectedSummary(null)}
-                />
+                <Portal>
+                    <WorkoutSummaryCard
+                        workout={selectedSummary}
+                        onClose={() => setSelectedSummary(null)}
+                    />
+                </Portal>
             )}
 
             <div className="space-y-6 animate-fade-in">
