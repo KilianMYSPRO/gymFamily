@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check } from 'lucide-react';
 import clsx from 'clsx';
 
 import ExerciseSelector from './ExerciseSelector';
@@ -12,6 +12,12 @@ const Planner = () => {
     const [showSelector, setShowSelector] = useState(false);
     const [newWorkoutName, setNewWorkoutName] = useState('');
     const [exercises, setExercises] = useState([]);
+
+    // Import/Export State
+    const [showImportModal, setShowImportModal] = useState(false);
+    const [importJson, setImportJson] = useState('');
+    const [importError, setImportError] = useState(null);
+    const [copiedId, setCopiedId] = useState(null);
 
     const handleAddExercise = (exercise) => {
         setExercises([...exercises, {
@@ -69,6 +75,59 @@ const Planner = () => {
         setExercises([]);
     };
 
+    // Export Logic
+    const handleExport = (workout) => {
+        const data = {
+            name: workout.name,
+            exercises: workout.exercises.map(ex => ({
+                name: ex.name,
+                sets: ex.sets,
+                reps: ex.reps,
+                restTime: ex.restTime,
+                weight: ex.weight,
+                link: ex.link,
+                description: ex.description
+            }))
+        };
+
+        navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+        setCopiedId(workout.id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    // Import Logic
+    const handleImport = () => {
+        try {
+            const data = JSON.parse(importJson);
+            if (!data.name || !Array.isArray(data.exercises)) {
+                throw new Error("Invalid format: Missing name or exercises array.");
+            }
+
+            // Sanitize and add IDs
+            const sanitizedExercises = data.exercises.map(ex => ({
+                id: crypto.randomUUID(),
+                name: ex.name || 'Unknown Exercise',
+                sets: ex.sets || 3,
+                reps: ex.reps || '10',
+                restTime: ex.restTime || '90',
+                weight: ex.weight || '',
+                link: ex.link || '',
+                description: ex.description || ''
+            }));
+
+            addWorkout({
+                name: data.name,
+                exercises: sanitizedExercises
+            });
+
+            setShowImportModal(false);
+            setImportJson('');
+            setImportError(null);
+        } catch (e) {
+            setImportError("Invalid JSON code. Please check your input.");
+        }
+    };
+
     return (
         <div className="space-y-6">
             {showSelector && (
@@ -78,19 +137,68 @@ const Planner = () => {
                 />
             )}
 
+            {/* Import Modal */}
+            {showImportModal && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-bold text-white">Import Routine</h3>
+                            <button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:text-white">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <p className="text-sm text-slate-400 mb-4">Paste the routine code (JSON) below:</p>
+
+                        <textarea
+                            value={importJson}
+                            onChange={(e) => {
+                                setImportJson(e.target.value);
+                                setImportError(null);
+                            }}
+                            placeholder='{"name": "My Workout", "exercises": [...] }'
+                            className="w-full h-40 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4"
+                        />
+
+                        {importError && (
+                            <p className="text-red-400 text-sm mb-4 bg-red-400/10 p-2 rounded border border-red-400/20">
+                                {importError}
+                            </p>
+                        )}
+
+                        <div className="flex justify-end gap-3">
+                            <button onClick={() => setShowImportModal(false)} className="btn btn-secondary">Cancel</button>
+                            <button onClick={handleImport} className="btn btn-primary" disabled={!importJson.trim()}>
+                                <Download size={18} /> Import
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <header className="flex justify-between items-center">
                 <div>
                     <h2 className="text-3xl font-bold text-white mb-2">Workout Planner</h2>
                     <p className="text-slate-400">Design your training routines.</p>
                 </div>
                 {!isCreating && (
-                    <button
-                        onClick={() => setIsCreating(true)}
-                        className="btn btn-primary"
-                    >
-                        <Plus size={20} />
-                        New Plan
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowImportModal(true)}
+                            className="btn btn-secondary"
+                        >
+                            <Download size={20} />
+                            <span className="hidden md:inline">Import</span>
+                        </button>
+                        <button
+                            onClick={() => setIsCreating(true)}
+                            className="btn btn-primary"
+                        >
+                            <Plus size={20} />
+                            <span className="hidden md:inline">New Plan</span>
+                            <span className="md:hidden">New</span>
+                        </button>
+                    </div>
                 )}
             </header>
 
@@ -228,14 +336,23 @@ const Planner = () => {
                         <div key={workout.id} className="glass-card group relative">
                             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                                 <button
+                                    onClick={() => handleExport(workout)}
+                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                    title="Share / Export"
+                                >
+                                    {copiedId === workout.id ? <Check size={18} className="text-emerald-400" /> : <Share2 size={18} />}
+                                </button>
+                                <button
                                     onClick={() => handleEdit(workout)}
                                     className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                    title="Edit"
                                 >
                                     <Pencil size={18} />
                                 </button>
                                 <button
                                     onClick={() => deleteWorkout(workout.id)}
                                     className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                                    title="Delete"
                                 >
                                     <Trash2 size={18} />
                                 </button>
@@ -272,9 +389,14 @@ const Planner = () => {
                             </div>
                             <h3 className="text-lg font-medium text-white mb-2">No routines yet</h3>
                             <p className="text-slate-400 mb-6">Create your first workout plan to get started.</p>
-                            <button onClick={() => setIsCreating(true)} className="btn btn-primary">
-                                Create Routine
-                            </button>
+                            <div className="flex justify-center gap-4">
+                                <button onClick={() => setShowImportModal(true)} className="btn btn-secondary">
+                                    <Download size={18} /> Import
+                                </button>
+                                <button onClick={() => setIsCreating(true)} className="btn btn-primary">
+                                    <Plus size={18} /> Create
+                                </button>
+                            </div>
                         </div>
                     )}
                 </div>
