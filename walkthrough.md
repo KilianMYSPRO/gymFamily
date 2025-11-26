@@ -30,6 +30,10 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - In the Tracker, optional exercises have a distinct badge.
 - A "Skip Optional Exercise" button allows you to quickly skip them during a workout.
 
+### 6. Weight Tracking
+- Added a "Log Entry" button in the Profile tab to track your body weight over time.
+- Added a "Body Weight" chart in the Analytics tab to visualize your progress (loss or gain).
+
 ## Verification Results
 
 ### Manual Verification
@@ -39,3 +43,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **UUID Generation**: Verified that the new UUID generator works correctly in the environment.
 - **Mobile Layout**: Verified code changes to ensure buttons stack on mobile (`flex-col-reverse`) and align horizontally on desktop (`md:flex-row`).
 - **Optional Exercises**: Verified that the "Optional" toggle works in the Planner and the badge/skip button appear in the Tracker.
+- **Weight Tracking**: Verified that logging weight adds an entry to history and the chart renders correctly in Analytics.
