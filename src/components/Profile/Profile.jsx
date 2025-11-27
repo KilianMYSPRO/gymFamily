@@ -7,7 +7,7 @@ import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
 
 const Profile = () => {
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, token, user, login, logout, syncStatus } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, token, user, login, logout, syncStatus, syncData } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,
@@ -334,7 +334,16 @@ const Profile = () => {
                                             <span className="text-slate-400">
                                                 {(syncStatus === 'success' || syncStatus === 'idle') ? 'Synced' :
                                                     syncStatus === 'syncing' ? 'Syncing...' :
-                                                        'Sync Error'}
+                                                        <span className="text-red-400 flex items-center gap-2">
+                                                            Sync Error
+                                                            <button
+                                                                onClick={() => syncData()}
+                                                                className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/20 transition-colors flex items-center gap-1"
+                                                            >
+                                                                <RefreshCw size={12} /> Retry
+                                                            </button>
+                                                        </span>
+                                                }
                                             </span>
                                         </div>
                                     </div>

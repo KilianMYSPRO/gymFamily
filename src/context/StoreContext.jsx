@@ -5,25 +5,15 @@ const StoreContext = createContext();
 
 const INITIAL_DATA = {
     profiles: [
-        { id: 'user1', name: 'User A', theme: 'blue' },
-        { id: 'user2', name: 'User B', theme: 'indigo' }
+        { id: 'user1', name: 'My Profile', theme: 'blue' }
     ],
     workouts: {
-        user1: [],
-        user2: []
+        user1: []
     },
     weightHistory: [],
     history: [],
     profileDetails: {
         user1: {
-            age: '',
-            weight: '',
-            height: '',
-            gender: 'prefer-not-to-say',
-            goal: 'general-fitness',
-            weeklyGoal: 3
-        },
-        user2: {
             age: '',
             weight: '',
             height: '',
@@ -47,7 +37,7 @@ export const StoreProvider = ({ children }) => {
                     profiles: Array.isArray(parsed.profiles) ? parsed.profiles : INITIAL_DATA.profiles,
                     workouts: { ...INITIAL_DATA.workouts, ...(parsed.workouts || {}) },
                     profileDetails: { ...INITIAL_DATA.profileDetails, ...(parsed.profileDetails || {}) },
-                    profileDetails: { ...INITIAL_DATA.profileDetails, ...(parsed.profileDetails || {}) },
+
                     history: Array.isArray(parsed.history) ? parsed.history : INITIAL_DATA.history,
                     weightHistory: Array.isArray(parsed.weightHistory) ? parsed.weightHistory : INITIAL_DATA.weightHistory
                 };
@@ -184,9 +174,7 @@ export const StoreProvider = ({ children }) => {
 
     const activeProfile = (Array.isArray(data.profiles) ? data.profiles.find(p => p.id === activeProfileId) : null) || INITIAL_DATA.profiles[0];
 
-    const switchProfile = (id) => {
-        setActiveProfileId(id);
-    };
+
 
     const addWorkout = (workout) => {
         setData(prev => ({
@@ -324,7 +312,6 @@ export const StoreProvider = ({ children }) => {
             profiles: data.profiles || [],
             workouts: (data.workouts && data.workouts[activeProfileId]) ? data.workouts[activeProfileId] : [],
             history: Array.isArray(data.history) ? data.history.filter(h => h.profileId === activeProfileId) : [],
-            switchProfile,
             addWorkout,
             updateWorkout,
             deleteWorkout,
@@ -342,7 +329,8 @@ export const StoreProvider = ({ children }) => {
             user,
             login,
             logout,
-            syncStatus
+            syncStatus,
+            syncData
         }}>
             {children}
         </StoreContext.Provider>

@@ -10,8 +10,17 @@ import Profile from './components/Profile/Profile';
 
 function AppContent() {
   const { token, login } = useStore();
-  const [currentView, setCurrentView] = useState('dashboard');
-  const [viewData, setViewData] = useState(null);
+  const [currentView, setCurrentView] = useState(() => {
+    return localStorage.getItem('duogym-current-view') || 'dashboard';
+  });
+  const [viewData, setViewData] = useState(() => {
+    try {
+      const saved = localStorage.getItem('duogym-view-data');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   if (!token) {
     return <Landing onLogin={login} />;
@@ -19,7 +28,13 @@ function AppContent() {
 
   const handleViewChange = (view, data = null) => {
     setCurrentView(view);
+    localStorage.setItem('duogym-current-view', view);
     setViewData(data);
+    if (data) {
+      localStorage.setItem('duogym-view-data', JSON.stringify(data));
+    } else {
+      localStorage.removeItem('duogym-view-data');
+    }
   };
 
   const renderView = () => {
