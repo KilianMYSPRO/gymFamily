@@ -59,6 +59,7 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Authentication**: Users can create an account and log in to sync their data.
 - **Automatic Sync**: Data is automatically pushed to the server when changed and pulled from the server periodically (every 30s) or on login.
 - **Cross-Device**: Changes made on one device (e.g., mobile) will automatically appear on another (e.g., desktop) when logged into the same account.
+- **Clear Status**: The sync status now clearly shows "Synced" (Green) when up-to-date, instead of the confusing "Idle" state.
 
 ### 11. Enforced Authentication
 - Added a **Landing Page** that appears for unauthenticated users.
@@ -88,3 +89,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Enforced Auth**: Verified that `App.jsx` conditionally renders the `Landing` component if no token is present, effectively blocking access to the dashboard.
 - **JSON Template**: Verified that clicking the "Template" button in the Planner import modal populates the textarea with the sample JSON.
 - **Modal Redesign**: Verified that helper buttons are now in a toolbar and the footer is simplified.
+- **Sync Status**: Verified that the status indicator shows "Synced" (Green) when the app is idle/up-to-date.
