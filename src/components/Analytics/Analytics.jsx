@@ -6,7 +6,7 @@ import clsx from 'clsx';
 const Analytics = () => {
     const { history, weightHistory } = useStore();
     const [selectedExercise, setSelectedExercise] = useState('');
-    const [timeRange, setTimeRange] = useState('all'); // 'all', 'month', 'year'
+    const [metric, setMetric] = useState('weight'); // 'weight' or 'volume'
 
     // 1. Extract all unique exercise names from history
     const uniqueExercises = useMemo(() => {
@@ -35,8 +35,16 @@ const Analytics = () => {
                 Object.keys(session.detailedSets || {}).forEach(key => {
                     if (key.startsWith(exerciseDef.id) && session.detailedSets[key].completed) {
                         const weight = parseFloat(session.detailedSets[key].weight);
-                        if (!isNaN(weight) && weight > maxWeight) {
-                            maxWeight = weight;
+                        const reps = parseFloat(session.detailedSets[key].reps || 0); // Default to 0 if missing
+
+                        if (!isNaN(weight)) {
+                            if (metric === 'weight') {
+                                if (weight > maxWeight) maxWeight = weight;
+                            } else {
+                                // Volume = Weight * Reps
+                                const volume = weight * reps;
+                                if (volume > maxWeight) maxWeight = volume;
+                            }
                         }
                     }
                 });
@@ -172,16 +180,27 @@ const Analytics = () => {
                     <p className="text-slate-400 text-sm">Visualize your strength gains over time.</p>
                 </div>
 
-                <select
-                    value={selectedExercise}
-                    onChange={(e) => setSelectedExercise(e.target.value)}
-                    className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-full md:w-64 p-2.5"
-                >
-                    <option value="">Select Exercise...</option>
-                    {uniqueExercises.map(name => (
-                        <option key={name} value={name}>{name}</option>
-                    ))}
-                </select>
+                <div className="flex gap-2 w-full md:w-auto">
+                    <select
+                        value={metric}
+                        onChange={(e) => setMetric(e.target.value)}
+                        className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-1/3 md:w-32 p-2.5"
+                    >
+                        <option value="weight">Max Weight</option>
+                        <option value="volume">Max Volume</option>
+                    </select>
+
+                    <select
+                        value={selectedExercise}
+                        onChange={(e) => setSelectedExercise(e.target.value)}
+                        className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-2/3 md:w-64 p-2.5"
+                    >
+                        <option value="">Select Exercise...</option>
+                        {uniqueExercises.map(name => (
+                            <option key={name} value={name}>{name}</option>
+                        ))}
+                    </select>
+                </div>
             </div>
 
             {selectedExercise ? (
@@ -190,11 +209,11 @@ const Analytics = () => {
                         <div className="flex justify-between items-end mb-8">
                             <div>
                                 <p className="text-slate-400 text-sm mb-1">Current Max</p>
-                                <p className="text-3xl font-bold text-white font-mono">{latestWeight} <span className="text-sm text-slate-500 font-sans">kg</span></p>
+                                <p className="text-3xl font-bold text-white font-mono">{latestWeight} <span className="text-sm text-slate-500 font-sans">{metric === 'weight' ? 'kg' : 'kg·reps'}</span></p>
                             </div>
                             <div className={clsx("text-right", progress >= 0 ? "text-emerald-400" : "text-red-400")}>
                                 <p className="text-sm font-medium flex items-center justify-end gap-1">
-                                    {progress >= 0 ? '+' : ''}{progress} kg
+                                    {progress >= 0 ? '+' : ''}{progress} {metric === 'weight' ? 'kg' : 'vol'}
                                     <ArrowUpRight size={16} className={progress < 0 ? "rotate-180" : ""} />
                                 </p>
                                 <p className="text-xs text-slate-500">Since first log</p>
@@ -234,7 +253,7 @@ const Analytics = () => {
                                             {/* Tooltip */}
                                             <foreignObject x={x - 50} y={y - 50} width="100" height="40" className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                                                 <div className="bg-slate-800 text-white text-xs rounded px-2 py-1 text-center shadow-lg border border-slate-700">
-                                                    {d.weight}kg
+                                                    {d.weight}{metric === 'weight' ? 'kg' : ' vol'}
                                                     <div className="text-[10px] text-slate-400">{d.date.toLocaleDateString()}</div>
                                                 </div>
                                             </foreignObject>

@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import useWakeLock from '../../hooks/useWakeLock';
 
 const Tracker = ({ initialWorkoutId }) => {
-    const { workouts, logSession } = useStore();
+    const { workouts, logSession, history } = useStore();
     const [activeWorkout, setActiveWorkout] = useState(null);
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completedSets, setCompletedSets] = useState({});
@@ -24,6 +24,14 @@ const Tracker = ({ initialWorkoutId }) => {
             }
         }
     }, [initialWorkoutId, workouts]);
+
+    // Find previous session for this workout
+    const previousSession = React.useMemo(() => {
+        if (!activeWorkout || !history) return null;
+        return history
+            .filter(h => h.workoutId === activeWorkout.id)
+            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+    }, [activeWorkout, history]);
 
     useEffect(() => {
         let interval;
@@ -236,9 +244,18 @@ const Tracker = ({ initialWorkoutId }) => {
                                         const isCompleted = completedSets[key]?.completed;
                                         const currentWeight = setWeights[key] !== undefined ? setWeights[key] : (ex.weight || '');
 
+                                        // Get previous stats for this specific set
+                                        const prevSet = previousSession?.detailedSets?.[key];
+                                        const prevStats = prevSet ? `${prevSet.weight}kg × ${prevSet.reps || ex.reps}` : null;
+
                                         return (
                                             <div key={i} className="flex items-center justify-between bg-slate-800/30 p-3 rounded-xl border border-slate-800">
-                                                <span className="text-slate-400 font-mono text-sm w-12">Set {i + 1}</span>
+                                                <div className="flex flex-col">
+                                                    <span className="text-slate-400 font-mono text-sm w-12">Set {i + 1}</span>
+                                                    {prevStats && (
+                                                        <span className="text-[10px] text-slate-500 font-mono">Last: {prevStats}</span>
+                                                    )}
+                                                </div>
 
                                                 <div className="flex items-center gap-3">
                                                     <div className="relative">
