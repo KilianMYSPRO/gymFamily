@@ -23,11 +23,24 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
     const [showCopyFallback, setShowCopyFallback] = React.useState(false);
 
     // Calculate total volume (approximate)
-    const totalVolume = Object.values(workout.detailedSets || {}).reduce((acc, set) => {
-        if (set.completed && set.weight && set.reps) {
-            // Handle ranges or text in reps by taking the first number found
-            const reps = parseInt(set.reps.toString().match(/\d+/)?.[0] || 0);
-            // Handle non-numeric weight (e.g. "body weight") by treating as 0 if no number found
+    // Calculate total volume (approximate)
+    const totalVolume = Object.entries(workout.detailedSets || {}).reduce((acc, [key, set]) => {
+        if (set.completed) {
+            // 1. Get Reps: Try set.reps first, then fallback to exercise default
+            let reps = 0;
+            if (set.reps) {
+                reps = parseInt(set.reps.toString().match(/\d+/)?.[0] || 0);
+            } else {
+                // Fallback for legacy data: find exercise default reps
+                // Key format is "exerciseId-setIndex"
+                const exerciseId = key.split('-')[0];
+                const exercise = workout.exercises?.find(e => e.id === exerciseId);
+                if (exercise && exercise.reps) {
+                    reps = parseInt(exercise.reps.toString().match(/\d+/)?.[0] || 0);
+                }
+            }
+
+            // 2. Get Weight: Handle non-numeric weight
             const weight = parseFloat(set.weight.toString().replace(/[^\d.]/g, '')) || 0;
             return acc + (weight * reps);
         }
