@@ -258,7 +258,7 @@ const Tracker = ({ initialWorkoutId }) => {
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={cancelWorkout}
-                                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                                className="p-2 text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg transition-colors"
                                 title="Cancel Workout"
                             >
                                 <X size={20} />
