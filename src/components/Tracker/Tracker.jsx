@@ -474,24 +474,32 @@ const Tracker = ({ initialWorkoutId }) => {
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {workouts.map(workout => (
-                    <button
-                        key={workout.id}
-                        onClick={() => setActiveWorkout(workout)}
-                        className="glass-card text-left group hover:border-sky-500/50 transition-all"
-                    >
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-colors">
-                                <Play size={24} className="ml-1" />
+                {workouts.map(workout => {
+                    const lastSession = history
+                        ?.filter(h => h.workoutId === workout.id)
+                        .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+
+                    return (
+                        <button
+                            key={workout.id}
+                            onClick={() => setActiveWorkout(workout)}
+                            className="glass-card text-left group hover:border-sky-500/50 transition-all"
+                        >
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                                    <Play size={24} className="ml-1" />
+                                </div>
+                                <span className="text-xs font-medium px-2 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
+                                    {workout.exercises.length} Exercises
+                                </span>
                             </div>
-                            <span className="text-xs font-medium px-2 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700">
-                                {workout.exercises.length} Exercises
-                            </span>
-                        </div>
-                        <h3 className="text-xl font-bold text-white mb-1">{workout.name}</h3>
-                        <p className="text-sm text-slate-400">Last performed: Never</p>
-                    </button>
-                ))}
+                            <h3 className="text-xl font-bold text-white mb-1">{workout.name}</h3>
+                            <p className="text-sm text-slate-400">
+                                Last performed: {lastSession ? new Date(lastSession.date).toLocaleDateString() : 'Never'}
+                            </p>
+                        </button>
+                    );
+                })}
 
                 {workouts.length === 0 && (
                     <div className="col-span-full text-center py-12 border-2 border-dashed border-slate-800 rounded-2xl">
