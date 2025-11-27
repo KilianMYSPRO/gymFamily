@@ -25,31 +25,61 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
         if (set.completed && set.weight && set.reps) {
             // Handle ranges or text in reps by taking the first number found
             const reps = parseInt(set.reps.toString().match(/\d+/)?.[0] || 0);
-            return acc + (parseFloat(set.weight) * reps);
+            // Handle non-numeric weight (e.g. "body weight") by treating as 0 if no number found
+            const weight = parseFloat(set.weight.toString().replace(/[^\d.]/g, '')) || 0;
+            return acc + (weight * reps);
         }
         return acc;
     }, 0);
 
-    const personalRecords = 0; // Placeholder for future PR tracking logic
+    const handleShare = async () => {
+        const summaryText = `🏋️ DuoGym Workout: ${workout.name}\n` +
+            `📅 ${formatDate(workout.date)}\n` +
+            `⏱️ Duration: ${formatTime(workout.duration)}\n` +
+            `📊 Sets: ${workout.completedSets}\n` +
+            `💪 Volume: ${(totalVolume / 1000).toFixed(1)}k kg\n\n` +
+            `Tracked with DuoGym`;
+
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: 'DuoGym Workout Summary',
+                    text: summaryText,
+                });
+            } catch (err) {
+                console.error('Share failed:', err);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(summaryText);
+                alert('Summary copied to clipboard!');
+            } catch (err) {
+                console.error('Clipboard failed:', err);
+                alert('Failed to copy summary.');
+            }
+        }
+    };
 
     return (
         <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-fade-in">
             <div className="relative w-full max-w-md">
-                <button
-                    onClick={onClose}
-                    className="absolute -top-12 right-0 text-slate-400 hover:text-white transition-colors"
-                >
-                    <X size={24} />
-                </button>
-
                 {/* The Card */}
-                <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-sky-900/20">
+                <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-sky-900/20 relative">
+
+                    {/* Close Button (Inside Card) */}
+                    <button
+                        onClick={onClose}
+                        className="absolute top-4 right-4 z-20 p-2 bg-black/20 hover:bg-black/40 text-white/70 hover:text-white rounded-full transition-colors backdrop-blur-sm"
+                    >
+                        <X size={20} />
+                    </button>
+
                     {/* Header */}
                     <div className="bg-sky-500/10 p-6 border-b border-sky-500/10 relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <Dumbbell size={120} />
                         </div>
-                        <div className="relative z-10">
+                        <div className="relative z-10 pr-8">
                             <div className="inline-flex items-center gap-2 bg-sky-500/20 text-sky-400 text-xs font-bold px-2 py-1 rounded-full mb-3 uppercase tracking-wider">
                                 <Trophy size={12} /> Workout Complete
                             </div>
@@ -103,7 +133,10 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
 
                     {/* Footer */}
                     <div className="p-6 bg-slate-900/50 border-t border-slate-800 flex flex-col gap-3">
-                        <button className="btn btn-primary w-full justify-center group relative overflow-hidden">
+                        <button
+                            onClick={handleShare}
+                            className="btn btn-primary w-full justify-center group relative overflow-hidden"
+                        >
                             <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity" />
                             <Share2 size={18} /> Share Summary
                         </button>
