@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces } from 'lucide-react';
 import clsx from 'clsx';
 
 import { generateUUID } from '../../utils/uuid';
@@ -227,7 +227,25 @@ const Planner = () => {
                             </button>
                         </div>
 
-                        <p className="text-sm text-slate-400 mb-4">Paste the routine code (JSON) below:</p>
+                        <div className="flex justify-between items-end mb-2">
+                            <p className="text-sm text-slate-400">Paste JSON below:</p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleCopyTemplate}
+                                    className="text-xs bg-slate-800 hover:bg-slate-700 text-sky-400 px-2 py-1 rounded border border-slate-700 transition-colors flex items-center gap-1"
+                                    title="Load a sample template"
+                                >
+                                    <Copy size={12} /> Template
+                                </button>
+                                <button
+                                    onClick={handleFormat}
+                                    className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-700 transition-colors flex items-center gap-1"
+                                    title="Format JSON code"
+                                >
+                                    <Braces size={12} /> Format
+                                </button>
+                            </div>
+                        </div>
 
                         <textarea
                             value={importJson}
@@ -245,13 +263,7 @@ const Planner = () => {
                             </p>
                         )}
 
-                        <div className="flex flex-col-reverse md:flex-row justify-end gap-3">
-                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 w-full md:w-auto">
-                                Format JSON
-                            </button>
-                            <button onClick={handleCopyTemplate} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 md:mr-auto w-full md:w-auto flex items-center justify-center gap-2">
-                                <Copy size={16} /> Template
-                            </button>
+                        <div className="flex justify-end gap-3">
                             <button onClick={() => setShowImportModal(false)} className="btn btn-secondary w-full md:w-auto">Cancel</button>
                             <button onClick={handleImport} className="btn btn-primary w-full md:w-auto" disabled={!importJson.trim()}>
                                 <Download size={18} /> Import

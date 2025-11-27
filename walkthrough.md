@@ -65,10 +65,10 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - Users are now **required** to Log In or Create an Account to access the application.
 - This ensures all data is synced and secure from the start.
 
-### 12. JSON Import Template
-- Added a **Template** button to the "Import Routine" modal in the Planner.
-- Clicking this button automatically fills the input area with a valid sample JSON structure.
-- This helps users understand the required format for creating custom workout routines via JSON.
+### 12. JSON Import Template & Redesign
+- **Redesigned Modal**: Moved the "Template" and "Format" buttons to a sleek toolbar above the input area.
+- **Footer Cleanup**: The footer now only contains "Cancel" and "Import" buttons, preventing overflow issues on smaller screens.
+- **Template Button**: Clicking "Template" automatically fills the input area with a valid sample JSON structure.
 
 ## Verification Results
 
@@ -87,3 +87,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Cloud Sync**: Verified that the backend service is configured in Docker Compose and the frontend UI allows login/registration.
 - **Enforced Auth**: Verified that `App.jsx` conditionally renders the `Landing` component if no token is present, effectively blocking access to the dashboard.
 - **JSON Template**: Verified that clicking the "Template" button in the Planner import modal populates the textarea with the sample JSON.
+- **Modal Redesign**: Verified that helper buttons are now in a toolbar and the footer is simplified.
