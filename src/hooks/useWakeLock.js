@@ -6,6 +6,8 @@ const useWakeLock = () => {
     const [type, setType] = useState(null); // 'native' | 'nosleep' | null
     const wakeLockRef = useRef(null);
     const noSleepRef = useRef(null);
+    const isLockedRef = useRef(false);
+    const typeRef = useRef(null);
 
     // Initialize NoSleep instance once
     useEffect(() => {
@@ -18,6 +20,13 @@ const useWakeLock = () => {
     }, []);
 
     const request = useCallback(async (forceNoSleep = false) => {
+        // Prevent stacking: If already locked, check if we need to do anything
+        if (isLockedRef.current) {
+            if (!forceNoSleep) return; // Already locked (native or nosleep), don't need to re-request native.
+            if (forceNoSleep && typeRef.current === 'nosleep') return; // Already nosleep
+            // If native and forcing nosleep, we proceed to enable nosleep (and release native below)
+        }
+
         // 1. Try Native API first (unless forced to skip)
         if (!forceNoSleep && 'wakeLock' in navigator) {
             try {
@@ -25,6 +34,8 @@ const useWakeLock = () => {
                 wakeLockRef.current = lock;
                 setIsLocked(true);
                 setType('native');
+                isLockedRef.current = true;
+                typeRef.current = 'native';
                 console.log('Wake Lock active (Native)');
 
                 lock.addEventListener('release', () => {
@@ -33,6 +44,8 @@ const useWakeLock = () => {
                     if (wakeLockRef.current === lock) {
                         setIsLocked(false);
                         setType(null);
+                        isLockedRef.current = false;
+                        typeRef.current = null;
                         wakeLockRef.current = null;
                     }
                 });
@@ -45,19 +58,25 @@ const useWakeLock = () => {
         // 2. Fallback: NoSleep.js
         try {
             if (noSleepRef.current) {
-                // NoSleep requires a user gesture to enable on some devices.
-                // If this is called from an effect without gesture, it might fail or wait.
-                // However, NoSleep.js is designed to handle the video playback.
-                // We wrap in a try-catch just in case.
+                // If we are upgrading from native to nosleep, release native first
+                if (wakeLockRef.current) {
+                    await wakeLockRef.current.release().catch(e => console.error("Failed to release native lock during upgrade", e));
+                    wakeLockRef.current = null;
+                }
+
                 await noSleepRef.current.enable();
                 setIsLocked(true);
                 setType('nosleep');
+                isLockedRef.current = true;
+                typeRef.current = 'nosleep';
                 console.log('Wake Lock active (NoSleep.js)');
             }
         } catch (err) {
             console.error('NoSleep Wake Lock failed:', err);
             setIsLocked(false);
             setType(null);
+            isLockedRef.current = false;
+            typeRef.current = null;
         }
     }, []);
 
@@ -79,6 +98,8 @@ const useWakeLock = () => {
 
         setIsLocked(false);
         setType(null);
+        isLockedRef.current = false;
+        typeRef.current = null;
     }, []);
 
     // Re-acquire on visibility change (Native only needs this usually)
