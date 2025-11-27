@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save, Sun } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save, Sun, HelpCircle } from 'lucide-react';
 import Portal from '../common/Portal';
 import clsx from 'clsx';
 import useWakeLock from '../../hooks/useWakeLock';
@@ -155,26 +155,35 @@ const Tracker = ({ initialWorkoutId }) => {
                                 <div className="flex items-center gap-2 text-sky-400 font-mono text-sm">
                                     <Clock size={14} />
                                     {formatTime(elapsedTime)}
-                                    <button
-                                        onClick={() => {
-                                            if (type === 'nosleep') {
-                                                releaseWakeLock();
-                                            } else {
-                                                // If unlocked OR native, upgrade to NoSleep (don't release native first)
-                                                requestWakeLock(true); // true = force NoSleep
-                                            }
-                                        }}
-                                        className={clsx(
-                                            "flex items-center gap-1 ml-2 text-xs transition-colors",
-                                            type === 'nosleep' ? "text-blue-400" :
-                                                type === 'native' ? "text-emerald-400" :
-                                                    "text-slate-600 hover:text-slate-400"
-                                        )}
-                                        title={isLocked ? "Screen Stay-Awake Active" : "Click to keep screen awake"}
-                                    >
-                                        <Sun size={12} />
-                                        <span>{isLocked ? "Awake" : "Sleep"}</span>
-                                    </button>
+                                    <div className="flex items-center gap-1 ml-2">
+                                        <button
+                                            onClick={() => {
+                                                if (type === 'nosleep') {
+                                                    releaseWakeLock();
+                                                } else {
+                                                    // If unlocked OR native, upgrade to NoSleep (don't release native first)
+                                                    requestWakeLock(true); // true = force NoSleep
+                                                }
+                                            }}
+                                            className={clsx(
+                                                "flex items-center gap-1 text-xs transition-colors",
+                                                type === 'nosleep' ? "text-blue-400" :
+                                                    type === 'native' ? "text-emerald-400" :
+                                                        "text-slate-600 hover:text-slate-400"
+                                            )}
+                                            title={isLocked ? "Screen Stay-Awake Active" : "Click to keep screen awake"}
+                                        >
+                                            <Sun size={12} />
+                                            <span>{type === 'nosleep' ? "Awake ⚡" : isLocked ? "Awake" : "Sleep"}</span>
+                                        </button>
+                                        <button
+                                            onClick={() => alert("🟢 Green (Awake): Standard battery-saving mode.\n🔵 Blue (Awake ⚡): High-reliability mode (Recommended if screen dims).\n⚪ Grey (Sleep): Screen will turn off normally.")}
+                                            className="text-slate-600 hover:text-slate-400 p-0.5"
+                                            title="What do the colors mean?"
+                                        >
+                                            <HelpCircle size={10} />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
