@@ -1,12 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2 } from 'lucide-react';
+import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play } from 'lucide-react';
 import clsx from 'clsx';
 import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
 
 const Dashboard = ({ onViewChange }) => {
     const { activeProfile, workouts = [], history = [], deleteLog } = useStore();
     const [selectedSummary, setSelectedSummary] = useState(null);
+    const [resumeWorkout, setResumeWorkout] = useState(null);
+
+    // Check for unfinished workout
+    useEffect(() => {
+        const saved = localStorage.getItem('duogym-active-workout');
+        if (saved) {
+            try {
+                const parsed = JSON.parse(saved);
+                if (parsed && parsed.activeWorkout) {
+                    setResumeWorkout(parsed.activeWorkout);
+                }
+            } catch (e) {
+                console.error("Failed to parse saved workout", e);
+            }
+        }
+    }, []);
+
+    // Calculate Most Used Plans
+    const mostUsedWorkouts = React.useMemo(() => {
+        if (!history || !workouts) return [];
+
+        const frequency = {};
+        history.forEach(h => {
+            if (h.workoutId) {
+                frequency[h.workoutId] = (frequency[h.workoutId] || 0) + 1;
+            }
+        });
+
+        return workouts
+            .map(w => ({ ...w, count: frequency[w.id] || 0 }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 3);
+    }, [history, workouts]);
 
     const formatDuration = (seconds) => {
         if (!seconds) return '0m';
@@ -143,29 +176,57 @@ const Dashboard = ({ onViewChange }) => {
 
                 <div className="space-y-6">
                     {/* Quick Start (Safe Mode) */}
+                    {/* Quick Start Section */}
                     <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-6 rounded-2xl border border-sky-500/20">
                         <h3 className="text-lg font-bold text-white mb-4">Quick Start</h3>
-                        {lastWorkout ? (
-                            <div className="text-center py-4">
-                                <p className="text-slate-400 text-sm mb-4">Ready for your next session?</p>
+
+                        <div className="space-y-3">
+                            {/* Resume Option */}
+                            {resumeWorkout && (
                                 <button
-                                    onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: lastWorkout.id })}
-                                    className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
+                                    onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: resumeWorkout.id })}
+                                    className="w-full btn btn-primary py-3 flex items-center justify-center gap-3 mb-4 animate-pulse-slow shadow-lg shadow-sky-500/20"
                                 >
-                                    <ArrowRight size={20} /> Resume: {lastWorkout.name}
+                                    <Play size={20} className="fill-current" />
+                                    <div className="flex flex-col items-start">
+                                        <span className="text-[10px] font-bold uppercase tracking-wider opacity-80">Resume Session</span>
+                                        <span className="text-sm font-bold">{resumeWorkout.name}</span>
+                                    </div>
                                 </button>
-                            </div>
-                        ) : (
-                            <div className="text-center py-4">
-                                <p className="text-slate-400 text-sm mb-4">No recent workouts.</p>
-                                <button
-                                    onClick={() => onViewChange && onViewChange('planner')}
-                                    className="w-full btn btn-secondary py-2"
-                                >
-                                    Create Routine
-                                </button>
-                            </div>
-                        )}
+                            )}
+
+                            {/* Most Used Plans */}
+                            {mostUsedWorkouts.length > 0 ? (
+                                <>
+                                    <p className="text-xs text-slate-500 font-medium uppercase tracking-wider mb-1">Most Used</p>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        {mostUsedWorkouts.map(w => (
+                                            <button
+                                                key={w.id}
+                                                onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: w.id })}
+                                                className="w-full p-3 bg-slate-800/50 hover:bg-slate-700 border border-slate-700/50 hover:border-sky-500/50 rounded-xl flex items-center justify-between group transition-all"
+                                            >
+                                                <span className="font-medium text-slate-200 group-hover:text-white">{w.name}</span>
+                                                <div className="flex items-center gap-2 text-xs text-slate-500">
+                                                    <span>{w.count} plays</span>
+                                                    <ArrowRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity text-sky-400" />
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center py-4">
+                                    <p className="text-slate-400 text-sm mb-4">No plans yet.</p>
+                                    <button
+                                        onClick={() => onViewChange && onViewChange('planner')}
+                                        className="w-full btn btn-secondary py-2"
+                                    >
+                                        Create Routine
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Recent History Section */}
