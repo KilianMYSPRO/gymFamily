@@ -25,6 +25,48 @@ const Tracker = ({ initialWorkoutId }) => {
         }
     }, [initialWorkoutId, workouts]);
 
+    // Persistence: Restore state on mount
+    useEffect(() => {
+        const savedState = localStorage.getItem('duogym-active-workout');
+        if (savedState) {
+            try {
+                const parsed = JSON.parse(savedState);
+                // Only restore if we're not trying to start a specific new workout, OR if the saved workout matches the requested one
+                if (!initialWorkoutId || parsed.activeWorkout.id === initialWorkoutId) {
+                    setActiveWorkout(parsed.activeWorkout);
+                    setElapsedTime(parsed.elapsedTime);
+                    setCompletedSets(parsed.completedSets);
+                    setSetWeights(parsed.setWeights);
+                    setSetReps(parsed.setReps);
+                    setRestTimer(parsed.restTimer);
+                }
+            } catch (e) {
+                console.error("Failed to restore workout state", e);
+                localStorage.removeItem('duogym-active-workout');
+            }
+        }
+    }, [initialWorkoutId]);
+
+    // Persistence: Save state on change
+    useEffect(() => {
+        if (activeWorkout) {
+            const stateToSave = {
+                activeWorkout,
+                elapsedTime,
+                completedSets,
+                setWeights,
+                setReps,
+                restTimer
+            };
+            localStorage.setItem('duogym-active-workout', JSON.stringify(stateToSave));
+        } else {
+            // If activeWorkout becomes null (finished/cancelled), clear storage
+            // This is handled in finishWorkout/cancelWorkout, but good as a fallback if we can distinguish "unmounting" from "clearing"
+            // Actually, we shouldn't clear here on unmount, only on explicit finish/cancel.
+            // So we'll leave this effect to ONLY save when activeWorkout exists.
+        }
+    }, [activeWorkout, elapsedTime, completedSets, setWeights, setReps, restTimer]);
+
     // Find previous session for this workout
     const previousSession = React.useMemo(() => {
         if (!activeWorkout || !history) return null;
@@ -131,6 +173,19 @@ const Tracker = ({ initialWorkoutId }) => {
         setElapsedTime(0);
         setCompletedSets({});
         setSetWeights({});
+        localStorage.removeItem('duogym-active-workout'); // Clear saved state
+    };
+
+    const cancelWorkout = () => {
+        if (window.confirm("Are you sure you want to cancel this workout? All progress will be lost.")) {
+            setActiveWorkout(null);
+            setElapsedTime(0);
+            setCompletedSets({});
+            setSetWeights({});
+            setSetReps({});
+            setRestTimer({ active: false, time: 90 });
+            localStorage.removeItem('duogym-active-workout');
+        }
     };
 
     const skipExercise = (exerciseId) => {
@@ -157,8 +212,9 @@ const Tracker = ({ initialWorkoutId }) => {
                     <header className="flex justify-between items-center sticky top-0 bg-slate-950/80 backdrop-blur-md py-4 z-10 border-b border-slate-800/50">
                         <div className="flex items-center gap-4">
                             <button
-                                onClick={() => setActiveWorkout(null)}
+                                onClick={() => setActiveWorkout(null)} // Just minimize/navigate away
                                 className="p-2 hover:bg-slate-800 rounded-lg text-slate-400 transition-colors"
+                                title="Minimize / Back"
                             >
                                 <ArrowLeft size={20} />
                             </button>
@@ -199,9 +255,18 @@ const Tracker = ({ initialWorkoutId }) => {
                                 </div>
                             </div>
                         </div>
-                        <button onClick={finishWorkout} className="btn btn-primary py-2 px-4 text-sm">
-                            <Save size={16} /> Finish
-                        </button>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={cancelWorkout}
+                                className="p-2 text-slate-400 hover:text-red-400 hover:bg-slate-800 rounded-lg transition-colors"
+                                title="Cancel Workout"
+                            >
+                                <X size={20} />
+                            </button>
+                            <button onClick={finishWorkout} className="btn btn-primary py-2 px-4 text-sm">
+                                <Save size={16} /> Finish
+                            </button>
+                        </div>
                     </header>
 
                     <div className="space-y-4 pb-20">
