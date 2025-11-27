@@ -518,7 +518,7 @@ const Planner = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {workouts.map(workout => (
                         <div key={workout.id} className="glass-card group relative">
-                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                            <div className="absolute top-4 right-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
                                 <button
                                     onClick={() => handleExport(workout)}
                                     className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"

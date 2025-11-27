@@ -228,7 +228,7 @@ const Profile = () => {
                                                     <button
                                                         type="button"
                                                         onClick={() => deleteWeightLog(entry.id)}
-                                                        className="text-slate-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all p-1"
+                                                        className="text-slate-500 hover:text-red-400 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all p-1"
                                                         title="Delete Entry"
                                                     >
                                                         <Trash2 size={14} />
