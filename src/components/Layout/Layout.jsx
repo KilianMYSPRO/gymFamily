@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from '../../context/StoreContext';
-import { LayoutDashboard, Calendar, Dumbbell, UserCircle2, LogOut, Clock } from 'lucide-react';
+import { LayoutDashboard, Calendar, Dumbbell, UserCircle2, LogOut, Clock, Languages } from 'lucide-react';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -78,7 +78,7 @@ const Layout = ({ children, currentView, onViewChange }) => {
                         onClick={toggleLanguage}
                         className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all w-full text-left"
                     >
-                        <span className="text-lg">{language === 'en' ? '🇫🇷' : '🇺🇸'}</span>
+                        <Languages size={20} />
                         <span className="font-medium text-sm">{language === 'en' ? 'Français' : 'English'}</span>
                     </button>
                 </div>
@@ -113,7 +113,7 @@ const Layout = ({ children, currentView, onViewChange }) => {
                             onClick={toggleLanguage}
                             className="p-2 rounded-lg text-slate-400 hover:text-white"
                         >
-                            <span className="text-xl">{language === 'en' ? '🇫🇷' : '🇺🇸'}</span>
+                            <Languages size={24} />
                         </button>
                     </div>
                 </div>
