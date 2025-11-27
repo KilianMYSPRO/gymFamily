@@ -25,6 +25,27 @@ const Tracker = ({ initialWorkoutId }) => {
         }
     }, [initialWorkoutId, workouts]);
 
+    // Sync active workout with store updates (e.g. if edited in Planner)
+    useEffect(() => {
+        if (activeWorkout && workouts.length > 0) {
+            const latestVersion = workouts.find(w => w.id === activeWorkout.id);
+            if (latestVersion) {
+                // Check if exercises or name have changed to avoid unnecessary updates
+                // We use JSON.stringify for a quick deep comparison of exercises
+                if (activeWorkout.name !== latestVersion.name ||
+                    JSON.stringify(activeWorkout.exercises) !== JSON.stringify(latestVersion.exercises)) {
+
+                    console.log("Syncing active workout with latest version from store");
+                    setActiveWorkout(prev => ({
+                        ...prev,
+                        name: latestVersion.name,
+                        exercises: latestVersion.exercises
+                    }));
+                }
+            }
+        }
+    }, [activeWorkout, workouts]);
+
     // Persistence: Restore state on mount
     useEffect(() => {
         const savedState = localStorage.getItem('duogym-active-workout');
