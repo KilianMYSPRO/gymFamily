@@ -71,6 +71,11 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Footer Cleanup**: The footer now only contains "Cancel" and "Import" buttons, preventing overflow issues on smaller screens.
 - **Template Button**: Clicking "Template" automatically fills the input area with a valid sample JSON structure.
 
+### 13. Profile Reorganization
+- **New 'Data' Tab**: Created a dedicated "Data" tab in the Profile section.
+- **Clean Layout**: Moved "Cloud Sync" and "Data Management" (Backup/Restore) features to this new tab.
+- **Focused Details**: The "Details" tab now focuses solely on personal information (Name, Weight, Goals).
+
 ## Verification Results
 
 ### Manual Verification
@@ -90,3 +95,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **JSON Template**: Verified that clicking the "Template" button in the Planner import modal populates the textarea with the sample JSON.
 - **Modal Redesign**: Verified that helper buttons are now in a toolbar and the footer is simplified.
 - **Sync Status**: Verified that the status indicator shows "Synced" (Green) when the app is idle/up-to-date.
+- **Profile Tabs**: Verified that the new "Data" tab exists and correctly houses the sync and backup features, while "Details" remains focused on user info.
