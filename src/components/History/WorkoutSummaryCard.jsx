@@ -20,6 +20,8 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
         return `${mins}m ${secs}s`;
     };
 
+    const [showCopyFallback, setShowCopyFallback] = React.useState(false);
+
     // Calculate total volume (approximate)
     const totalVolume = Object.values(workout.detailedSets || {}).reduce((acc, set) => {
         if (set.completed && set.weight && set.reps) {
@@ -32,13 +34,17 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
         return acc;
     }, 0);
 
-    const handleShare = async () => {
-        const summaryText = `🏋️ DuoGym Workout: ${workout.name}\n` +
+    const getSummaryText = () => {
+        return `🏋️ DuoGym Workout: ${workout.name}\n` +
             `📅 ${formatDate(workout.date)}\n` +
             `⏱️ Duration: ${formatTime(workout.duration)}\n` +
             `📊 Sets: ${workout.completedSets}\n` +
-            `💪 Volume: ${(totalVolume / 1000).toFixed(1)}k kg\n\n` +
+            `💪 Volume: ${totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} kg\n\n` +
             `Tracked with DuoGym`;
+    };
+
+    const handleShare = async () => {
+        const summaryText = getSummaryText();
 
         if (navigator.share) {
             try {
@@ -55,7 +61,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                 alert('Summary copied to clipboard!');
             } catch (err) {
                 console.error('Clipboard failed:', err);
-                alert('Failed to copy summary.');
+                setShowCopyFallback(true);
             }
         }
     };
@@ -102,7 +108,9 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                         </div>
                         <div className="p-4 text-center">
                             <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">Volume</p>
-                            <p className="text-white font-mono font-bold">{(totalVolume / 1000).toFixed(1)}k <span className="text-xs text-slate-600">kg</span></p>
+                            <p className="text-white font-mono font-bold">
+                                {totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} <span className="text-xs text-slate-600">kg</span>
+                            </p>
                         </div>
                     </div>
 
@@ -133,13 +141,25 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
 
                     {/* Footer */}
                     <div className="p-6 bg-slate-900/50 border-t border-slate-800 flex flex-col gap-3">
-                        <button
-                            onClick={handleShare}
-                            className="btn btn-primary w-full justify-center group relative overflow-hidden"
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity" />
-                            <Share2 size={18} /> Share Summary
-                        </button>
+                        {!showCopyFallback ? (
+                            <button
+                                onClick={handleShare}
+                                className="btn btn-primary w-full justify-center group relative overflow-hidden"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity" />
+                                <Share2 size={18} /> Share Summary
+                            </button>
+                        ) : (
+                            <div className="space-y-2 animate-fade-in">
+                                <p className="text-xs text-slate-400 text-center">Copy summary manually:</p>
+                                <textarea
+                                    readOnly
+                                    value={getSummaryText()}
+                                    className="w-full h-24 bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500/50 resize-none"
+                                    onClick={(e) => e.target.select()}
+                                />
+                            </div>
+                        )}
                         <p className="text-center text-[10px] text-slate-600">
                             DuoGym • Track Better, Lift Heavier
                         </p>
