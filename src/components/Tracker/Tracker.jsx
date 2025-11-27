@@ -45,6 +45,44 @@ const Tracker = ({ initialWorkoutId }) => {
         return () => clearInterval(interval);
     }, [restTimer.active, restTimer.time]);
 
+    // Screen Wake Lock
+    useEffect(() => {
+        let wakeLock = null;
+
+        const requestWakeLock = async () => {
+            if ('wakeLock' in navigator && activeWorkout) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Wake Lock is active');
+                } catch (err) {
+                    console.error(`${err.name}, ${err.message}`);
+                }
+            }
+        };
+
+        const handleVisibilityChange = () => {
+            if (wakeLock !== null && document.visibilityState === 'visible') {
+                requestWakeLock();
+            }
+        };
+
+        if (activeWorkout) {
+            requestWakeLock();
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+        return () => {
+            if (wakeLock !== null) {
+                wakeLock.release()
+                    .then(() => {
+                        wakeLock = null;
+                        console.log('Wake Lock released');
+                    });
+            }
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [activeWorkout]);
+
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;

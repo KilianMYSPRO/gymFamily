@@ -9,11 +9,27 @@ import templates from '../../data/templates.json';
 
 const Planner = () => {
     const { workouts, addWorkout, updateWorkout, deleteWorkout } = useStore();
-    const [isCreating, setIsCreating] = useState(false);
-    const [editingId, setEditingId] = useState(null);
+    const [isCreating, setIsCreating] = useState(() => localStorage.getItem('duogym-planner-creating') === 'true');
+    const [editingId, setEditingId] = useState(() => localStorage.getItem('duogym-planner-editing-id'));
     const [showSelector, setShowSelector] = useState(false);
-    const [newWorkoutName, setNewWorkoutName] = useState('');
-    const [exercises, setExercises] = useState([]);
+    const [newWorkoutName, setNewWorkoutName] = useState(() => localStorage.getItem('duogym-planner-name') || '');
+    const [exercises, setExercises] = useState(() => {
+        try {
+            const saved = localStorage.getItem('duogym-planner-exercises');
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    // Persist state
+    React.useEffect(() => {
+        localStorage.setItem('duogym-planner-creating', isCreating);
+        if (editingId) localStorage.setItem('duogym-planner-editing-id', editingId);
+        else localStorage.removeItem('duogym-planner-editing-id');
+        localStorage.setItem('duogym-planner-name', newWorkoutName);
+        localStorage.setItem('duogym-planner-exercises', JSON.stringify(exercises));
+    }, [isCreating, editingId, newWorkoutName, exercises]);
 
     // Import/Export State
     const [showImportModal, setShowImportModal] = useState(false);
@@ -61,10 +77,15 @@ const Planner = () => {
             addWorkout(workoutData);
         }
 
+        // Clear storage
         setIsCreating(false);
         setEditingId(null);
         setNewWorkoutName('');
         setExercises([]);
+        localStorage.removeItem('duogym-planner-creating');
+        localStorage.removeItem('duogym-planner-editing-id');
+        localStorage.removeItem('duogym-planner-name');
+        localStorage.removeItem('duogym-planner-exercises');
     };
 
     const handleEdit = (workout) => {
@@ -79,6 +100,10 @@ const Planner = () => {
         setEditingId(null);
         setNewWorkoutName('');
         setExercises([]);
+        localStorage.removeItem('duogym-planner-creating');
+        localStorage.removeItem('duogym-planner-editing-id');
+        localStorage.removeItem('duogym-planner-name');
+        localStorage.removeItem('duogym-planner-exercises');
     };
 
     // Export Logic
