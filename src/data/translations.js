@@ -139,7 +139,11 @@ export const translations = {
             selectFile: "Select File",
             logEntry: "Log Entry",
             recentEntries: "Recent Entries",
-            memberSince: "Member since"
+            memberSince: "Member since",
+            security: "Security",
+            securitySubtitle: "Update your security question for account recovery.",
+            updateSecurity: "Update Security",
+            securityUpdated: "Security settings updated!"
         },
         dashboard: {
             letsCrushIt: "Let's Crush It,",
@@ -348,7 +352,11 @@ export const translations = {
             selectFile: "Choisir un fichier",
             logEntry: "Ajouter",
             recentEntries: "Entrées récentes",
-            memberSince: "Membre depuis"
+            memberSince: "Membre depuis",
+            security: "Sécurité",
+            securitySubtitle: "Mettez à jour votre question de sécurité pour la récupération du compte.",
+            updateSecurity: "Mettre à jour la sécurité",
+            securityUpdated: "Paramètres de sécurité mis à jour !"
         },
         dashboard: {
             letsCrushIt: "C'est parti,",

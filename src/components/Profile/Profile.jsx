@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock } from 'lucide-react';
 import Portal from '../common/Portal';
 import Auth from '../Auth/Auth';
 import Analytics from '../Analytics/Analytics';
@@ -25,6 +25,13 @@ const Profile = () => {
     const [importFile, setImportFile] = useState(null);
     const [importError, setImportError] = useState(null);
 
+    // Security State
+    const [securityData, setSecurityData] = useState({
+        question: 'q1',
+        answer: ''
+    });
+    const [securityStatus, setSecurityStatus] = useState(null); // 'success', 'error', 'loading'
+
     useEffect(() => {
         setFormData(prev => ({
             ...prev,
@@ -46,6 +53,35 @@ const Profile = () => {
         updateProfileDetails(details);
         setIsSaved(true);
         setTimeout(() => setIsSaved(false), 3000);
+    };
+
+    const handleSecurityUpdate = async (e) => {
+        e.preventDefault();
+        if (!token) return;
+        setSecurityStatus('loading');
+
+        try {
+            const response = await fetch('/api/auth/update-security', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    securityQuestion: securityData.question,
+                    securityAnswer: securityData.answer
+                })
+            });
+
+            if (!response.ok) throw new Error('Failed to update');
+
+            setSecurityStatus('success');
+            setSecurityData(prev => ({ ...prev, answer: '' }));
+            setTimeout(() => setSecurityStatus(null), 3000);
+        } catch (error) {
+            setSecurityStatus('error');
+            setTimeout(() => setSecurityStatus(null), 3000);
+        }
     };
 
     const handleExport = () => {
@@ -88,6 +124,8 @@ const Profile = () => {
         };
         reader.readAsText(importFile);
     };
+
+    const SECURITY_QUESTIONS = ['q1', 'q2', 'q3', 'q4', 'q5'];
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
@@ -281,7 +319,7 @@ const Profile = () => {
                                 <input
                                     type="number"
                                     name="weeklyGoal"
-                                    value={formData.weeklyGoal || 3}
+                                    value={formData.weeklyGoal}
                                     onChange={handleChange}
                                     min="1"
                                     max="21"
@@ -302,6 +340,73 @@ const Profile = () => {
                             </button>
                         </div>
                     </form>
+
+                    {/* Security Section - Only visible when logged in */}
+                    {token && (
+                        <div className="glass-card space-y-6 animate-fade-in mt-6">
+                            <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
+                                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                                    <Shield size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white">{t('profile.security')}</h3>
+                                    <p className="text-slate-400">{t('profile.securitySubtitle')}</p>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSecurityUpdate} className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
+                                        <HelpCircle size={16} /> {t('auth.securityQuestion')}
+                                    </label>
+                                    <select
+                                        value={securityData.question}
+                                        onChange={(e) => setSecurityData({ ...securityData, question: e.target.value })}
+                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
+                                    >
+                                        {SECURITY_QUESTIONS.map((qKey) => (
+                                            <option key={qKey} value={qKey} className="bg-slate-800 text-white">
+                                                {t(`auth.securityQuestions.${qKey}`)}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
+                                        <Lock size={16} /> {t('auth.securityAnswer')}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={securityData.answer}
+                                        onChange={(e) => setSecurityData({ ...securityData, answer: e.target.value })}
+                                        placeholder={t('auth.enterAnswer')}
+                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    />
+                                </div>
+
+                                <div className="flex items-center justify-end gap-3">
+                                    {securityStatus === 'success' && (
+                                        <span className="text-emerald-400 text-sm flex items-center gap-1 animate-fade-in">
+                                            <CheckCircle2 size={16} /> {t('profile.securityUpdated')}
+                                        </span>
+                                    )}
+                                    {securityStatus === 'error' && (
+                                        <span className="text-red-400 text-sm flex items-center gap-1 animate-fade-in">
+                                            <AlertTriangle size={16} /> {t('common.error')}
+                                        </span>
+                                    )}
+                                    <button
+                                        type="submit"
+                                        disabled={!securityData.answer || securityStatus === 'loading'}
+                                        className="btn btn-secondary"
+                                    >
+                                        {t('profile.updateSecurity')}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    )}
                 </>
             ) : activeTab === 'data' ? (
                 <>
