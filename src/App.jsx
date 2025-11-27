@@ -61,10 +61,14 @@ function AppContent() {
   );
 }
 
+import { LanguageProvider } from './context/LanguageContext';
+
 function App() {
   return (
     <StoreProvider>
-      <AppContent />
+      <LanguageProvider>
+        <AppContent />
+      </LanguageProvider>
     </StoreProvider>
   );
 }

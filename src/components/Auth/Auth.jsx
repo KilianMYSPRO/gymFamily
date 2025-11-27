@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { User, Lock, ArrowRight, Loader2, AlertCircle, HelpCircle, ArrowLeft } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Auth = ({ onLogin }) => {
+    const { t } = useLanguage();
     const [view, setView] = useState('login'); // 'login', 'register', 'forgot-password', 'reset-password'
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -118,7 +120,7 @@ const Auth = ({ onLogin }) => {
             return (
                 <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">Username</label>
+                        <label className="text-sm font-medium text-slate-400">{t('auth.username')}</label>
                         <div className="relative">
                             <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
@@ -128,7 +130,7 @@ const Auth = ({ onLogin }) => {
                                 onChange={handleChange}
                                 required
                                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                                placeholder="Enter your username"
+                                placeholder={t('auth.enterUsername')}
                             />
                         </div>
                     </div>
@@ -137,14 +139,14 @@ const Auth = ({ onLogin }) => {
                         disabled={loading}
                         className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
                     >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Next'}
+                        {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.next')}
                     </button>
                     <button
                         type="button"
                         onClick={() => setView('login')}
                         className="w-full text-sm text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-2"
                     >
-                        <ArrowLeft size={16} /> Back to Login
+                        <ArrowLeft size={16} /> {t('auth.backToLogin')}
                     </button>
                 </form>
             );
@@ -154,12 +156,12 @@ const Auth = ({ onLogin }) => {
             return (
                 <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                     <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 mb-4">
-                        <p className="text-sm text-slate-400 mb-1">Security Question:</p>
+                        <p className="text-sm text-slate-400 mb-1">{t('auth.securityQuestion')}:</p>
                         <p className="text-white font-medium">{securityQuestion}</p>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">Answer</label>
+                        <label className="text-sm font-medium text-slate-400">{t('auth.securityAnswer')}</label>
                         <div className="relative">
                             <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
@@ -169,13 +171,13 @@ const Auth = ({ onLogin }) => {
                                 onChange={handleChange}
                                 required
                                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                                placeholder="Enter your answer"
+                                placeholder={t('auth.enterAnswer')}
                             />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">New Password</label>
+                        <label className="text-sm font-medium text-slate-400">{t('auth.newPassword')}</label>
                         <div className="relative">
                             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
@@ -185,7 +187,7 @@ const Auth = ({ onLogin }) => {
                                 onChange={handleChange}
                                 required
                                 className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                                placeholder="Enter new password"
+                                placeholder={t('auth.enterNewPassword')}
                             />
                         </div>
                     </div>
@@ -195,14 +197,14 @@ const Auth = ({ onLogin }) => {
                         disabled={loading}
                         className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
                     >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : 'Reset Password'}
+                        {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.resetPassword')}
                     </button>
                     <button
                         type="button"
                         onClick={() => setView('login')}
                         className="w-full text-sm text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-2"
                     >
-                        Cancel
+                        {t('auth.cancel')}
                     </button>
                 </form>
             );
@@ -211,7 +213,7 @@ const Auth = ({ onLogin }) => {
         return (
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-400">Username</label>
+                    <label className="text-sm font-medium text-slate-400">{t('auth.username')}</label>
                     <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
@@ -221,13 +223,13 @@ const Auth = ({ onLogin }) => {
                             onChange={handleChange}
                             required
                             className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                            placeholder="Enter username"
+                            placeholder={t('auth.enterUsername')}
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-400">Password</label>
+                    <label className="text-sm font-medium text-slate-400">{t('auth.password')}</label>
                     <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
@@ -237,7 +239,7 @@ const Auth = ({ onLogin }) => {
                             onChange={handleChange}
                             required
                             className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                            placeholder="Enter password"
+                            placeholder={t('auth.enterPassword')}
                         />
                     </div>
                 </div>
@@ -245,7 +247,7 @@ const Auth = ({ onLogin }) => {
                 {view === 'register' && (
                     <>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">Security Question</label>
+                            <label className="text-sm font-medium text-slate-400">{t('auth.securityQuestion')}</label>
                             <div className="relative">
                                 <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <select
@@ -262,7 +264,7 @@ const Auth = ({ onLogin }) => {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">Security Answer</label>
+                            <label className="text-sm font-medium text-slate-400">{t('auth.securityAnswer')}</label>
                             <div className="relative">
                                 <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
@@ -272,7 +274,7 @@ const Auth = ({ onLogin }) => {
                                     onChange={handleChange}
                                     required
                                     className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
-                                    placeholder="Answer to security question"
+                                    placeholder={t('auth.enterAnswer')}
                                 />
                             </div>
                         </div>
@@ -286,7 +288,7 @@ const Auth = ({ onLogin }) => {
                             onClick={() => setView('forgot-password')}
                             className="text-sm text-sky-400 hover:text-sky-300 transition-colors"
                         >
-                            Forgot Password?
+                            {t('auth.forgotPassword')}
                         </button>
                     </div>
                 )}
@@ -300,7 +302,7 @@ const Auth = ({ onLogin }) => {
                         <Loader2 className="animate-spin" size={20} />
                     ) : (
                         <>
-                            {view === 'login' ? 'Sign In' : 'Create Account'}
+                            {view === 'login' ? t('auth.signIn') : t('auth.createAccount')}
                             <ArrowRight size={18} />
                         </>
                     )}
@@ -313,16 +315,16 @@ const Auth = ({ onLogin }) => {
         <div className="w-full max-w-md mx-auto p-6 glass-card animate-fade-in">
             <div className="text-center mb-8">
                 <h2 className="text-2xl font-bold text-white mb-2">
-                    {view === 'login' && 'Welcome Back'}
-                    {view === 'register' && 'Create Account'}
-                    {view === 'forgot-password' && 'Recover Account'}
-                    {view === 'reset-password' && 'Reset Password'}
+                    {view === 'login' && t('auth.welcomeBack')}
+                    {view === 'register' && t('auth.createAccount')}
+                    {view === 'forgot-password' && t('auth.recoverAccount')}
+                    {view === 'reset-password' && t('auth.resetPassword')}
                 </h2>
                 <p className="text-slate-400">
-                    {view === 'login' && 'Sign in to sync your workouts'}
-                    {view === 'register' && 'Sign up to start tracking your progress'}
-                    {view === 'forgot-password' && 'Enter your username to recover your account'}
-                    {view === 'reset-password' && 'Answer your security question'}
+                    {view === 'login' && t('auth.signInSubtitle')}
+                    {view === 'register' && t('auth.signUpSubtitle')}
+                    {view === 'forgot-password' && t('auth.recoverSubtitle')}
+                    {view === 'reset-password' && t('auth.resetSubtitle')}
                 </p>
             </div>
 
@@ -348,7 +350,7 @@ const Auth = ({ onLogin }) => {
                         onClick={() => setView(view === 'login' ? 'register' : 'login')}
                         className="text-sm text-slate-400 hover:text-white transition-colors"
                     >
-                        {view === 'login' ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
+                        {view === 'login' ? t('auth.noAccount') : t('auth.hasAccount')}
                     </button>
                 </div>
             )}

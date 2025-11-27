@@ -18,8 +18,11 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
     </button>
 );
 
+import { useLanguage } from '../../context/LanguageContext';
+
 const Layout = ({ children, currentView, onViewChange }) => {
     const { activeProfile } = useStore();
+    const { t, language, toggleLanguage } = useLanguage();
 
     return (
         <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 text-slate-50">
@@ -38,39 +41,50 @@ const Layout = ({ children, currentView, onViewChange }) => {
                     <nav className="space-y-2 hidden md:block">
                         <NavItem
                             icon={LayoutDashboard}
-                            label="Dashboard"
+                            label={t('nav.dashboard')}
                             active={currentView === 'dashboard'}
                             onClick={() => onViewChange('dashboard')}
                         />
                         <NavItem
                             icon={Calendar}
-                            label="Planner"
+                            label={t('nav.planner')}
                             active={currentView === 'planner'}
                             onClick={() => onViewChange('planner')}
                         />
                         <NavItem
                             icon={Dumbbell}
-                            label="Workout"
+                            label={t('nav.workout')}
                             active={currentView === 'workout'}
                             onClick={() => onViewChange('workout')}
                         />
                         <NavItem
                             icon={Clock}
-                            label="History"
+                            label={t('nav.history')}
                             active={currentView === 'history'}
                             onClick={() => onViewChange('history')}
                         />
                         <NavItem
                             icon={UserCircle2}
-                            label="Profile"
+                            label={t('nav.profile')}
                             active={currentView === 'profile'}
                             onClick={() => onViewChange('profile')}
                         />
                     </nav>
                 </div>
+
+                <div className="hidden md:block px-2">
+                    <button
+                        onClick={toggleLanguage}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all w-full text-left"
+                    >
+                        <span className="text-lg">{language === 'en' ? '🇫🇷' : '🇺🇸'}</span>
+                        <span className="font-medium text-sm">{language === 'en' ? 'Français' : 'English'}</span>
+                    </button>
+                </div>
+
                 {/* Mobile Nav */}
                 <div className="md:hidden flex justify-between items-center overflow-x-auto pb-2">
-                    <div className="flex gap-1 w-full justify-between">
+                    <div className="flex gap-1 w-full justify-between items-center">
                         <button
                             onClick={() => onViewChange('dashboard')}
                             className={clsx("p-2 rounded-lg", currentView === 'dashboard' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
@@ -91,6 +105,15 @@ const Layout = ({ children, currentView, onViewChange }) => {
                             onClick={() => onViewChange('profile')}
                             className={clsx("p-2 rounded-lg", currentView === 'profile' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
                         ><UserCircle2 size={24} /></button>
+
+                        <div className="w-px h-6 bg-slate-800 mx-1"></div>
+
+                        <button
+                            onClick={toggleLanguage}
+                            className="p-2 rounded-lg text-slate-400 hover:text-white"
+                        >
+                            <span className="text-xl">{language === 'en' ? '🇫🇷' : '🇺🇸'}</span>
+                        </button>
                     </div>
                 </div>
             </aside>
