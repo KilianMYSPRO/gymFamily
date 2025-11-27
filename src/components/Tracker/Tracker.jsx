@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save, Sun, HelpCircle } from 'lucide-react';
 import Portal from '../common/Portal';
+import Tooltip from '../common/Tooltip';
+import ConfirmModal from '../common/ConfirmModal';
 import clsx from 'clsx';
 import useWakeLock from '../../hooks/useWakeLock';
 
@@ -14,6 +16,7 @@ const Tracker = ({ initialWorkoutId }) => {
     const [setReps, setSetReps] = useState({}); // New state for reps input
     const [restTimer, setRestTimer] = useState({ active: false, time: 90 });
     const [activeInfo, setActiveInfo] = useState(null);
+    const [showCancelModal, setShowCancelModal] = useState(false);
 
     // Auto-start effect
     useEffect(() => {
@@ -198,15 +201,14 @@ const Tracker = ({ initialWorkoutId }) => {
     };
 
     const cancelWorkout = () => {
-        if (window.confirm("Are you sure you want to cancel this workout? All progress will be lost.")) {
-            setActiveWorkout(null);
-            setElapsedTime(0);
-            setCompletedSets({});
-            setSetWeights({});
-            setSetReps({});
-            setRestTimer({ active: false, time: 90 });
-            localStorage.removeItem('duogym-active-workout');
-        }
+        setActiveWorkout(null);
+        setElapsedTime(0);
+        setCompletedSets({});
+        setSetWeights({});
+        setSetReps({});
+        setRestTimer({ active: false, time: 90 });
+        localStorage.removeItem('duogym-active-workout');
+        setShowCancelModal(false);
     };
 
     const skipExercise = (exerciseId) => {
@@ -231,7 +233,7 @@ const Tracker = ({ initialWorkoutId }) => {
             <>
                 <div className="space-y-6 pb-24 animate-enter">
                     <header className="sticky top-0 z-20 -mx-6 -mt-6 px-6 py-4 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 shadow-2xl">
-                        <div className="flex justify-between items-center mb-4">
+                        <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
                             <div className="flex items-center gap-4">
                                 <button
                                     onClick={() => setActiveWorkout(null)}
@@ -247,35 +249,59 @@ const Tracker = ({ initialWorkoutId }) => {
                                             {formatTime(elapsedTime)}
                                         </div>
                                         <div className="h-4 w-px bg-white/10"></div>
-                                        <button
-                                            onClick={() => {
-                                                if (type === 'nosleep') {
-                                                    releaseWakeLock();
-                                                } else {
-                                                    requestWakeLock(true);
-                                                }
-                                            }}
-                                            className={clsx(
-                                                "flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border transition-all",
-                                                type === 'nosleep'
-                                                    ? "bg-electric-500/10 text-electric-400 border-electric-500/20 shadow-[0_0_10px_rgba(0,242,234,0.2)]"
-                                                    : type === 'native'
-                                                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                                                        : "bg-slate-800 text-slate-500 border-slate-700"
-                                            )}
+                                        <Tooltip
+                                            position="bottom"
+                                            content={
+                                                <div className="space-y-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-electric-500 shadow-[0_0_8px_rgba(0,242,234,0.5)]"></div>
+                                                        <span className="font-bold text-electric-400">NoSleep.js</span>
+                                                        <span className="text-slate-500">- Simulated (Video Loop)</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                                        <span className="font-bold text-emerald-400">Native</span>
+                                                        <span className="text-slate-500">- Browser API (Best)</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-2 h-2 rounded-full bg-slate-500"></div>
+                                                        <span className="font-bold text-slate-400">Sleep</span>
+                                                        <span className="text-slate-500">- System Default</span>
+                                                    </div>
+                                                </div>
+                                            }
                                         >
-                                            <Sun size={10} />
-                                            <span>{type === 'nosleep' ? "Awake ⚡" : isLocked ? "Awake" : "Sleep"}</span>
-                                        </button>
+                                            <button
+                                                onClick={() => {
+                                                    if (type === 'nosleep') {
+                                                        releaseWakeLock();
+                                                    } else {
+                                                        requestWakeLock(true);
+                                                    }
+                                                }}
+                                                className={clsx(
+                                                    "flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border transition-all",
+                                                    type === 'nosleep'
+                                                        ? "bg-electric-500/10 text-electric-400 border-electric-500/20 shadow-[0_0_10px_rgba(0,242,234,0.2)]"
+                                                        : type === 'native'
+                                                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                                                            : "bg-slate-800 text-slate-500 border-slate-700"
+                                                )}
+                                            >
+                                                <Sun size={10} />
+                                                <span>{type === 'nosleep' ? "Awake ⚡" : isLocked ? "Awake" : "Sleep"}</span>
+                                            </button>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 ml-auto sm:ml-0">
                                 <button
-                                    onClick={cancelWorkout}
-                                    className="p-3 text-red-400 hover:text-white hover:bg-red-500/20 rounded-xl transition-colors"
+                                    onClick={() => setShowCancelModal(true)}
+                                    className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all flex items-center gap-2 font-bold text-sm uppercase tracking-wider"
                                 >
-                                    <X size={20} />
+                                    <X size={18} />
+                                    <span>Cancel</span>
                                 </button>
                                 <button onClick={finishWorkout} className="btn btn-primary py-2 px-6 text-sm flex items-center gap-2">
                                     <Save size={18} /> <span className="uppercase tracking-wider font-bold">Finish</span>
@@ -498,6 +524,16 @@ const Tracker = ({ initialWorkoutId }) => {
                         </Portal>
                     )
                 }
+
+                <ConfirmModal
+                    isOpen={showCancelModal}
+                    onClose={() => setShowCancelModal(false)}
+                    onConfirm={cancelWorkout}
+                    title="Cancel Workout?"
+                    message="Are you sure you want to cancel this workout? All progress for this session will be lost permanently."
+                    confirmText="Yes, Cancel"
+                    isDestructive={true}
+                />
             </>
         );
     }

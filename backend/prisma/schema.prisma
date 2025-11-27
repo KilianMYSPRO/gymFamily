@@ -11,10 +11,12 @@ datasource db {
 model User {
   id        String   @id @default(uuid())
   username  String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  data      UserData[]
+  password        String
+  securityQuestion String?
+  securityAnswer   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  data            UserData[]
 }
 
 model UserData {
