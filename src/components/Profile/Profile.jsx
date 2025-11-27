@@ -398,66 +398,66 @@ const Profile = () => {
                             </div>
                         </div>
                     </div>
-                </div>
 
-            {showImportConfirm && (
-                <Portal>
-                    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
-                        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
-                            <button
-                                onClick={() => {
-                                    setShowImportConfirm(false);
-                                    setImportFile(null);
-                                    setImportError(null);
-                                }}
-                                className="absolute top-4 right-4 text-slate-400 hover:text-white"
-                            >
-                                <X size={24} />
-                            </button>
 
-                            <div className="flex flex-col items-center text-center mb-6">
-                                <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mb-4">
-                                    <AlertTriangle size={32} />
+                    {showImportConfirm && (
+                        <Portal>
+                            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
+                                    <button
+                                        onClick={() => {
+                                            setShowImportConfirm(false);
+                                            setImportFile(null);
+                                            setImportError(null);
+                                        }}
+                                        className="absolute top-4 right-4 text-slate-400 hover:text-white"
+                                    >
+                                        <X size={24} />
+                                    </button>
+
+                                    <div className="flex flex-col items-center text-center mb-6">
+                                        <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mb-4">
+                                            <AlertTriangle size={32} />
+                                        </div>
+                                        <h3 className="text-xl font-bold text-white mb-2">Warning: Overwrite Data?</h3>
+                                        <p className="text-slate-400 text-sm">
+                                            Importing <strong>{importFile?.name}</strong> will completely replace your current profiles, workouts, and history. This action cannot be undone.
+                                        </p>
+                                    </div>
+
+                                    {importError && (
+                                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
+                                            {importError}
+                                        </div>
+                                    )}
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => {
+                                                setShowImportConfirm(false);
+                                                setImportFile(null);
+                                                setImportError(null);
+                                            }}
+                                            className="flex-1 py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={confirmImport}
+                                            className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
+                                        >
+                                            Yes, Overwrite
+                                        </button>
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-bold text-white mb-2">Warning: Overwrite Data?</h3>
-                                <p className="text-slate-400 text-sm">
-                                    Importing <strong>{importFile?.name}</strong> will completely replace your current profiles, workouts, and history. This action cannot be undone.
-                                </p>
                             </div>
-
-                            {importError && (
-                                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center">
-                                    {importError}
-                                </div>
-                            )}
-
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => {
-                                        setShowImportConfirm(false);
-                                        setImportFile(null);
-                                        setImportError(null);
-                                    }}
-                                    className="flex-1 py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={confirmImport}
-                                    className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
-                                >
-                                    Yes, Overwrite
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </Portal>
-            )}
-        </>
-    ) : (
-        <Analytics />
-    )
-}
+                        </Portal>
+                    )}
+                </>
+            ) : (
+                <Analytics />
+            )
+            }
         </div >
     );
 };
