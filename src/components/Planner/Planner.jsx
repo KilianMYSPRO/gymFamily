@@ -113,6 +113,26 @@ const Planner = () => {
         }
     };
 
+    const handleCopyTemplate = () => {
+        const template = {
+            "name": "My Custom Routine",
+            "exercises": [
+                {
+                    "name": "Bench Press",
+                    "sets": 3,
+                    "reps": "8-12",
+                    "restTime": "90",
+                    "weight": "60",
+                    "link": "https://example.com/bench-press",
+                    "description": "Keep back flat on bench",
+                    "isOptional": false
+                }
+            ]
+        };
+        setImportJson(JSON.stringify(template, null, 2));
+        setImportError(null);
+    };
+
     const handleImport = () => {
         try {
             if (!importJson.trim()) {
@@ -226,8 +246,11 @@ const Planner = () => {
                         )}
 
                         <div className="flex flex-col-reverse md:flex-row justify-end gap-3">
-                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 md:mr-auto w-full md:w-auto">
+                            <button onClick={handleFormat} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 w-full md:w-auto">
                                 Format JSON
+                            </button>
+                            <button onClick={handleCopyTemplate} className="btn bg-slate-800 hover:bg-slate-700 text-slate-300 md:mr-auto w-full md:w-auto flex items-center justify-center gap-2">
+                                <Copy size={16} /> Template
                             </button>
                             <button onClick={() => setShowImportModal(false)} className="btn btn-secondary w-full md:w-auto">Cancel</button>
                             <button onClick={handleImport} className="btn btn-primary w-full md:w-auto" disabled={!importJson.trim()}>
