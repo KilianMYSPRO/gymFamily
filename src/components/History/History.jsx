@@ -3,8 +3,10 @@ import { useStore } from '../../context/StoreContext';
 import { Calendar, Clock, Dumbbell, Trash2, Share2 } from 'lucide-react';
 import WorkoutSummaryCard from './WorkoutSummaryCard';
 import Portal from '../common/Portal';
+import { useLanguage } from '../../context/LanguageContext';
 
 const History = () => {
+    const { t } = useLanguage();
     const { history, deleteLog } = useStore();
     const [selectedSummary, setSelectedSummary] = useState(null);
 
@@ -38,8 +40,8 @@ const History = () => {
             <div className="space-y-6 animate-fade-in">
 
                 <header>
-                    <h2 className="text-3xl font-bold text-white mb-2">History</h2>
-                    <p className="text-slate-400">Your past workouts and achievements.</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">{t('history.title')}</h2>
+                    <p className="text-slate-400">{t('history.subtitle')}</p>
                 </header>
 
                 <div className="space-y-4">
@@ -48,8 +50,8 @@ const History = () => {
                             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
                                 <Calendar size={32} />
                             </div>
-                            <h3 className="text-lg font-medium text-white mb-2">No history yet</h3>
-                            <p className="text-slate-400">Complete a workout to see it here.</p>
+                            <h3 className="text-lg font-medium text-white mb-2">{t('history.noHistory')}</h3>
+                            <p className="text-slate-400">{t('history.noHistorySubtitle')}</p>
                         </div>
                     ) : (
                         sortedHistory.map((session) => (
@@ -85,7 +87,7 @@ const History = () => {
                                                 <Clock size={14} /> {formatTime(session.duration)}
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <Dumbbell size={14} /> {session.completedSets} Sets
+                                                <Dumbbell size={14} /> {session.completedSets} {t('history.sets')}
                                             </span>
                                         </div>
                                     </div>

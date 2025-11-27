@@ -3,8 +3,10 @@ import { createPortal } from 'react-dom';
 import { Search, X, Filter, Dumbbell } from 'lucide-react';
 import { translateSearchTerm } from '../../utils/translations';
 import exercisesData from '../../data/exercises.json';
+import { useLanguage } from '../../context/LanguageContext';
 
 const ExerciseSelector = ({ onSelect, onClose }) => {
+    const { t } = useLanguage();
     const [search, setSearch] = useState('');
     const [selectedMuscle, setSelectedMuscle] = useState('all');
 
@@ -25,7 +27,7 @@ const ExerciseSelector = ({ onSelect, onClose }) => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
                 <div className="p-4 border-b border-slate-800 flex justify-between items-center flex-shrink-0">
-                    <h3 className="text-xl font-bold text-white">Select Exercise</h3>
+                    <h3 className="text-xl font-bold text-white">{t('planner.selectExercise')}</h3>
                     <button onClick={onClose} className="text-slate-400 hover:text-white">
                         <X size={24} />
                     </button>
@@ -36,7 +38,7 @@ const ExerciseSelector = ({ onSelect, onClose }) => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
                         <input
                             type="text"
-                            placeholder="Search by name or muscle (EN/FR)..."
+                            placeholder={t('planner.searchPlaceholder')}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full bg-slate-800 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
@@ -81,7 +83,7 @@ const ExerciseSelector = ({ onSelect, onClose }) => {
 
                     {filteredExercises.length === 0 && (
                         <div className="text-center py-8 text-slate-500">
-                            No exercises found.
+                            {t('planner.noExercisesFound')}
                         </div>
                     )}
                 </div>

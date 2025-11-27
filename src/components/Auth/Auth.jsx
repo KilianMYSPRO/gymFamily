@@ -11,21 +11,17 @@ const Auth = ({ onLogin }) => {
     const [successMessage, setSuccessMessage] = useState(null);
     const [securityQuestion, setSecurityQuestion] = useState(null);
 
+    const SECURITY_QUESTIONS = [
+        'q1', 'q2', 'q3', 'q4', 'q5'
+    ];
+
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        securityQuestion: 'What is your mother\'s maiden name?',
+        securityQuestion: 'q1',
         securityAnswer: '',
         newPassword: ''
     });
-
-    const SECURITY_QUESTIONS = [
-        "What is your mother's maiden name?",
-        "What was the name of your first pet?",
-        "What is the name of the city you were born in?",
-        "What is your favorite book?",
-        "What is the name of your elementary school?"
-    ];
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -43,10 +39,15 @@ const Auth = ({ onLogin }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'User not found');
+                throw new Error(data.error || t('auth.errors.userNotFound'));
             }
 
-            setSecurityQuestion(data.question);
+            // If the question is one of our keys, translate it. Otherwise show as is (legacy support)
+            const questionKey = Object.keys(t('auth.securityQuestions')).find(key =>
+                t(`auth.securityQuestions.${key}`) === data.question || data.question === key
+            );
+
+            setSecurityQuestion(questionKey ? t(`auth.securityQuestions.${questionKey}`) : data.question);
             setView('reset-password');
         } catch (err) {
             setError(err.message);
@@ -74,10 +75,10 @@ const Auth = ({ onLogin }) => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Failed to reset password');
+                throw new Error(data.error || t('auth.errors.resetFailed'));
             }
 
-            setSuccessMessage('Password reset successfully! Please login.');
+            setSuccessMessage(t('auth.success.resetSuccess'));
             setView('login');
             setFormData(prev => ({ ...prev, password: '', securityAnswer: '', newPassword: '' }));
         } catch (err) {
@@ -94,17 +95,30 @@ const Auth = ({ onLogin }) => {
 
         const endpoint = view === 'login' ? '/api/auth/login' : '/api/auth/register';
 
+        // For registration, we need to send the translated question text or the key?
+        // Let's send the key if possible, or the translated text. 
+        // Ideally backend stores the key, but for now let's send the translated text to match legacy behavior if needed,
+        // OR better: send the key if the backend supports it. 
+        // Assuming backend just stores string. Let's store the KEY so it can be translated on retrieval.
+        // But wait, if we store the key, older users have full text.
+        // Let's store the key.
+
+        const payload = { ...formData };
+        if (view === 'register') {
+            // If it's a key (q1, q2...), keep it.
+        }
+
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             });
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Authentication failed');
+                throw new Error(data.error || t('auth.errors.authFailed'));
             }
 
             onLogin(data);
@@ -157,7 +171,12 @@ const Auth = ({ onLogin }) => {
                 <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
                     <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 mb-4">
                         <p className="text-sm text-slate-400 mb-1">{t('auth.securityQuestion')}:</p>
-                        <p className="text-white font-medium">{securityQuestion}</p>
+                        <p className="text-white font-medium">
+                            {/* Try to translate if it's a key, otherwise show as is */}
+                            {t(`auth.securityQuestions.${securityQuestion}`) !== `auth.securityQuestions.${securityQuestion}`
+                                ? t(`auth.securityQuestions.${securityQuestion}`)
+                                : securityQuestion}
+                        </p>
                     </div>
 
                     <div className="space-y-2">
@@ -256,8 +275,10 @@ const Auth = ({ onLogin }) => {
                                     onChange={handleChange}
                                     className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
                                 >
-                                    {SECURITY_QUESTIONS.map((q, i) => (
-                                        <option key={i} value={q} className="bg-slate-800 text-white">{q}</option>
+                                    {SECURITY_QUESTIONS.map((qKey) => (
+                                        <option key={qKey} value={qKey} className="bg-slate-800 text-white">
+                                            {t(`auth.securityQuestions.${qKey}`)}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
