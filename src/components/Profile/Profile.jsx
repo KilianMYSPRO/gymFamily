@@ -5,8 +5,10 @@ import Portal from '../common/Portal';
 import Auth from '../Auth/Auth';
 import Analytics from '../Analytics/Analytics';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Profile = () => {
+    const { t } = useLanguage();
     const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, token, user, login, logout, syncStatus, syncData } = useStore();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
@@ -91,8 +93,8 @@ const Profile = () => {
         <div className="max-w-4xl mx-auto space-y-6">
             <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">My Profile</h2>
-                    <p className="text-slate-400">Manage your personal details and track progress.</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">{t('profile.title')}</h2>
+                    <p className="text-slate-400">{t('profile.subtitle')}</p>
                 </div>
 
                 <div className="flex bg-slate-800/50 p-1 rounded-xl border border-slate-700/50">
@@ -103,7 +105,7 @@ const Profile = () => {
                             activeTab === 'details' ? "bg-slate-700 text-white shadow-sm" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <Settings size={16} /> Details
+                        <Settings size={16} /> {t('profile.details')}
                     </button>
                     <button
                         onClick={() => setActiveTab('analytics')}
@@ -112,7 +114,7 @@ const Profile = () => {
                             activeTab === 'analytics' ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <TrendingUp size={16} /> Analytics
+                        <TrendingUp size={16} /> {t('profile.analytics')}
                     </button>
                     <button
                         onClick={() => setActiveTab('data')}
@@ -121,7 +123,7 @@ const Profile = () => {
                             activeTab === 'data' ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <Database size={16} /> Data
+                        <Database size={16} /> {t('profile.data')}
                     </button>
                 </div>
             </header>
@@ -136,14 +138,14 @@ const Profile = () => {
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold text-white">{activeProfile.name}</h3>
-                                <p className="text-slate-400">Member since 2025</p>
+                                <p className="text-slate-400">{t('profile.memberSince')} 2025</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="col-span-1 md:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <User size={16} /> Name
+                                    <User size={16} /> {t('profile.name')}
                                 </label>
                                 <input
                                     type="text"
@@ -157,7 +159,7 @@ const Profile = () => {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Calendar size={16} /> Age
+                                    <Calendar size={16} /> {t('profile.age')}
                                 </label>
                                 <input
                                     type="number"
@@ -171,7 +173,7 @@ const Profile = () => {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <User size={16} /> Gender
+                                    <User size={16} /> {t('profile.gender')}
                                 </label>
                                 <select
                                     name="gender"
@@ -188,7 +190,7 @@ const Profile = () => {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Weight size={16} /> Weight (kg)
+                                    <Weight size={16} /> {t('profile.weight')}
                                 </label>
                                 <div className="flex gap-2">
                                     <input
@@ -210,14 +212,14 @@ const Profile = () => {
                                         }}
                                         className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-colors whitespace-nowrap"
                                     >
-                                        Log Entry
+                                        {t('profile.logEntry')}
                                     </button>
                                 </div>
 
                                 {/* Recent History */}
                                 {weightHistory && weightHistory.length > 0 && (
                                     <div className="mt-3 space-y-2">
-                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">Recent Entries</p>
+                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t('profile.recentEntries')}</p>
                                         <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
                                             {[...weightHistory].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map(entry => (
                                                 <div key={entry.id} className="flex justify-between items-center bg-slate-800/30 px-3 py-2 rounded-lg border border-slate-700/30 group">
@@ -242,7 +244,7 @@ const Profile = () => {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Ruler size={16} /> Height (cm)
+                                    <Ruler size={16} /> {t('profile.height')}
                                 </label>
                                 <input
                                     type="number"
@@ -256,7 +258,7 @@ const Profile = () => {
 
                             <div className="col-span-1 md:col-span-2 space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Target size={16} /> Primary Goal
+                                    <Target size={16} /> {t('profile.goal')}
                                 </label>
                                 <select
                                     name="goal"
@@ -274,7 +276,7 @@ const Profile = () => {
 
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Target size={16} /> Weekly Workout Goal
+                                    <Target size={16} /> {t('profile.weeklyGoal')}
                                 </label>
                                 <input
                                     type="number"
@@ -292,11 +294,11 @@ const Profile = () => {
                             {isSaved && (
                                 <div className="absolute left-0 -top-12 md:static md:top-auto flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-lg border border-emerald-500/20 animate-fade-in shadow-lg shadow-emerald-500/10">
                                     <CheckCircle2 size={18} />
-                                    <span className="text-sm font-medium">Changes saved successfully!</span>
+                                    <span className="text-sm font-medium">{t('profile.savedSuccess')}</span>
                                 </div>
                             )}
                             <button type="submit" className="btn btn-primary ml-auto">
-                                <Save size={18} /> Save Changes
+                                <Save size={18} /> {t('profile.saveChanges')}
                             </button>
                         </div>
                     </form>
@@ -309,8 +311,8 @@ const Profile = () => {
                                 <Cloud size={24} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white">Cloud Sync</h3>
-                                <p className="text-slate-400">Sync your data across devices.</p>
+                                <h3 className="text-xl font-bold text-white">{t('profile.cloudSync')}</h3>
+                                <p className="text-slate-400">{t('profile.syncSubtitle')}</p>
                             </div>
                         </div>
 
@@ -323,7 +325,7 @@ const Profile = () => {
                                         {user?.username?.[0]?.toUpperCase()}
                                     </div>
                                     <div>
-                                        <h4 className="text-white font-bold text-lg">Logged in as {user?.username}</h4>
+                                        <h4 className="text-white font-bold text-lg">{t('profile.loggedInAs')} {user?.username}</h4>
                                         <div className="flex items-center gap-2 text-sm">
                                             <span className={clsx(
                                                 "w-2 h-2 rounded-full",
@@ -332,15 +334,15 @@ const Profile = () => {
                                                         "bg-red-500"
                                             )} />
                                             <span className="text-slate-400">
-                                                {(syncStatus === 'success' || syncStatus === 'idle') ? 'Synced' :
-                                                    syncStatus === 'syncing' ? 'Syncing...' :
+                                                {(syncStatus === 'success' || syncStatus === 'idle') ? t('profile.synced') :
+                                                    syncStatus === 'syncing' ? t('profile.syncing') :
                                                         <span className="text-red-400 flex items-center gap-2">
-                                                            Sync Error
+                                                            {t('profile.syncError')}
                                                             <button
                                                                 onClick={() => syncData()}
                                                                 className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/20 transition-colors flex items-center gap-1"
                                                             >
-                                                                <RefreshCw size={12} /> Retry
+                                                                <RefreshCw size={12} /> {t('profile.retry')}
                                                             </button>
                                                         </span>
                                                 }
@@ -353,7 +355,7 @@ const Profile = () => {
                                     onClick={logout}
                                     className="px-4 py-2 bg-slate-800 hover:bg-red-500/10 hover:text-red-400 text-slate-400 rounded-lg border border-slate-700 hover:border-red-500/30 transition-all flex items-center gap-2"
                                 >
-                                    <LogOut size={18} /> Sign Out
+                                    <LogOut size={18} /> {t('profile.signOut')}
                                 </button>
                             </div>
                         )}
@@ -365,8 +367,8 @@ const Profile = () => {
                                 <Save size={24} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white">Data Management</h3>
-                                <p className="text-slate-400">Backup or restore your data.</p>
+                                <h3 className="text-xl font-bold text-white">{t('profile.dataManagement')}</h3>
+                                <p className="text-slate-400">{t('profile.backupSubtitle')}</p>
                             </div>
                         </div>
 
@@ -374,29 +376,29 @@ const Profile = () => {
                             <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
                                 <div className="flex items-center gap-3 text-sky-400 mb-2">
                                     <FileDown size={20} />
-                                    <h4 className="font-bold text-white">Export Backup</h4>
+                                    <h4 className="font-bold text-white">{t('profile.exportBackup')}</h4>
                                 </div>
                                 <p className="text-sm text-slate-400">
-                                    Download a copy of all your profiles, workouts, and history to your device.
+                                    {t('profile.exportSubtitle')}
                                 </p>
                                 <button
                                     onClick={handleExport}
                                     className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
                                 >
-                                    <FileDown size={16} /> Download JSON
+                                    <FileDown size={16} /> {t('profile.downloadJson')}
                                 </button>
                             </div>
 
                             <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
                                 <div className="flex items-center gap-3 text-emerald-400 mb-2">
                                     <Upload size={20} />
-                                    <h4 className="font-bold text-white">Import Backup</h4>
+                                    <h4 className="font-bold text-white">{t('profile.importBackup')}</h4>
                                 </div>
                                 <p className="text-sm text-slate-400">
-                                    Restore your data from a backup file. This will overwrite current data.
+                                    {t('profile.importSubtitle')}
                                 </p>
                                 <label className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer">
-                                    <Upload size={16} /> Select File
+                                    <Upload size={16} /> {t('profile.selectFile')}
                                     <input
                                         type="file"
                                         accept=".json"
@@ -428,9 +430,9 @@ const Profile = () => {
                                         <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 mb-4">
                                             <AlertTriangle size={32} />
                                         </div>
-                                        <h3 className="text-xl font-bold text-white mb-2">Warning: Overwrite Data?</h3>
+                                        <h3 className="text-xl font-bold text-white mb-2">{t('planner.overwriteWarning')}</h3>
                                         <p className="text-slate-400 text-sm">
-                                            Importing <strong>{importFile?.name}</strong> will completely replace your current profiles, workouts, and history. This action cannot be undone.
+                                            {t('planner.overwriteMessage')}
                                         </p>
                                     </div>
 
@@ -449,13 +451,13 @@ const Profile = () => {
                                             }}
                                             className="flex-1 py-2 px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-colors"
                                         >
-                                            Cancel
+                                            {t('planner.cancel')}
                                         </button>
                                         <button
                                             onClick={confirmImport}
                                             className="flex-1 py-2 px-4 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors font-medium"
                                         >
-                                            Yes, Overwrite
+                                            {t('planner.yesOverwrite')}
                                         </button>
                                     </div>
                                 </div>

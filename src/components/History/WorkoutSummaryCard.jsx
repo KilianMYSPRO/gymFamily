@@ -1,8 +1,10 @@
 import React from 'react';
 import { Calendar, Clock, Dumbbell, Trophy, Share2, X } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const WorkoutSummaryCard = ({ workout, onClose }) => {
+    const { t } = useLanguage();
     if (!workout) return null;
 
     const formatDate = (dateString) => {
@@ -22,7 +24,6 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
 
     const [showCopyFallback, setShowCopyFallback] = React.useState(false);
 
-    // Calculate total volume (approximate)
     // Calculate total volume (approximate)
     const totalVolume = Object.entries(workout.detailedSets || {}).reduce((acc, [key, set]) => {
         if (set.completed) {
@@ -48,12 +49,12 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
     }, 0);
 
     const getSummaryText = () => {
-        return `🏋️ DuoGym Workout: ${workout.name}\n` +
+        return `🏋️ ${t('summary.workoutTitle')} ${workout.name}\n` +
             `📅 ${formatDate(workout.date)}\n` +
-            `⏱️ Duration: ${formatTime(workout.duration)}\n` +
-            `📊 Sets: ${workout.completedSets}\n` +
-            `💪 Volume: ${totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} kg\n\n` +
-            `Tracked with DuoGym`;
+            `⏱️ ${t('summary.duration')} ${formatTime(workout.duration)}\n` +
+            `📊 ${t('summary.sets')} ${workout.completedSets}\n` +
+            `💪 ${t('summary.volume')} ${totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} kg\n\n` +
+            `${t('summary.trackedWith')}`;
     };
 
     const handleShare = async () => {
@@ -66,14 +67,14 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                     text: summaryText,
                 });
             } catch (err) {
-                console.error('Share failed:', err);
+                console.error(t('summary.shareFailed'), err);
             }
         } else {
             try {
                 await navigator.clipboard.writeText(summaryText);
-                alert('Summary copied to clipboard!');
+                alert(t('summary.copied'));
             } catch (err) {
-                console.error('Clipboard failed:', err);
+                console.error(t('summary.clipboardFailed'), err);
                 setShowCopyFallback(true);
             }
         }
@@ -100,7 +101,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                         </div>
                         <div className="relative z-10 pr-8">
                             <div className="inline-flex items-center gap-2 bg-sky-500/20 text-sky-400 text-xs font-bold px-2 py-1 rounded-full mb-3 uppercase tracking-wider">
-                                <Trophy size={12} /> Workout Complete
+                                <Trophy size={12} /> {t('summary.workoutComplete')}
                             </div>
                             <h2 className="text-3xl font-bold text-white mb-1">{workout.name}</h2>
                             <p className="text-sky-200/60 font-medium flex items-center gap-2">
@@ -129,7 +130,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
 
                     {/* Exercise List Summary */}
                     <div className="p-6 space-y-4 max-h-[40vh] overflow-y-auto">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Workout Summary</h3>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">{t('summary.workoutSummary')}</h3>
                         {workout.exercises && workout.exercises.map((ex, i) => {
                             // Count completed sets for this exercise
                             const completedCount = Object.keys(workout.detailedSets || {}).filter(k => k.startsWith(ex.id) && workout.detailedSets[k].completed).length;
@@ -145,7 +146,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                                         <span className="text-slate-200 font-medium">{ex.name}</span>
                                     </div>
                                     <div className="text-slate-500 text-sm">
-                                        {completedCount} sets
+                                        {completedCount} {t('summary.setsCount')}
                                     </div>
                                 </div>
                             );
@@ -160,11 +161,11 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                                 className="btn btn-primary w-full justify-center group relative overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity" />
-                                <Share2 size={18} /> Share Summary
+                                <Share2 size={18} /> {t('summary.shareSummary')}
                             </button>
                         ) : (
                             <div className="space-y-2 animate-fade-in">
-                                <p className="text-xs text-slate-400 text-center">Copy summary manually:</p>
+                                <p className="text-xs text-slate-400 text-center">{t('summary.copyManually')}</p>
                                 <textarea
                                     readOnly
                                     value={getSummaryText()}
@@ -174,7 +175,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                             </div>
                         )}
                         <p className="text-center text-[10px] text-slate-600">
-                            DuoGym • Track Better, Lift Heavier
+                            {t('summary.footer')}
                         </p>
                     </div>
                 </div>

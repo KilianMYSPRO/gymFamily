@@ -2,6 +2,7 @@ import React from 'react';
 import { useStore } from '../../context/StoreContext';
 import { LayoutDashboard, Calendar, Dumbbell, UserCircle2, LogOut, Clock } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const NavItem = ({ icon: Icon, label, active, onClick }) => (
     <button
@@ -18,7 +19,7 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
     </button>
 );
 
-import { useLanguage } from '../../context/LanguageContext';
+
 
 const Layout = ({ children, currentView, onViewChange }) => {
     const { activeProfile } = useStore();

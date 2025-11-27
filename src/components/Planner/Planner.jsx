@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 import { generateUUID } from '../../utils/uuid';
 import ExerciseSelector from './ExerciseSelector';
 import templates from '../../data/templates.json';
 
 const Planner = () => {
+    const { t } = useLanguage();
     const { workouts, addWorkout, updateWorkout, deleteWorkout } = useStore();
     const [isCreating, setIsCreating] = useState(() => localStorage.getItem('duogym-planner-creating') === 'true');
     const [editingId, setEditingId] = useState(() => localStorage.getItem('duogym-planner-editing-id'));
@@ -134,7 +136,7 @@ const Planner = () => {
             setImportJson(JSON.stringify(parsed, null, 2));
             setImportError(null);
         } catch (e) {
-            setImportError(`Format Error: ${e.message}`);
+            setImportError(`${t('planner.formatError')}: ${e.message}`);
         }
     };
 
@@ -161,7 +163,7 @@ const Planner = () => {
     const handleImport = () => {
         try {
             if (!importJson.trim()) {
-                setImportError("Please paste your JSON code first.");
+                setImportError(t('planner.pasteJson'));
                 return;
             }
 
@@ -169,11 +171,11 @@ const Planner = () => {
             try {
                 data = JSON.parse(importJson);
             } catch (e) {
-                throw new Error(`Invalid JSON syntax: ${e.message}`);
+                throw new Error(`${t('planner.invalidJson')}: ${e.message}`);
             }
 
             if (!data.name || typeof data.name !== 'string') {
-                throw new Error("Invalid format: Missing or invalid 'name' field.");
+                throw new Error(`${t('planner.invalidJson')}: ${t('planner.missingName')}`);
             }
 
             if (!Array.isArray(data.exercises)) {
@@ -246,14 +248,14 @@ const Planner = () => {
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-md relative">
                         <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-xl font-bold text-white">Import Routine</h3>
+                            <h3 className="text-xl font-bold text-white">{t('planner.importRoutine')}</h3>
                             <button onClick={() => setShowImportModal(false)} className="text-slate-400 hover:text-white">
                                 <X size={24} />
                             </button>
                         </div>
 
                         <div className="flex justify-between items-end mb-2">
-                            <p className="text-sm text-slate-400">Paste JSON below:</p>
+                            <p className="text-sm text-slate-400">{t('planner.pasteJson')}</p>
                             <div className="flex gap-2">
                                 <button
                                     onClick={handleCopyTemplate}
@@ -289,9 +291,9 @@ const Planner = () => {
                         )}
 
                         <div className="flex justify-end gap-3">
-                            <button onClick={() => setShowImportModal(false)} className="btn btn-secondary w-full md:w-auto">Cancel</button>
+                            <button onClick={() => setShowImportModal(false)} className="btn btn-secondary w-full md:w-auto">{t('planner.cancel')}</button>
                             <button onClick={handleImport} className="btn btn-primary w-full md:w-auto" disabled={!importJson.trim()}>
-                                <Download size={18} /> Import
+                                <Download size={18} /> {t('planner.import')}
                             </button>
                         </div>
                     </div>
@@ -304,8 +306,8 @@ const Planner = () => {
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-2xl relative max-h-[80vh] flex flex-col">
                         <div className="flex justify-between items-center mb-4 shrink-0">
                             <div>
-                                <h3 className="text-xl font-bold text-white">Template Library</h3>
-                                <p className="text-slate-400 text-sm">Choose a routine to get started.</p>
+                                <h3 className="text-xl font-bold text-white">{t('planner.templateLibrary')}</h3>
+                                <p className="text-slate-400 text-sm">{t('planner.chooseTemplate')}</p>
                             </div>
                             <button onClick={() => setShowTemplateModal(false)} className="text-slate-400 hover:text-white">
                                 <X size={24} />
@@ -340,8 +342,8 @@ const Planner = () => {
 
             <header className="flex justify-between items-center">
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">Workout Planner</h2>
-                    <p className="text-slate-400">Design your training routines.</p>
+                    <h2 className="text-3xl font-bold text-white mb-2">{t('planner.title')}</h2>
+                    <p className="text-slate-400">{t('planner.subtitle')}</p>
                 </div>
                 {!isCreating && (
                     <div className="flex gap-2">
@@ -350,15 +352,15 @@ const Planner = () => {
                             className="btn btn-secondary"
                         >
                             <Download size={20} />
-                            <span className="hidden md:inline">Import</span>
+                            <span className="hidden md:inline">{t('planner.import')}</span>
                         </button>
                         <button
                             onClick={() => setIsCreating(true)}
                             className="btn btn-primary"
                         >
                             <Plus size={20} />
-                            <span className="hidden md:inline">New Plan</span>
-                            <span className="md:hidden">New</span>
+                            <span className="hidden md:inline">{t('planner.newPlan')}</span>
+                            <span className="md:hidden">{t('planner.create')}</span>
                         </button>
                     </div>
                 )}
@@ -367,7 +369,7 @@ const Planner = () => {
             {isCreating ? (
                 <div className="glass-card animate-fade-in">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-xl font-bold text-white">{editingId ? 'Edit Routine' : 'Create New Routine'}</h3>
+                        <h3 className="text-xl font-bold text-white">{editingId ? t('planner.editRoutine') : t('planner.createRoutine')}</h3>
                         <button onClick={handleCancel} className="text-slate-400 hover:text-white">
                             <X size={24} />
                         </button>
@@ -375,7 +377,7 @@ const Planner = () => {
 
                     <div className="space-y-4 mb-6">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">Routine Name</label>
+                            <label className="block text-sm font-medium text-slate-400 mb-1">{t('planner.routineName')}</label>
                             <input
                                 type="text"
                                 value={newWorkoutName}
@@ -387,27 +389,27 @@ const Planner = () => {
 
                         <div className="space-y-3">
                             <div className="flex justify-between items-center">
-                                <label className="block text-sm font-medium text-slate-400">Exercises</label>
+                                <label className="block text-sm font-medium text-slate-400">{t('planner.exercises')}</label>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => setShowTemplateModal(true)}
                                         className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
                                     >
-                                        <BookOpen size={16} /> Load Template
+                                        <BookOpen size={16} /> {t('planner.loadTemplate')}
                                     </button>
                                     <button onClick={() => setShowSelector(true)} className="text-sm text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1 px-2 py-1">
-                                        <Plus size={16} /> Add Exercise
+                                        <Plus size={16} /> {t('planner.addExercise')}
                                     </button>
                                 </div>
                             </div>
 
                             {/* Desktop Headers */}
                             <div className="hidden md:grid md:grid-cols-12 gap-2 px-3 mb-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                <div className="md:col-span-5 pl-8">Exercise</div>
+                                <div className="md:col-span-5 pl-8">{t('planner.exercises')}</div>
                                 <div className="md:col-span-7 grid grid-cols-7 gap-2 text-center">
-                                    <div className="col-span-2">Sets</div>
-                                    <div className="col-span-2">Reps</div>
-                                    <div className="col-span-3">Rest (s)</div>
+                                    <div className="col-span-2">{t('planner.sets')}</div>
+                                    <div className="col-span-2">{t('planner.reps')}</div>
+                                    <div className="col-span-3">{t('planner.rest')}</div>
                                 </div>
                             </div>
 
@@ -422,11 +424,11 @@ const Planner = () => {
 
                                     <div className="mt-6 md:mt-0 md:ml-8 md:mr-10 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-2 items-center">
                                         <div className="md:col-span-5">
-                                            <label className="block text-xs text-slate-500 md:hidden mb-1">Exercise Name</label>
+                                            <label className="block text-xs text-slate-500 md:hidden mb-1">{t('planner.exerciseName')}</label>
                                             <div className="flex gap-2">
                                                 <input
                                                     type="text"
-                                                    placeholder="Exercise Name"
+                                                    placeholder={t('planner.exerciseName')}
                                                     value={ex.name}
                                                     onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
@@ -441,37 +443,37 @@ const Planner = () => {
                                                     )}
                                                     title="Toggle Optional"
                                                 >
-                                                    {ex.isOptional ? 'Optional' : 'Required'}
+                                                    {ex.isOptional ? t('planner.optional') : t('planner.required')}
                                                 </button>
                                             </div>
                                         </div>
 
                                         <div className="grid grid-cols-3 gap-4 md:col-span-7 md:grid-cols-7 md:gap-2">
                                             <div className="md:col-span-2">
-                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Sets</label>
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.sets')}</label>
                                                 <input
                                                     type="number"
-                                                    placeholder="Sets"
+                                                    placeholder={t('planner.setsPlaceholder')}
                                                     value={ex.sets}
                                                     onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
                                                 />
                                             </div>
                                             <div className="md:col-span-2">
-                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Reps</label>
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.reps')}</label>
                                                 <input
                                                     type="text"
-                                                    placeholder="e.g. 8-12"
+                                                    placeholder={t('planner.repsPlaceholder')}
                                                     value={ex.reps}
                                                     onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
                                                 />
                                             </div>
                                             <div className="md:col-span-3">
-                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">Rest (s)</label>
+                                                <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.rest')}</label>
                                                 <input
                                                     type="number"
-                                                    placeholder="Rest (s)"
+                                                    placeholder={t('planner.restPlaceholder')}
                                                     value={ex.restTime || '90'}
                                                     onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
@@ -481,14 +483,14 @@ const Planner = () => {
                                             <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                                                 <input
                                                     type="text"
-                                                    placeholder="External Link (YouTube/Image)"
+                                                    placeholder={t('planner.linkPlaceholder')}
                                                     value={ex.link || ''}
                                                     onChange={(e) => updateExercise(ex.id, 'link', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
                                                 />
                                                 <input
                                                     type="text"
-                                                    placeholder="Instructions / Description"
+                                                    placeholder={t('planner.descPlaceholder')}
                                                     value={ex.description || ''}
                                                     onChange={(e) => updateExercise(ex.id, 'description', e.target.value)}
                                                     className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
@@ -501,16 +503,16 @@ const Planner = () => {
 
                             {exercises.length === 0 && (
                                 <div className="text-center py-8 text-slate-500 border-2 border-dashed border-slate-800 rounded-lg">
-                                    No exercises added yet.
+                                    {t('planner.noExercises')}
                                 </div>
                             )}
                         </div>
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        <button onClick={handleCancel} className="btn btn-secondary">Cancel</button>
+                        <button onClick={handleCancel} className="btn btn-secondary">{t('planner.cancel')}</button>
                         <button onClick={handleSave} className="btn btn-primary" disabled={!newWorkoutName}>
-                            <Save size={18} /> Save Routine
+                            <Save size={18} /> {t('planner.saveRoutine')}
                         </button>
                     </div>
                 </div>
@@ -548,7 +550,7 @@ const Planner = () => {
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-bold text-white">{workout.name}</h3>
-                                    <p className="text-sm text-slate-400">{workout.exercises.length} Exercises</p>
+                                    <p className="text-sm text-slate-400">{workout.exercises.length} {t('planner.exercises')}</p>
                                 </div>
                             </div>
 
@@ -556,11 +558,11 @@ const Planner = () => {
                                 {workout.exercises.slice(0, 3).map((ex, i) => (
                                     <div key={i} className="flex justify-between text-sm text-slate-300 border-b border-slate-800/50 pb-1 last:border-0">
                                         <span>{ex.name}</span>
-                                        <span className="text-slate-500 text-xs">{ex.sets} sets • {ex.reps} reps • {ex.restTime || 90}s</span>
+                                        <span className="text-slate-500 text-xs">{ex.sets} {t('planner.sets')} • {ex.reps} {t('planner.reps')} • {ex.restTime || 90}s</span>
                                     </div>
                                 ))}
                                 {workout.exercises.length > 3 && (
-                                    <p className="text-xs text-slate-500 pt-1">+{workout.exercises.length - 3} more</p>
+                                    <p className="text-xs text-slate-500 pt-1">+{workout.exercises.length - 3} {t('planner.more')}</p>
                                 )}
                             </div>
                         </div>
@@ -571,14 +573,14 @@ const Planner = () => {
                             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
                                 <Dumbbell size={32} />
                             </div>
-                            <h3 className="text-lg font-medium text-white mb-2">No routines yet</h3>
-                            <p className="text-slate-400 mb-6">Create your first workout plan to get started.</p>
+                            <h3 className="text-lg font-medium text-white mb-2">{t('planner.noRoutines')}</h3>
+                            <p className="text-slate-400 mb-6">{t('planner.noRoutinesSubtitle')}</p>
                             <div className="flex justify-center gap-4">
                                 <button onClick={() => setShowImportModal(true)} className="btn btn-secondary">
-                                    <Download size={18} /> Import
+                                    <Download size={18} /> {t('planner.import')}
                                 </button>
                                 <button onClick={() => setIsCreating(true)} className="btn btn-primary">
-                                    <Plus size={18} /> Create
+                                    <Plus size={18} /> {t('planner.create')}
                                 </button>
                             </div>
                         </div>

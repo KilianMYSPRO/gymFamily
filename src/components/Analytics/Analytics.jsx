@@ -2,8 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { TrendingUp, Calendar, ArrowUpRight, Weight } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Analytics = () => {
+    const { t } = useLanguage();
     const { history, weightHistory } = useStore();
     const [selectedExercise, setSelectedExercise] = useState('');
     const [metric, setMetric] = useState('weight'); // 'weight' or 'volume'
@@ -102,14 +104,14 @@ const Analytics = () => {
             {/* Weight Section */}
             <div className="mb-12">
                 <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4">
-                    <Weight className="text-sky-400" /> Body Weight
+                    <Weight className="text-sky-400" /> {t('analytics.bodyWeight')}
                 </h3>
 
                 {weightChartData.length > 1 ? (
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                         <div className="flex justify-between items-end mb-8">
                             <div>
-                                <p className="text-slate-400 text-sm mb-1">Current Weight</p>
+                                <p className="text-slate-400 text-sm mb-1">{t('analytics.currentWeight')}</p>
                                 <p className="text-3xl font-bold text-white font-mono">{latestBodyWeight} <span className="text-sm text-slate-500 font-sans">kg</span></p>
                             </div>
                             <div className={clsx("text-right", weightChange <= 0 ? "text-emerald-400" : "text-red-400")}>
@@ -117,7 +119,7 @@ const Analytics = () => {
                                     {weightChange > 0 ? '+' : ''}{weightChange.toFixed(1)} kg
                                     <ArrowUpRight size={16} className={weightChange < 0 ? "rotate-180" : ""} />
                                 </p>
-                                <p className="text-xs text-slate-500">Total Change</p>
+                                <p className="text-xs text-slate-500">{t('analytics.totalChange')}</p>
                             </div>
                         </div>
 
@@ -166,8 +168,8 @@ const Analytics = () => {
                     </div>
                 ) : (
                     <div className="text-center py-8 border-2 border-dashed border-slate-800 rounded-2xl">
-                        <p className="text-slate-400">Not enough weight data.</p>
-                        <p className="text-sm text-slate-500">Log your weight in the Profile tab to see your progress.</p>
+                        <p className="text-slate-400">{t('analytics.notEnoughWeightData')}</p>
+                        <p className="text-sm text-slate-500">{t('analytics.logWeightHint')}</p>
                     </div>
                 )}
             </div>
@@ -175,9 +177,9 @@ const Analytics = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                        <TrendingUp className="text-sky-400" /> Progress Tracker
+                        <TrendingUp className="text-sky-400" /> {t('analytics.progressTracker')}
                     </h3>
-                    <p className="text-slate-400 text-sm">Visualize your strength gains over time.</p>
+                    <p className="text-slate-400 text-sm">{t('analytics.visualizeGains')}</p>
                 </div>
 
                 <div className="flex gap-2 w-full md:w-auto">
@@ -186,8 +188,8 @@ const Analytics = () => {
                         onChange={(e) => setMetric(e.target.value)}
                         className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-1/3 md:w-32 p-2.5"
                     >
-                        <option value="weight">Max Weight</option>
-                        <option value="volume">Max Volume</option>
+                        <option value="weight">{t('analytics.maxWeight')}</option>
+                        <option value="volume">{t('analytics.maxVolume')}</option>
                     </select>
 
                     <select
@@ -195,7 +197,7 @@ const Analytics = () => {
                         onChange={(e) => setSelectedExercise(e.target.value)}
                         className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-2/3 md:w-64 p-2.5"
                     >
-                        <option value="">Select Exercise...</option>
+                        <option value="">{t('analytics.selectExercise')}</option>
                         {uniqueExercises.map(name => (
                             <option key={name} value={name}>{name}</option>
                         ))}
@@ -208,7 +210,7 @@ const Analytics = () => {
                     <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
                         <div className="flex justify-between items-end mb-8">
                             <div>
-                                <p className="text-slate-400 text-sm mb-1">Current Max</p>
+                                <p className="text-slate-400 text-sm mb-1">{t('analytics.currentMax')}</p>
                                 <p className="text-3xl font-bold text-white font-mono">{latestWeight} <span className="text-sm text-slate-500 font-sans">{metric === 'weight' ? 'kg' : 'kg·reps'}</span></p>
                             </div>
                             <div className={clsx("text-right", progress >= 0 ? "text-emerald-400" : "text-red-400")}>
@@ -216,7 +218,7 @@ const Analytics = () => {
                                     {progress >= 0 ? '+' : ''}{progress} {metric === 'weight' ? 'kg' : 'vol'}
                                     <ArrowUpRight size={16} className={progress < 0 ? "rotate-180" : ""} />
                                 </p>
-                                <p className="text-xs text-slate-500">Since first log</p>
+                                <p className="text-xs text-slate-500">{t('analytics.sinceFirstLog')}</p>
                             </div>
                         </div>
 
@@ -271,8 +273,8 @@ const Analytics = () => {
                 ) : (
                     <div className="text-center py-12 border-2 border-dashed border-slate-800 rounded-2xl">
                         <TrendingUp className="mx-auto text-slate-600 mb-4" size={32} />
-                        <p className="text-slate-400">Not enough data to chart.</p>
-                        <p className="text-sm text-slate-500">Complete at least 2 workouts with this exercise.</p>
+                        <p className="text-slate-400">{t('analytics.notEnoughData')}</p>
+                        <p className="text-sm text-slate-500">{t('analytics.completeWorkoutsHint')}</p>
                     </div>
                 )
             ) : (
@@ -280,8 +282,8 @@ const Analytics = () => {
                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
                         <TrendingUp size={32} />
                     </div>
-                    <h3 className="text-lg font-medium text-white mb-2">Select an Exercise</h3>
-                    <p className="text-slate-400">Choose an exercise above to see your progress.</p>
+                    <h3 className="text-lg font-medium text-white mb-2">{t('analytics.selectExerciseTitle')}</h3>
+                    <p className="text-slate-400">{t('analytics.selectExerciseSubtitle')}</p>
                 </div>
             )}
         </div>

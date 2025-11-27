@@ -3,8 +3,10 @@ import { useStore } from '../../context/StoreContext';
 import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play } from 'lucide-react';
 import clsx from 'clsx';
 import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Dashboard = ({ onViewChange }) => {
+    const { t } = useLanguage();
     const { activeProfile, workouts = [], history = [], deleteLog } = useStore();
     const [selectedSummary, setSelectedSummary] = useState(null);
     const [resumeWorkout, setResumeWorkout] = useState(null);
@@ -147,7 +149,7 @@ const Dashboard = ({ onViewChange }) => {
     const lastWorkoutId = recentHistory[0]?.workoutId;
     const lastWorkout = Array.isArray(workouts) ? workouts.find(w => w.id === lastWorkoutId) : null;
 
-    if (!activeProfile) return <div className="text-white p-8">Loading profile...</div>;
+    if (!activeProfile) return <div className="text-white p-8">{t('common.loading')}</div>;
 
     return (
         <div className="text-white p-6 space-y-8 pb-24 animate-enter">
@@ -164,12 +166,12 @@ const Dashboard = ({ onViewChange }) => {
                 </div>
                 <div className="relative z-10">
                     <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-1 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        Let's Crush It, <br />
+                        {t('dashboard.letsCrushIt')} <br />
                         <span className="text-electric-400">{activeProfile.name}</span>
                     </h1>
                     <p className="text-slate-400 font-medium flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-acid-500 animate-pulse"></span>
-                        Ready for gains?
+                        {t('dashboard.readyForGains')}
                     </p>
                 </div>
             </header>
@@ -180,7 +182,7 @@ const Dashboard = ({ onViewChange }) => {
                     <Dumbbell className="text-electric-400 group-hover:scale-110 transition-transform duration-300" size={28} />
                     <div className="text-center relative z-10">
                         <p className="text-3xl font-black italic text-white">{history.length}</p>
-                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Workouts</h3>
+                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t('dashboard.workouts')}</h3>
                     </div>
                 </div>
                 <div className="p-4 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group hover:border-neon-500/30 transition-colors">
@@ -188,7 +190,7 @@ const Dashboard = ({ onViewChange }) => {
                     <Calendar className="text-neon-400 group-hover:scale-110 transition-transform duration-300" size={28} />
                     <div className="text-center relative z-10">
                         <p className="text-3xl font-black italic text-white">{workouts.length}</p>
-                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">Plans</h3>
+                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t('dashboard.plans')}</h3>
                     </div>
                 </div>
 
@@ -197,7 +199,7 @@ const Dashboard = ({ onViewChange }) => {
                     <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl flex flex-col justify-center gap-1 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-r from-acid-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <h3 className="text-slate-400 text-xs uppercase tracking-wider font-bold flex items-center gap-2">
-                            <TrendingUp size={14} className="text-acid-400" /> Weekly Goal
+                            <TrendingUp size={14} className="text-acid-400" /> {t('dashboard.weeklyGoal')}
                         </h3>
                         <div className="flex items-baseline gap-2 relative z-10">
                             <p className={clsx(
@@ -218,14 +220,14 @@ const Dashboard = ({ onViewChange }) => {
                     <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl flex flex-col justify-center gap-1 relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <h3 className="text-slate-400 text-xs uppercase tracking-wider font-bold flex items-center gap-2">
-                            <span className="text-orange-500">🔥</span> Streak
+                            <span className="text-orange-500">🔥</span> {t('dashboard.streak')}
                         </h3>
                         <div className="flex items-baseline gap-2 relative z-10">
                             <p className="text-3xl font-black italic text-white">{streak}</p>
-                            <span className="text-xs text-slate-500 font-mono">weeks</span>
+                            <span className="text-xs text-slate-500 font-mono">{t('dashboard.weeks')}</span>
                         </div>
                         {streak > 0 && (
-                            <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider mt-1">Keep it up!</p>
+                            <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider mt-1">{t('dashboard.keepItUp')}</p>
                         )}
                     </div>
                 </div>
@@ -236,7 +238,7 @@ const Dashboard = ({ onViewChange }) => {
                 {/* Weekly Activity Chart */}
                 <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-                        <Clock size={14} /> Weekly Schedule
+                        <Clock size={14} /> {t('dashboard.weeklySchedule')}
                     </h3>
                     <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
                         {weeklyActivity.map((day, i) => (
@@ -267,7 +269,7 @@ const Dashboard = ({ onViewChange }) => {
                         <div className="absolute inset-0 bg-gradient-to-br from-electric-500 to-neon-500 rounded-3xl opacity-20 blur-xl group-hover:opacity-30 transition-opacity duration-500" />
                         <div className="bg-slate-950/90 backdrop-blur-xl p-6 rounded-[22px] border border-white/5 relative z-10 h-full">
                             <h3 className="text-lg font-black italic text-white mb-6 flex items-center gap-2">
-                                <span className="text-electric-400">⚡</span> Quick Start
+                                <span className="text-electric-400">⚡</span> {t('dashboard.quickStart')}
                             </h3>
 
                             <div className="space-y-3">
@@ -281,7 +283,7 @@ const Dashboard = ({ onViewChange }) => {
                                         <div className="absolute inset-0 bg-black/20" />
                                         <div className="relative z-10 flex items-center justify-between">
                                             <div>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mb-1 block">Resume Session</span>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mb-1 block">{t('dashboard.resumeSession')}</span>
                                                 <span className="text-lg font-black italic text-white">{resumeWorkout.name}</span>
                                             </div>
                                             <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
@@ -294,7 +296,7 @@ const Dashboard = ({ onViewChange }) => {
                                 {/* Most Used Plans */}
                                 {mostUsedWorkouts.length > 0 ? (
                                     <>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2 mt-4">Most Used</p>
+                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2 mt-4">{t('dashboard.mostUsed')}</p>
                                         <div className="grid grid-cols-1 gap-2">
                                             {mostUsedWorkouts.map(w => (
                                                 <button
@@ -304,7 +306,7 @@ const Dashboard = ({ onViewChange }) => {
                                                 >
                                                     <span className="font-bold text-slate-300 group-hover/item:text-white transition-colors">{w.name}</span>
                                                     <div className="flex items-center gap-3">
-                                                        <span className="text-[10px] font-mono text-slate-600 group-hover/item:text-electric-400 transition-colors">{w.count} plays</span>
+                                                        <span className="text-[10px] font-mono text-slate-600 group-hover/item:text-electric-400 transition-colors">{w.count} {t('dashboard.plays')}</span>
                                                         <ArrowRight size={16} className="text-slate-600 group-hover/item:text-electric-400 -translate-x-2 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300" />
                                                     </div>
                                                 </button>
@@ -313,12 +315,12 @@ const Dashboard = ({ onViewChange }) => {
                                     </>
                                 ) : (
                                     <div className="text-center py-8">
-                                        <p className="text-slate-500 text-xs mb-4">No plans yet.</p>
+                                        <p className="text-slate-500 text-xs mb-4">{t('dashboard.noPlans')}</p>
                                         <button
                                             onClick={() => onViewChange && onViewChange('planner')}
                                             className="w-full btn btn-secondary py-3 text-sm"
                                         >
-                                            Create Routine
+                                            {t('dashboard.createRoutine')}
                                         </button>
                                     </div>
                                 )}
@@ -328,7 +330,7 @@ const Dashboard = ({ onViewChange }) => {
 
                     {/* Recent History Section */}
                     <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">Recent History</h3>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{t('dashboard.recentHistory')}</h3>
                         <div className="space-y-1">
                             {recentHistory.map(h => (
                                 <div key={h.id || Math.random()} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
@@ -339,7 +341,7 @@ const Dashboard = ({ onViewChange }) => {
                                     <div className="flex items-center gap-2">
                                         <div className="text-right mr-2">
                                             <p className="text-sm text-electric-400 font-mono font-bold">{formatDuration(h.duration)}</p>
-                                            <p className="text-[10px] text-slate-600">{h.completedSets || 0} sets</p>
+                                            <p className="text-[10px] text-slate-600">{h.completedSets || 0} {t('dashboard.sets')}</p>
                                         </div>
                                         <button
                                             onClick={() => setSelectedSummary(h)}
@@ -357,7 +359,7 @@ const Dashboard = ({ onViewChange }) => {
                                 </div>
                             ))}
                             {recentHistory.length === 0 && (
-                                <p className="text-slate-500 text-xs text-center py-4 italic">No history yet. Go lift something!</p>
+                                <p className="text-slate-500 text-xs text-center py-4 italic">{t('dashboard.noHistory')}</p>
                             )}
                         </div>
                     </div>
