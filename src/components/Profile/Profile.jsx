@@ -316,14 +316,14 @@ const Profile = () => {
                                         <div className="flex items-center gap-2 text-sm">
                                             <span className={clsx(
                                                 "w-2 h-2 rounded-full",
-                                                syncStatus === 'success' ? "bg-emerald-500" :
+                                                (syncStatus === 'success' || syncStatus === 'idle') ? "bg-emerald-500" :
                                                     syncStatus === 'syncing' ? "bg-amber-500 animate-pulse" :
-                                                        syncStatus === 'error' ? "bg-red-500" : "bg-slate-500"
+                                                        "bg-red-500"
                                             )} />
                                             <span className="text-slate-400">
-                                                {syncStatus === 'success' ? 'Synced' :
+                                                {(syncStatus === 'success' || syncStatus === 'idle') ? 'Synced' :
                                                     syncStatus === 'syncing' ? 'Syncing...' :
-                                                        syncStatus === 'error' ? 'Sync Error' : 'Idle'}
+                                                        'Sync Error'}
                                             </span>
                                         </div>
                                     </div>
