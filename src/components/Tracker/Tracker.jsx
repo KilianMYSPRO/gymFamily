@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save } from 'lucide-react';
+import { Play, Pause, RotateCcw, CheckCircle2, ChevronRight, ChevronLeft, Timer, SkipForward, Plus, Minus, Info, ExternalLink, X, Clock, ArrowLeft, Save, Sun } from 'lucide-react';
 import Portal from '../common/Portal';
 import clsx from 'clsx';
+import useWakeLock from '../../hooks/useWakeLock';
 
 const Tracker = ({ initialWorkoutId }) => {
     const { workouts, logSession } = useStore();
@@ -46,42 +47,15 @@ const Tracker = ({ initialWorkoutId }) => {
     }, [restTimer.active, restTimer.time]);
 
     // Screen Wake Lock
+    const { isLocked, type, request: requestWakeLock, release: releaseWakeLock } = useWakeLock();
+
     useEffect(() => {
-        let wakeLock = null;
-
-        const requestWakeLock = async () => {
-            if ('wakeLock' in navigator && activeWorkout) {
-                try {
-                    wakeLock = await navigator.wakeLock.request('screen');
-                    console.log('Wake Lock is active');
-                } catch (err) {
-                    console.error(`${err.name}, ${err.message}`);
-                }
-            }
-        };
-
-        const handleVisibilityChange = () => {
-            if (wakeLock !== null && document.visibilityState === 'visible') {
-                requestWakeLock();
-            }
-        };
-
         if (activeWorkout) {
             requestWakeLock();
-            document.addEventListener('visibilitychange', handleVisibilityChange);
+        } else {
+            releaseWakeLock();
         }
-
-        return () => {
-            if (wakeLock !== null) {
-                wakeLock.release()
-                    .then(() => {
-                        wakeLock = null;
-                        console.log('Wake Lock released');
-                    });
-            }
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, [activeWorkout]);
+    }, [activeWorkout, requestWakeLock, releaseWakeLock]);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
@@ -181,6 +155,26 @@ const Tracker = ({ initialWorkoutId }) => {
                                 <div className="flex items-center gap-2 text-sky-400 font-mono text-sm">
                                     <Clock size={14} />
                                     {formatTime(elapsedTime)}
+                                    <button
+                                        onClick={() => {
+                                            if (type === 'nosleep') {
+                                                releaseWakeLock();
+                                            } else {
+                                                // If unlocked OR native, upgrade to NoSleep (don't release native first)
+                                                requestWakeLock(true); // true = force NoSleep
+                                            }
+                                        }}
+                                        className={clsx(
+                                            "flex items-center gap-1 ml-2 text-xs transition-colors",
+                                            type === 'nosleep' ? "text-blue-400" :
+                                                type === 'native' ? "text-emerald-400" :
+                                                    "text-slate-600 hover:text-slate-400"
+                                        )}
+                                        title={isLocked ? `Screen Wake Lock Active (${type === 'native' ? 'Native' : 'Video Mode'})` : "Click to activate Screen Wake Lock (Video Mode)"}
+                                    >
+                                        <Sun size={12} />
+                                        <span>{type === 'nosleep' ? "Video" : isLocked ? "Awake" : "Sleep"}</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
