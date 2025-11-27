@@ -68,7 +68,31 @@ const Layout = ({ children, currentView, onViewChange }) => {
                         />
                     </nav>
                 </div>
-
+                {/* Mobile Nav */}
+                <div className="md:hidden flex justify-between items-center overflow-x-auto pb-2">
+                    <div className="flex gap-1 w-full justify-between">
+                        <button
+                            onClick={() => onViewChange('dashboard')}
+                            className={clsx("p-2 rounded-lg", currentView === 'dashboard' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><LayoutDashboard size={24} /></button>
+                        <button
+                            onClick={() => onViewChange('planner')}
+                            className={clsx("p-2 rounded-lg", currentView === 'planner' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><Calendar size={24} /></button>
+                        <button
+                            onClick={() => onViewChange('workout')}
+                            className={clsx("p-2 rounded-lg", currentView === 'workout' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><Dumbbell size={24} /></button>
+                        <button
+                            onClick={() => onViewChange('history')}
+                            className={clsx("p-2 rounded-lg", currentView === 'history' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><Clock size={24} /></button>
+                        <button
+                            onClick={() => onViewChange('profile')}
+                            className={clsx("p-2 rounded-lg", currentView === 'profile' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
+                        ><UserCircle2 size={24} /></button>
+                    </div>
+                </div>
             </aside>
 
             {/* Main Content */}
