@@ -123,11 +123,11 @@ const Tracker = ({ initialWorkoutId }) => {
 
     useEffect(() => {
         if (activeWorkout) {
-            requestWakeLock();
+            if (!isLocked) requestWakeLock();
         } else {
-            releaseWakeLock();
+            if (isLocked) releaseWakeLock();
         }
-    }, [activeWorkout, requestWakeLock, releaseWakeLock]);
+    }, [activeWorkout, isLocked, requestWakeLock, releaseWakeLock]);
 
     const formatTime = (seconds) => {
         const mins = Math.floor(seconds / 60);
