@@ -170,10 +170,10 @@ const Tracker = ({ initialWorkoutId }) => {
                                                 type === 'native' ? "text-emerald-400" :
                                                     "text-slate-600 hover:text-slate-400"
                                         )}
-                                        title={isLocked ? `Screen Wake Lock Active (${type === 'native' ? 'Native' : 'Video Mode'})` : "Click to activate Screen Wake Lock (Video Mode)"}
+                                        title={isLocked ? "Screen Stay-Awake Active" : "Click to keep screen awake"}
                                     >
                                         <Sun size={12} />
-                                        <span>{type === 'nosleep' ? "Video" : isLocked ? "Awake" : "Sleep"}</span>
+                                        <span>{isLocked ? "Awake" : "Sleep"}</span>
                                     </button>
                                 </div>
                             </div>
