@@ -185,14 +185,14 @@ const Dashboard = ({ onViewChange }) => {
                                         </div>
                                         <button
                                             onClick={() => setSelectedSummary(h)}
-                                            className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
                                             title="Share Summary"
                                         >
                                             <Share2 size={16} />
                                         </button>
                                         <button
                                             onClick={() => deleteLog(h.id)}
-                                            className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                                            className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
                                             title="Delete Log"
                                         >
                                             <Trash2 size={16} />
