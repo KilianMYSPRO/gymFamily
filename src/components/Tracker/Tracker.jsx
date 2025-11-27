@@ -328,10 +328,11 @@ const Tracker = ({ initialWorkoutId }) => {
                                                             type="text"
                                                             value={currentWeight}
                                                             onChange={(e) => handleWeightChange(ex.id, i, e.target.value)}
-                                                            placeholder="0"
-                                                            className="w-20 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-right text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                                            placeholder={ex.weight || '0'}
+                                                            disabled={isCompleted}
+                                                            className="w-20 bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-8 py-2 text-center text-white focus:outline-none focus:border-sky-500 transition-colors disabled:opacity-50"
                                                         />
-                                                        <span className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
+                                                        <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
                                                     </div>
 
                                                     <div className="flex items-center gap-2">
@@ -342,7 +343,7 @@ const Tracker = ({ initialWorkoutId }) => {
                                                                 onChange={(e) => handleRepsChange(ex.id, i, e.target.value)}
                                                                 placeholder={ex.reps}
                                                                 disabled={isCompleted}
-                                                                className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-center text-white focus:outline-none focus:border-sky-500 transition-colors disabled:opacity-50"
+                                                                className="w-20 bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-10 py-2 text-center text-white focus:outline-none focus:border-sky-500 transition-colors disabled:opacity-50"
                                                             />
                                                             <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">reps</span>
                                                         </div>
