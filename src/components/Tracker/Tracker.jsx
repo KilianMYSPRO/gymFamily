@@ -11,6 +11,7 @@ const Tracker = ({ initialWorkoutId }) => {
     const [elapsedTime, setElapsedTime] = useState(0);
     const [completedSets, setCompletedSets] = useState({});
     const [setWeights, setSetWeights] = useState({});
+    const [setReps, setSetReps] = useState({}); // New state for reps input
     const [restTimer, setRestTimer] = useState({ active: false, time: 90 });
     const [activeInfo, setActiveInfo] = useState(null);
 
@@ -64,24 +65,26 @@ const Tracker = ({ initialWorkoutId }) => {
     };
 
     const handleWeightChange = (exerciseId, setIndex, value) => {
-        setSetWeights(prev => ({
-            ...prev,
-            [`${exerciseId}-${setIndex}`]: value
-        }));
+        setSetWeights(prev => ({ ...prev, [`${exerciseId}-${setIndex}`]: value }));
+    };
+
+    const handleRepsChange = (exerciseId, setIndex, value) => {
+        setSetReps(prev => ({ ...prev, [`${exerciseId}-${setIndex}`]: value }));
     };
 
     const toggleSet = (exerciseId, setIndex) => {
         const key = `${exerciseId}-${setIndex}`;
         if (completedSets[key]?.completed) return; // Prevent undoing
 
-        const weight = setWeights[key] !== undefined ? setWeights[key] : (activeWorkout.exercises.find(e => e.id === exerciseId)?.weight || '');
+        const exercise = activeWorkout.exercises.find(e => e.id === exerciseId);
+        const weight = setWeights[key] !== undefined ? setWeights[key] : (exercise?.weight || '');
+        const reps = setReps[key] !== undefined ? setReps[key] : (exercise?.reps || '');
 
         setCompletedSets(prev => ({
             ...prev,
-            [key]: { completed: true, weight }
+            [key]: { completed: true, weight, reps }
         }));
 
-        const exercise = activeWorkout.exercises.find(e => e.id === exerciseId);
         const restDuration = exercise?.restTime ? parseInt(exercise.restTime) : 90;
         setRestTimer({ active: true, time: restDuration });
     };
@@ -101,7 +104,8 @@ const Tracker = ({ initialWorkoutId }) => {
             if (completedSets[key]?.completed) {
                 finalSets[key] = {
                     completed: true,
-                    weight: setWeights[key] !== undefined ? setWeights[key] : completedSets[key].weight
+                    weight: setWeights[key] !== undefined ? setWeights[key] : completedSets[key].weight,
+                    reps: setReps[key] !== undefined ? setReps[key] : completedSets[key].reps
                 };
             }
         });
@@ -248,18 +252,33 @@ const Tracker = ({ initialWorkoutId }) => {
                                                         <span className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">kg</span>
                                                     </div>
 
-                                                    <button
-                                                        onClick={() => toggleSet(ex.id, i)}
-                                                        disabled={isCompleted}
-                                                        className={clsx(
-                                                            "w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200",
-                                                            isCompleted
-                                                                ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
-                                                                : "bg-slate-700 text-slate-400 hover:bg-slate-600 hover:text-white"
-                                                        )}
-                                                    >
-                                                        {isCompleted ? <CheckCircle2 size={24} /> : <span className="font-bold">{ex.reps}</span>}
-                                                    </button>
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="relative">
+                                                            <input
+                                                                type="text"
+                                                                value={setReps[key] !== undefined ? setReps[key] : ex.reps}
+                                                                onChange={(e) => handleRepsChange(ex.id, i, e.target.value)}
+                                                                placeholder={ex.reps}
+                                                                disabled={isCompleted}
+                                                                className="w-16 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-center text-white focus:outline-none focus:border-sky-500 transition-colors disabled:opacity-50"
+                                                            />
+                                                            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 text-xs pointer-events-none">reps</span>
+                                                        </div>
+
+                                                        <button
+                                                            onClick={() => toggleSet(ex.id, i)}
+                                                            disabled={isCompleted}
+                                                            className={clsx(
+                                                                "w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-200",
+                                                                isCompleted
+                                                                    ? "bg-sky-500 text-white shadow-[0_0_15px_rgba(14,165,233,0.4)]"
+                                                                    : "bg-slate-700 text-slate-400 hover:bg-sky-500 hover:text-white"
+                                                            )}
+                                                            title="Complete Set"
+                                                        >
+                                                            <CheckCircle2 size={20} />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         );
