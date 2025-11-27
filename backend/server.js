@@ -42,10 +42,14 @@ app.post('/api/auth/register', async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedAnswer = req.body.securityAnswer ? await bcrypt.hash(req.body.securityAnswer.toLowerCase(), 10) : null;
+
         const user = await prisma.user.create({
             data: {
                 username,
-                password: hashedPassword
+                password: hashedPassword,
+                securityQuestion: req.body.securityQuestion,
+                securityAnswer: hashedAnswer
             }
         });
 
@@ -70,6 +74,60 @@ app.post('/api/auth/login', async (req, res) => {
         res.json({ token, user: { id: user.id, username: user.username } });
     } catch (error) {
         console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/auth/get-security-question/:username', async (req, res) => {
+    try {
+        const { username } = req.params;
+        const user = await prisma.user.findUnique({ where: { username } });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (!user.securityQuestion) {
+            return res.status(400).json({ error: 'No security question set for this user' });
+        }
+
+        res.json({ question: user.securityQuestion });
+    } catch (error) {
+        console.error('Get security question error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    try {
+        const { username, securityAnswer, newPassword } = req.body;
+
+        if (!username || !securityAnswer || !newPassword) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+
+        const user = await prisma.user.findUnique({ where: { username } });
+
+        if (!user || !user.securityAnswer) {
+            return res.status(400).json({ error: 'Invalid request' });
+        }
+
+        const isAnswerValid = await bcrypt.compare(securityAnswer.toLowerCase(), user.securityAnswer);
+
+        if (!isAnswerValid) {
+            return res.status(401).json({ error: 'Incorrect security answer' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { password: hashedPassword }
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Reset password error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
