@@ -117,7 +117,9 @@ export const translations = {
             format: "Format",
             formatJson: "Format JSON code",
             invalidFormatArray: "Invalid format: 'exercises' must be an array.",
-            invalidFormatEmpty: "Invalid format: 'exercises' array is empty."
+            invalidFormatEmpty: "Invalid format: 'exercises' array is empty.",
+            moveUp: "Move Up",
+            moveDown: "Move Down"
         },
         profile: {
             title: "My Profile",
@@ -350,7 +352,9 @@ export const translations = {
             format: "Formater",
             formatJson: "Formater le code JSON",
             invalidFormatArray: "Format invalide : 'exercises' doit être un tableau.",
-            invalidFormatEmpty: "Format invalide : le tableau 'exercises' est vide."
+            invalidFormatEmpty: "Format invalide : le tableau 'exercises' est vide.",
+            moveUp: "Monter",
+            moveDown: "Descendre"
         },
         profile: {
             title: "Mon Profil",
