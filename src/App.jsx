@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
 import Layout from './components/Layout/Layout';
 import Landing from './components/Landing/Landing';
-import Dashboard from './components/Dashboard/Dashboard';
-import Planner from './components/Planner/Planner';
-import Tracker from './components/Tracker/Tracker';
-import History from './components/History/History';
-import Profile from './components/Profile/Profile';
+import Loading from './components/common/Loading';
+
+const Dashboard = lazy(() => import('./components/Dashboard/Dashboard'));
+const Planner = lazy(() => import('./components/Planner/Planner'));
+const Tracker = lazy(() => import('./components/Tracker/Tracker'));
+const History = lazy(() => import('./components/History/History'));
+const Profile = lazy(() => import('./components/Profile/Profile'));
 
 function AppContent() {
   const { token, login } = useStore();
@@ -56,7 +58,9 @@ function AppContent() {
 
   return (
     <Layout currentView={currentView} onViewChange={handleViewChange}>
-      {renderView()}
+      <Suspense fallback={<Loading />}>
+        {renderView()}
+      </Suspense>
     </Layout>
   );
 }
