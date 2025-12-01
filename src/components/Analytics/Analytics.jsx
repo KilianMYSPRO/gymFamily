@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { TrendingUp, Calendar, ArrowUpRight, Weight } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -63,42 +64,17 @@ const Analytics = () => {
         return data;
     }, [history, selectedExercise]);
 
-    // 3. Helper to calculate chart bounds
-    const getChartBounds = (data) => {
-        if (!data || data.length === 0) return { minVal: 0, maxVal: 100, range: 100 };
-
-        const values = data.map(d => d.weight);
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        const dataRange = max - min;
-
-        // Add 10% padding based on range, with a minimum fallback
-        let padding = dataRange * 0.1;
-        if (dataRange === 0) padding = 1; // Default padding for flat lines
-
-        const minVal = min - padding;
-        const maxVal = max + padding;
-
-        return {
-            minVal,
-            maxVal,
-            range: maxVal - minVal
-        };
-    };
-
-    // 4. Helper to generate SVG path
-    const getPath = (data, width, height) => {
-        if (data.length < 2) return '';
-
-        const { minVal, range } = getChartBounds(data);
-
-        const points = data.map((d, i) => {
-            const x = (i / (data.length - 1)) * width;
-            const y = height - ((d.weight - minVal) / range) * height;
-            return `${x},${y}`;
-        });
-
-        return `M ${points.join(' L ')}`;
+    // Custom Tooltip Component
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <div className="bg-slate-800 text-white text-xs rounded px-2 py-1 text-center shadow-lg border border-slate-700">
+                    <p className="font-bold">{payload[0].value} {metric === 'weight' ? 'kg' : (payload[0].unit || 'kg')}</p>
+                    <p className="text-[10px] text-slate-400">{new Date(label).toLocaleDateString()}</p>
+                </div>
+            );
+        }
+        return null;
     };
 
     const maxWeight = chartData.length > 0 ? Math.max(...chartData.map(d => d.weight)) : 0;
@@ -121,8 +97,7 @@ const Analytics = () => {
     const startBodyWeight = weightChartData.length > 0 ? weightChartData[0].weight : 0;
     const weightChange = latestBodyWeight - startBodyWeight;
 
-    const weightChartBounds = useMemo(() => getChartBounds(weightChartData), [weightChartData]);
-    const exerciseChartBounds = useMemo(() => getChartBounds(chartData), [chartData]);
+
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -148,40 +123,38 @@ const Analytics = () => {
                             </div>
                         </div>
 
-                        <div className="h-64 w-full relative">
-                            <svg viewBox="0 0 800 300" className="w-full h-full overflow-visible">
-                                <line x1="0" y1="0" x2="800" y2="0" stroke="#1e293b" strokeDasharray="4" />
-                                <line x1="0" y1="150" x2="800" y2="150" stroke="#1e293b" strokeDasharray="4" />
-                                <line x1="0" y1="300" x2="800" y2="300" stroke="#1e293b" strokeDasharray="4" />
-
-                                <path
-                                    d={getPath(weightChartData, 800, 300)}
-                                    fill="none"
-                                    stroke="#0ea5e9"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="drop-shadow-[0_0_10px_rgba(14,165,233,0.3)]"
-                                />
-
-                                {weightChartData.map((d, i) => {
-                                    const { minVal, range } = weightChartBounds;
-                                    const x = (i / (weightChartData.length - 1)) * 800;
-                                    const y = 300 - ((d.weight - minVal) / range) * 300;
-
-                                    return (
-                                        <g key={i} className="group">
-                                            <circle cx={x} cy={y} r="4" className="fill-slate-950 stroke-sky-400 stroke-2 group-hover:r-6 transition-all" />
-                                            <foreignObject x={x - 50} y={y - 50} width="100" height="40" className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                                                <div className="bg-slate-800 text-white text-xs rounded px-2 py-1 text-center shadow-lg border border-slate-700">
-                                                    {d.weight}kg
-                                                    <div className="text-[10px] text-slate-400">{d.date.toLocaleDateString()}</div>
-                                                </div>
-                                            </foreignObject>
-                                        </g>
-                                    );
-                                })}
-                            </svg>
+                        <div className="h-64 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={weightChartData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                    <XAxis
+                                        dataKey="date"
+                                        tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        stroke="#64748b"
+                                        tick={{ fontSize: 10 }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        minTickGap={30}
+                                    />
+                                    <YAxis
+                                        domain={['auto', 'auto']}
+                                        stroke="#64748b"
+                                        tick={{ fontSize: 10 }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        width={30}
+                                    />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="weight"
+                                        stroke="#0ea5e9"
+                                        strokeWidth={3}
+                                        dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}
+                                        activeDot={{ r: 6, fill: '#0ea5e9' }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
                         </div>
 
                         <div className="flex justify-between mt-4 text-xs text-slate-500 font-medium uppercase tracking-wider">
@@ -246,44 +219,40 @@ const Analytics = () => {
                         </div>
 
                         {/* Chart Area */}
-                        <div className="h-64 w-full relative">
-                            <svg viewBox="0 0 800 300" className="w-full h-full overflow-visible">
-                                {/* Grid Lines */}
-                                <line x1="0" y1="0" x2="800" y2="0" stroke="#1e293b" strokeDasharray="4" />
-                                <line x1="0" y1="150" x2="800" y2="150" stroke="#1e293b" strokeDasharray="4" />
-                                <line x1="0" y1="300" x2="800" y2="300" stroke="#1e293b" strokeDasharray="4" />
-
-                                {/* Line Path */}
-                                <path
-                                    d={getPath(chartData, 800, 300)}
-                                    fill="none"
-                                    stroke="#0ea5e9"
-                                    strokeWidth="3"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="drop-shadow-[0_0_10px_rgba(14,165,233,0.3)]"
-                                />
-
-                                {/* Data Points */}
-                                {chartData.map((d, i) => {
-                                    const { minVal, range } = exerciseChartBounds;
-                                    const x = (i / (chartData.length - 1)) * 800;
-                                    const y = 300 - ((d.weight - minVal) / range) * 300;
-
-                                    return (
-                                        <g key={i} className="group">
-                                            <circle cx={x} cy={y} r="4" className="fill-slate-950 stroke-sky-400 stroke-2 group-hover:r-6 transition-all" />
-                                            {/* Tooltip */}
-                                            <foreignObject x={x - 50} y={y - 50} width="100" height="40" className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                                                <div className="bg-slate-800 text-white text-xs rounded px-2 py-1 text-center shadow-lg border border-slate-700">
-                                                    {d.weight}{metric === 'weight' ? 'kg' : ' vol'}
-                                                    <div className="text-[10px] text-slate-400">{d.date.toLocaleDateString()}</div>
-                                                </div>
-                                            </foreignObject>
-                                        </g>
-                                    );
-                                })}
-                            </svg>
+                        {/* Chart Area */}
+                        <div className="h-64 w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <LineChart data={chartData}>
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                    <XAxis
+                                        dataKey="date"
+                                        tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                        stroke="#64748b"
+                                        tick={{ fontSize: 10 }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        minTickGap={30}
+                                    />
+                                    <YAxis
+                                        domain={['auto', 'auto']}
+                                        stroke="#64748b"
+                                        tick={{ fontSize: 10 }}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        width={30}
+                                    />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="weight"
+                                        stroke="#0ea5e9"
+                                        strokeWidth={3}
+                                        dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}
+                                        activeDot={{ r: 6, fill: '#0ea5e9' }}
+                                        unit={metric === 'weight' ? 'kg' : ' vol'}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
                         </div>
 
                         <div className="flex justify-between mt-4 text-xs text-slate-500 font-medium uppercase tracking-wider">
@@ -307,7 +276,7 @@ const Analytics = () => {
                     <p className="text-slate-400">{t('analytics.selectExerciseSubtitle')}</p>
                 </div>
             )}
-        </div>
+        </div >
     );
 };
 
