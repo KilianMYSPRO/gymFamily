@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft } from 'lucide-react';
+import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
 import Tooltip from '../common/Tooltip';
 import ConfirmModal from '../common/ConfirmModal';
 import RestTimer from './RestTimer';
+import PlateCalculator from './PlateCalculator';
 import { useLanguage } from '../../context/LanguageContext';
 import exercisesData from '../../data/exercises.json';
 
@@ -19,6 +20,8 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [showRestTimer, setShowRestTimer] = useState(false);
     const [restTimerDuration, setRestTimerDuration] = useState(90);
+    const [showPlateCalculator, setShowPlateCalculator] = useState(false);
+    const [calculatorTargetWeight, setCalculatorTargetWeight] = useState('');
     const hasInitialized = useRef(false);
 
     // Wake Lock
@@ -312,6 +315,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                 defaultDuration={restTimerDuration}
             />
 
+            <PlateCalculator
+                isOpen={showPlateCalculator}
+                onClose={() => setShowPlateCalculator(false)}
+                initialWeight={calculatorTargetWeight}
+            />
+
             <>
                 <div className="space-y-6 pb-24 animate-enter">
                     <header className="sticky top-0 z-20 -mx-6 -mt-6 px-6 py-4 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 shadow-2xl">
@@ -393,141 +402,164 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
                         {/* Exercise List */}
                         <div className="space-y-4">
-                            {workoutData.exercises.map((exercise, exerciseIndex) => (
-                                <div key={exercise.id} className="glass-card p-4 rounded-2xl animate-fade-in" style={{ animationDelay: `${exerciseIndex * 100}ms` }}>
-                                    <div
-                                        className="flex items-center justify-between mb-4 cursor-pointer"
-                                        onClick={() => toggleExerciseExpand(exercise.id)}
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            {expandedExercises[exercise.id] ? <ChevronUp size={18} className="text-slate-500" /> : <ChevronDown size={18} className="text-slate-500" />}
-                                            <h3 className="font-bold text-lg text-white">
-                                                {exercise.name}
-                                            </h3>
-                                            <div onClick={(e) => e.stopPropagation()}>
-                                                <Tooltip
-                                                    position="right"
-                                                    content={(() => {
-                                                        const exData = exercisesData.find(e => e.id === exercise.originalId || e.name === exercise.name);
-                                                        const hasCustomDesc = exercise.description && exercise.description.trim().length > 0;
-
-                                                        if (!exData && !hasCustomDesc) return <span className="text-slate-400">No details available</span>;
-
-                                                        return (
-                                                            <div className="space-y-2 max-w-xs">
-                                                                {exData && (
-                                                                    <div className="flex flex-wrap gap-1">
-                                                                        {(exData.primaryMuscles || []).map(m => (
-                                                                            <span key={m} className="text-[10px] bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
-                                                                                {m}
-                                                                            </span>
-                                                                        ))}
-                                                                    </div>
-                                                                )}
-
-                                                                {hasCustomDesc ? (
-                                                                    <div className="text-slate-300 text-xs border-l-2 border-sky-500/50 pl-2 italic">
-                                                                        {exercise.description}
-                                                                    </div>
-                                                                ) : (
-                                                                    exData && exData.instructions && (
-                                                                        <ul className="list-disc list-inside text-slate-300 space-y-1">
-                                                                            {exData.instructions.slice(0, 3).map((inst, i) => (
-                                                                                <li key={i}>{inst}</li>
-                                                                            ))}
-                                                                        </ul>
-                                                                    )
-                                                                )}
-
-                                                                {exercise.link && (
-                                                                    <a
-                                                                        href={exercise.link}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="flex items-center gap-2 text-xs text-sky-400 hover:text-sky-300 font-medium pt-2 border-t border-white/10"
-                                                                    >
-                                                                        <ExternalLink size={12} />
-                                                                        {t('tracker.viewGuide') || 'View Guide'}
-                                                                    </a>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })()}
-                                                >
-                                                    <div className="p-1 text-slate-500 hover:text-sky-400 transition-colors">
-                                                        <Info size={16} />
-                                                    </div>
-                                                </Tooltip>
-                                            </div>
-                                        </div>
-                                        <button
-                                            onClick={(e) => { e.stopPropagation(); addSet(exerciseIndex); }}
-                                            className="p-2 hover:bg-white/10 rounded-lg text-sky-400 transition-colors"
+                            {workoutData.exercises.map((exercise, exerciseIndex) => {
+                                const isSuperset = !!exercise.supersetId;
+                                return (
+                                    <div key={exercise.id} className={clsx(
+                                        "glass-card p-4 rounded-2xl animate-fade-in relative transition-all",
+                                        isSuperset && "border-l-4 border-l-indigo-500"
+                                    )} style={{ animationDelay: `${exerciseIndex * 100}ms` }}>
+                                        <div
+                                            className="flex items-center justify-between mb-4 cursor-pointer"
+                                            onClick={() => toggleExerciseExpand(exercise.id)}
                                         >
-                                            <Plus size={18} />
-                                        </button>
-                                    </div>
-
-                                    {(!expandedExercises[exercise.id]) && (
-                                        <div className="space-y-2">
-                                            <div className="grid grid-cols-10 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
-                                                <div className="col-span-1 text-center">Set</div>
-                                                <div className="col-span-3 text-center">kg</div>
-                                                <div className="col-span-3 text-center">Reps</div>
-                                                <div className="col-span-3 text-center">Done</div>
-                                            </div>
-
-                                            {exercise.sets.map((set, setIndex) => (
-                                                <div key={set.id} className={clsx(
-                                                    "grid grid-cols-10 gap-2 items-center p-2 rounded-xl transition-all",
-                                                    set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
-                                                )}>
-                                                    <div className="col-span-1 text-center font-mono text-slate-400 font-bold">{setIndex + 1}</div>
-                                                    <div className="col-span-3">
-                                                        <input
-                                                            type="text"
-                                                            inputMode="decimal"
-                                                            value={set.weight}
-                                                            onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                            className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
-                                                            placeholder="0"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <input
-                                                            type="text"
-                                                            inputMode="decimal"
-                                                            value={set.reps}
-                                                            onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                            className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
-                                                            placeholder="0"
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-3 flex justify-center gap-2">
-                                                        <button
-                                                            onClick={() => toggleSetComplete(exerciseIndex, setIndex)}
-                                                            className={clsx(
-                                                                "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
-                                                                set.completed ? "bg-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]" : "bg-slate-800 text-slate-500 hover:bg-slate-700 hover:text-white"
-                                                            )}
-                                                        >
-                                                            <Clock size={16} />
-                                                        </button>
-                                                        {!set.completed && (
-                                                            <button
-                                                                onClick={() => removeSet(exerciseIndex, setIndex)}
-                                                                className="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-800 text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"
-                                                            >
-                                                                <Trash2 size={14} />
-                                                            </button>
-                                                        )}
-                                                    </div>
+                                            <div className="flex items-center gap-2">
+                                                {expandedExercises[exercise.id] ? <ChevronUp size={18} className="text-slate-500" /> : <ChevronDown size={18} className="text-slate-500" />}
+                                                <div className="flex flex-col">
+                                                    {exercise.supersetId && (
+                                                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1 mb-0.5">
+                                                            <Link size={10} /> {t('tracker.superset')}
+                                                        </span>
+                                                    )}
+                                                    <h3 className="font-bold text-lg text-white">
+                                                        {exercise.name}
+                                                    </h3>
                                                 </div>
-                                            ))}
+                                                <div onClick={(e) => e.stopPropagation()}>
+                                                    <Tooltip
+                                                        position="right"
+                                                        content={(() => {
+                                                            const exData = exercisesData.find(e => e.id === exercise.originalId || e.name === exercise.name);
+                                                            const hasCustomDesc = exercise.description && exercise.description.trim().length > 0;
+
+                                                            if (!exData && !hasCustomDesc) return <span className="text-slate-400">No details available</span>;
+
+                                                            return (
+                                                                <div className="space-y-2 max-w-xs">
+                                                                    {exData && (
+                                                                        <div className="flex flex-wrap gap-1">
+                                                                            {(exData.primaryMuscles || []).map(m => (
+                                                                                <span key={m} className="text-[10px] bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
+                                                                                    {m}
+                                                                                </span>
+                                                                            ))}
+                                                                        </div>
+                                                                    )}
+
+                                                                    {hasCustomDesc ? (
+                                                                        <div className="text-slate-300 text-xs border-l-2 border-sky-500/50 pl-2 italic">
+                                                                            {exercise.description}
+                                                                        </div>
+                                                                    ) : (
+                                                                        exData && exData.instructions && (
+                                                                            <ul className="list-disc list-inside text-slate-300 space-y-1">
+                                                                                {exData.instructions.slice(0, 3).map((inst, i) => (
+                                                                                    <li key={i}>{inst}</li>
+                                                                                ))}
+                                                                            </ul>
+                                                                        )
+                                                                    )}
+
+                                                                    {exercise.link && (
+                                                                        <a
+                                                                            href={exercise.link}
+                                                                            target="_blank"
+                                                                            rel="noopener noreferrer"
+                                                                            className="flex items-center gap-2 text-xs text-sky-400 hover:text-sky-300 font-medium pt-2 border-t border-white/10"
+                                                                        >
+                                                                            <ExternalLink size={12} />
+                                                                            {t('tracker.viewGuide') || 'View Guide'}
+                                                                        </a>
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        })()}
+                                                    >
+                                                        <div className="p-1 text-slate-500 hover:text-sky-400 transition-colors">
+                                                            <Info size={16} />
+                                                        </div>
+                                                    </Tooltip>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); addSet(exerciseIndex); }}
+                                                className="p-2 hover:bg-white/10 rounded-lg text-sky-400 transition-colors"
+                                            >
+                                                <Plus size={18} />
+                                            </button>
                                         </div>
-                                    )}
-                                </div>
-                            ))}
+
+                                        {(!expandedExercises[exercise.id]) && (
+                                            <div className="space-y-2">
+                                                <div className="grid grid-cols-10 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
+                                                    <div className="col-span-1 text-center">Set</div>
+                                                    <div className="col-span-3 text-center">kg</div>
+                                                    <div className="col-span-3 text-center">Reps</div>
+                                                    <div className="col-span-3 text-center">Done</div>
+                                                </div>
+
+                                                {exercise.sets.map((set, setIndex) => (
+                                                    <div key={set.id} className={clsx(
+                                                        "grid grid-cols-10 gap-2 items-center p-2 rounded-xl transition-all",
+                                                        set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
+                                                    )}>
+                                                        <div className="col-span-1 text-center font-mono text-slate-400 font-bold">{setIndex + 1}</div>
+                                                        <div className="col-span-3 relative">
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={set.weight}
+                                                                onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
+                                                                className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
+                                                                placeholder="0"
+                                                            />
+                                                            <button
+                                                                onClick={() => {
+                                                                    setCalculatorTargetWeight(set.weight);
+                                                                    setShowPlateCalculator(true);
+                                                                }}
+                                                                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"
+                                                                title="Plate Calculator"
+                                                            >
+                                                                <Calculator size={12} />
+                                                            </button>
+                                                        </div>
+                                                        <div className="col-span-3">
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={set.reps}
+                                                                onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
+                                                                className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
+                                                                placeholder="0"
+                                                            />
+                                                        </div>
+                                                        <div className="col-span-3 flex justify-center gap-2">
+                                                            <button
+                                                                onClick={() => toggleSetComplete(exerciseIndex, setIndex)}
+                                                                className={clsx(
+                                                                    "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
+                                                                    set.completed ? "bg-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]" : "bg-slate-800 text-slate-500 hover:bg-slate-700 hover:text-white"
+                                                                )}
+                                                            >
+                                                                <Clock size={16} />
+                                                            </button>
+                                                            {!set.completed && (
+                                                                <button
+                                                                    onClick={() => removeSet(exerciseIndex, setIndex)}
+                                                                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-800 text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                                                                >
+                                                                    <Trash2 size={14} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </header>
                 </div>
