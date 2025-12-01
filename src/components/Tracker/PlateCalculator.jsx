@@ -115,7 +115,7 @@ const PlateCalculator = ({ isOpen, onClose, initialWeight = '' }) => {
                                     ))
                                 ) : (
                                     <div className="text-slate-600 text-sm font-medium italic">
-                                        {weight && parseFloat(weight) < 20 ? "Weight too low" : "Enter weight"}
+                                        {weight && parseFloat(weight) < 20 ? t('plateCalculator.weightTooLow') : t('plateCalculator.enterWeight')}
                                     </div>
                                 )}
                             </div>

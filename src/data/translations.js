@@ -111,7 +111,13 @@ export const translations = {
             selectMode: "Select Mode",
             group: "Group",
             ungroup: "Ungroup",
-            superset: "Superset"
+            superset: "Superset",
+            editJson: "Edit JSON",
+            editJsonSubtitle: "Directly edit workout data",
+            format: "Format",
+            formatJson: "Format JSON code",
+            invalidFormatArray: "Invalid format: 'exercises' must be an array.",
+            invalidFormatEmpty: "Invalid format: 'exercises' array is empty."
         },
         profile: {
             title: "My Profile",
@@ -216,7 +222,9 @@ export const translations = {
         plateCalculator: {
             title: "Plate Calculator",
             subtitle: "Standard 20kg Bar",
-            perSide: "Plates per side"
+            perSide: "Plates per side",
+            weightTooLow: "Weight too low",
+            enterWeight: "Enter weight"
         },
         common: {
             loading: "Loading...",
@@ -336,7 +344,13 @@ export const translations = {
             selectMode: "Mode Sélection",
             group: "Grouper",
             ungroup: "Dégrouper",
-            superset: "Superset"
+            superset: "Superset",
+            editJson: "Modifier JSON",
+            editJsonSubtitle: "Modifier directement les données",
+            format: "Formater",
+            formatJson: "Formater le code JSON",
+            invalidFormatArray: "Format invalide : 'exercises' doit être un tableau.",
+            invalidFormatEmpty: "Format invalide : le tableau 'exercises' est vide."
         },
         profile: {
             title: "Mon Profil",
@@ -441,7 +455,9 @@ export const translations = {
         plateCalculator: {
             title: "Calculateur de Plaques",
             subtitle: "Barre Standard 20kg",
-            perSide: "Plaques par côté"
+            perSide: "Plaques par côté",
+            weightTooLow: "Poids trop faible",
+            enterWeight: "Entrez le poids"
         },
         common: {
             loading: "Chargement...",
