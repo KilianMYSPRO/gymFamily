@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces, FileJson, Link, CheckSquare, Square } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces, FileJson, Link, CheckSquare, Square, ChevronUp, ChevronDown } from 'lucide-react';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -81,6 +81,16 @@ const Planner = () => {
 
         setSelectedExercises([]);
         setSelectionMode(false);
+    };
+
+    const moveExercise = (index, direction) => {
+        const newExercises = [...exercises];
+        if (direction === 'up' && index > 0) {
+            [newExercises[index], newExercises[index - 1]] = [newExercises[index - 1], newExercises[index]];
+        } else if (direction === 'down' && index < newExercises.length - 1) {
+            [newExercises[index], newExercises[index + 1]] = [newExercises[index + 1], newExercises[index]];
+        }
+        setExercises(newExercises);
     };
 
     const findExerciseId = (name) => {
@@ -618,7 +628,25 @@ const Planner = () => {
                                                 <div className="w-0.5 h-full bg-indigo-500/50"></div>
                                             </div>
                                         )}
-                                        <div className="absolute top-2 right-2">
+                                        <div className="absolute top-2 right-2 flex items-center gap-1">
+                                            <div className="flex flex-col mr-2">
+                                                <button
+                                                    onClick={() => moveExercise(idx, 'up')}
+                                                    disabled={idx === 0 || selectionMode}
+                                                    className="text-slate-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed p-0.5"
+                                                    title={t('planner.moveUp')}
+                                                >
+                                                    <ChevronUp size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => moveExercise(idx, 'down')}
+                                                    disabled={idx === exercises.length - 1 || selectionMode}
+                                                    className="text-slate-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed p-0.5"
+                                                    title={t('planner.moveDown')}
+                                                >
+                                                    <ChevronDown size={16} />
+                                                </button>
+                                            </div>
                                             <button onClick={() => removeExercise(ex.id)} className="text-slate-500 hover:text-red-400 p-2">
                                                 <Trash2 size={18} />
                                             </button>
