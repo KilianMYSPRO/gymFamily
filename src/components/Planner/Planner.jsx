@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces } from 'lucide-react';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces, FileJson } from 'lucide-react';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
 import { generateUUID } from '../../utils/uuid';
 import ExerciseSelector from './ExerciseSelector';
 import templates from '../../data/templates.json';
+import exercisesData from '../../data/exercises.json';
 
 const Planner = () => {
     const { t } = useLanguage();
@@ -23,6 +24,11 @@ const Planner = () => {
             return [];
         }
     });
+
+    // JSON Editor State
+    const [editingJsonId, setEditingJsonId] = useState(null);
+    const [jsonContent, setJsonContent] = useState('');
+    const [jsonError, setJsonError] = useState(null);
 
     // Persist state
     React.useEffect(() => {
@@ -41,6 +47,11 @@ const Planner = () => {
 
     // Template State
     const [showTemplateModal, setShowTemplateModal] = useState(false);
+
+    const findExerciseId = (name) => {
+        const match = exercisesData.find(ex => ex.name.toLowerCase() === name.toLowerCase());
+        return match ? match.id : null;
+    };
 
     const handleAddExercise = (exercise) => {
         setExercises([...exercises, {
@@ -200,7 +211,8 @@ const Planner = () => {
                     weight: ex.weight || '',
                     link: ex.link || '',
                     description: ex.description || '',
-                    isOptional: ex.isOptional || false
+                    isOptional: ex.isOptional || false,
+                    originalId: findExerciseId(ex.name)
                 };
             });
 
@@ -229,9 +241,54 @@ const Planner = () => {
             weight: '',
             link: '',
             description: '',
-            isOptional: false
+            isOptional: false,
+            originalId: findExerciseId(ex.name)
         })));
         setShowTemplateModal(false);
+    };
+
+    // JSON Editor Logic
+    const handleEditJson = (workout) => {
+        setEditingJsonId(workout.id);
+        setJsonContent(JSON.stringify(workout, null, 2));
+        setJsonError(null);
+    };
+
+    const handleFormatJson = () => {
+        try {
+            const parsed = JSON.parse(jsonContent);
+            setJsonContent(JSON.stringify(parsed, null, 2));
+            setJsonError(null);
+        } catch (e) {
+            setJsonError(`${t('planner.formatError')}: ${e.message}`);
+        }
+    };
+
+    const handleSaveJson = () => {
+        try {
+            const parsed = JSON.parse(jsonContent);
+
+            if (!parsed.name || typeof parsed.name !== 'string') {
+                throw new Error(t('planner.missingName'));
+            }
+
+            if (!Array.isArray(parsed.exercises)) {
+                throw new Error("Invalid format: 'exercises' must be an array.");
+            }
+
+            // Ensure ID matches
+            if (parsed.id !== editingJsonId) {
+                // Force the ID to match the one we are editing to prevent duplicates/confusion
+                parsed.id = editingJsonId;
+            }
+
+            updateWorkout(parsed);
+            setEditingJsonId(null);
+            setJsonContent('');
+            setJsonError(null);
+        } catch (e) {
+            setJsonError(`${t('planner.invalidJson')}: ${e.message}`);
+        }
     };
 
     return (
@@ -335,6 +392,55 @@ const Planner = () => {
                                     </div>
                                 </button>
                             ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* JSON Editor Modal */}
+            {editingJsonId && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-fade-in">
+                    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-2xl relative flex flex-col h-[80vh]">
+                        <div className="flex justify-between items-center mb-4 shrink-0">
+                            <div>
+                                <h3 className="text-xl font-bold text-white">Edit JSON</h3>
+                                <p className="text-slate-400 text-sm">Directly edit workout data</p>
+                            </div>
+                            <button onClick={() => setEditingJsonId(null)} className="text-slate-400 hover:text-white">
+                                <X size={24} />
+                            </button>
+                        </div>
+
+                        <div className="flex justify-end mb-2 shrink-0">
+                            <button
+                                onClick={handleFormatJson}
+                                className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-700 transition-colors flex items-center gap-1"
+                                title="Format JSON code"
+                            >
+                                <Braces size={12} /> Format
+                            </button>
+                        </div>
+
+                        <textarea
+                            value={jsonContent}
+                            onChange={(e) => {
+                                setJsonContent(e.target.value);
+                                setJsonError(null);
+                            }}
+                            className="w-full flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4 resize-none"
+                        />
+
+                        {jsonError && (
+                            <p className="text-red-400 text-sm mb-4 bg-red-400/10 p-2 rounded border border-red-400/20 shrink-0">
+                                {jsonError}
+                            </p>
+                        )}
+
+                        <div className="flex justify-end gap-3 shrink-0">
+                            <button onClick={() => setEditingJsonId(null)} className="btn btn-secondary w-full md:w-auto">{t('planner.cancel')}</button>
+                            <button onClick={handleSaveJson} className="btn btn-primary w-full md:w-auto">
+                                <Save size={18} /> {t('planner.saveRoutine')}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -521,6 +627,13 @@ const Planner = () => {
                     {workouts.map(workout => (
                         <div key={workout.id} className="glass-card group relative">
                             <div className="absolute top-4 right-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                <button
+                                    onClick={() => handleEditJson(workout)}
+                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                    title="Edit JSON"
+                                >
+                                    <FileJson size={18} />
+                                </button>
                                 <button
                                     onClick={() => handleExport(workout)}
                                     className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"

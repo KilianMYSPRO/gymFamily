@@ -57,6 +57,14 @@ export const StoreProvider = ({ children }) => {
         }
     });
     const [syncStatus, setSyncStatus] = useState('idle'); // idle, syncing, error, success
+    const [activeWorkout, setActiveWorkout] = useState(() => {
+        try {
+            const saved = localStorage.getItem('duogym-active-workout');
+            return saved ? JSON.parse(saved) : null;
+        } catch {
+            return null;
+        }
+    });
 
     useEffect(() => {
         localStorage.setItem('duogym-data', JSON.stringify(data));
@@ -78,6 +86,14 @@ export const StoreProvider = ({ children }) => {
         }
     }, [user]);
 
+    useEffect(() => {
+        if (activeWorkout) {
+            localStorage.setItem('duogym-active-workout', JSON.stringify(activeWorkout));
+        } else {
+            localStorage.removeItem('duogym-active-workout');
+        }
+    }, [activeWorkout]);
+
     // Sync Logic
     const syncData = async (authToken = token) => {
         if (!authToken) return;
@@ -95,14 +111,27 @@ export const StoreProvider = ({ children }) => {
 
             if (serverData && Object.keys(serverData).length > 0) {
                 // Merge/Replace strategy: Server wins for now to ensure consistency
-                setData(prev => ({
-                    ...prev,
-                    ...serverData,
-                    // Ensure arrays are arrays
-                    profiles: Array.isArray(serverData.profiles) ? serverData.profiles : prev.profiles,
-                    history: Array.isArray(serverData.history) ? serverData.history : prev.history,
-                    weightHistory: Array.isArray(serverData.weightHistory) ? serverData.weightHistory : prev.weightHistory,
-                }));
+                // Merge/Replace strategy: Merge history/weightHistory to preserve local changes, replace others
+                setData(prev => {
+                    const mergeArrays = (local, server) => {
+                        const serverIds = new Set(server.map(i => i.id));
+                        const localUnique = local.filter(i => !serverIds.has(i.id));
+                        return [...server, ...localUnique];
+                    };
+
+                    return {
+                        ...prev,
+                        ...serverData,
+                        // Ensure arrays are arrays and merge them
+                        profiles: Array.isArray(serverData.profiles) ? serverData.profiles : prev.profiles,
+                        history: Array.isArray(serverData.history)
+                            ? mergeArrays(prev.history, serverData.history)
+                            : prev.history,
+                        weightHistory: Array.isArray(serverData.weightHistory)
+                            ? mergeArrays(prev.weightHistory, serverData.weightHistory)
+                            : prev.weightHistory,
+                    };
+                });
             } else {
                 // If server is empty, push local data
                 await pushData(authToken);
@@ -209,10 +238,32 @@ export const StoreProvider = ({ children }) => {
     };
 
     const logSession = (session) => {
-        setData(prev => ({
-            ...prev,
-            history: [...prev.history, { ...session, id: generateUUID(), profileId: activeProfileId, date: new Date().toISOString() }]
-        }));
+        setData(prev => {
+            // 1. Add to history
+            const newHistory = [...prev.history, { ...session, id: generateUUID(), profileId: activeProfileId, date: new Date().toISOString() }];
+
+            // 2. Update workout stats (lastPerformed, usageCount)
+            const userWorkouts = prev.workouts[activeProfileId] || [];
+            const updatedWorkouts = userWorkouts.map(w => {
+                if (w.id === session.id) {
+                    return {
+                        ...w,
+                        lastPerformed: new Date().toISOString(),
+                        usageCount: (w.usageCount || 0) + 1
+                    };
+                }
+                return w;
+            });
+
+            return {
+                ...prev,
+                history: newHistory,
+                workouts: {
+                    ...prev.workouts,
+                    [activeProfileId]: updatedWorkouts
+                }
+            };
+        });
     };
 
     const deleteLog = (logId) => {
@@ -305,6 +356,7 @@ export const StoreProvider = ({ children }) => {
         }
     };
 
+
     return (
         <StoreContext.Provider value={{
             activeProfileId,
@@ -330,7 +382,9 @@ export const StoreProvider = ({ children }) => {
             login,
             logout,
             syncStatus,
-            syncData
+            syncData,
+            activeWorkout,
+            setActiveWorkout
         }}>
             {children}
         </StoreContext.Provider>

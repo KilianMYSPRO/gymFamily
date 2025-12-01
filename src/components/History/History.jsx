@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Calendar, Clock, Dumbbell, Trash2, Share2 } from 'lucide-react';
 import WorkoutSummaryCard from './WorkoutSummaryCard';
@@ -6,14 +6,15 @@ import Portal from '../common/Portal';
 import { useLanguage } from '../../context/LanguageContext';
 
 const History = () => {
-    const { t } = useLanguage();
     const { history, deleteLog } = useStore();
+    const { t } = useLanguage();
     const [selectedSummary, setSelectedSummary] = useState(null);
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
-            weekday: 'short',
-            month: 'short',
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
             day: 'numeric'
         });
     };
@@ -24,7 +25,9 @@ const History = () => {
     };
 
     // Sort history by date descending
-    const sortedHistory = [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const sortedHistory = useMemo(() => {
+        return [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }, [history]);
 
     return (
         <>
@@ -87,7 +90,7 @@ const History = () => {
                                                 <Clock size={14} /> {formatTime(session.duration)}
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <Dumbbell size={14} /> {session.completedSets} {t('history.sets')}
+                                                <Dumbbell size={14} /> {session.exercises ? session.exercises.reduce((acc, ex) => acc + (ex.sets ? ex.sets.length : 0), 0) : 0} {t('history.sets')}
                                             </span>
                                         </div>
                                     </div>
