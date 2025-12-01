@@ -10,6 +10,8 @@ const Tracker = lazy(() => import('./components/Tracker/Tracker'));
 const History = lazy(() => import('./components/History/History'));
 const Profile = lazy(() => import('./components/Profile/Profile'));
 
+import ErrorBoundary from './components/common/ErrorBoundary';
+
 function AppContent() {
   const { token, login } = useStore();
   const [currentView, setCurrentView] = useState(() => {
@@ -58,9 +60,11 @@ function AppContent() {
 
   return (
     <Layout currentView={currentView} onViewChange={handleViewChange}>
-      <Suspense fallback={<Loading />}>
-        {renderView()}
-      </Suspense>
+      <ErrorBoundary>
+        <Suspense fallback={<Loading />}>
+          {renderView()}
+        </Suspense>
+      </ErrorBoundary>
     </Layout>
   );
 }
