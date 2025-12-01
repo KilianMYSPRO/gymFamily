@@ -107,7 +107,11 @@ export const translations = {
             more: "more",
             overwriteWarning: "Warning: Overwrite Data?",
             overwriteMessage: "Importing this file will completely replace your current profiles, workouts, and history. This action cannot be undone.",
-            yesOverwrite: "Yes, Overwrite"
+            yesOverwrite: "Yes, Overwrite",
+            selectMode: "Select Mode",
+            group: "Group",
+            ungroup: "Ungroup",
+            superset: "Superset"
         },
         profile: {
             title: "My Profile",
@@ -208,6 +212,11 @@ export const translations = {
             completeWorkoutsHint: "Complete at least 2 workouts with this exercise.",
             selectExerciseTitle: "Select an Exercise",
             selectExerciseSubtitle: "Choose an exercise above to see your progress."
+        },
+        plateCalculator: {
+            title: "Plate Calculator",
+            subtitle: "Standard 20kg Bar",
+            perSide: "Plates per side"
         },
         common: {
             loading: "Loading...",
@@ -323,7 +332,11 @@ export const translations = {
             more: "plus",
             overwriteWarning: "Attention : Écraser les données ?",
             overwriteMessage: "L'importation de ce fichier remplacera complètement vos profils, entraînements et historiques actuels. Cette action est irréversible.",
-            yesOverwrite: "Oui, écraser"
+            yesOverwrite: "Oui, écraser",
+            selectMode: "Mode Sélection",
+            group: "Grouper",
+            ungroup: "Dégrouper",
+            superset: "Superset"
         },
         profile: {
             title: "Mon Profil",
@@ -424,6 +437,11 @@ export const translations = {
             completeWorkoutsHint: "Terminez au moins 2 entraînements avec cet exercice.",
             selectExerciseTitle: "Sélectionnez un Exercice",
             selectExerciseSubtitle: "Choisissez un exercice ci-dessus pour voir vos progrès."
+        },
+        plateCalculator: {
+            title: "Calculateur de Plaques",
+            subtitle: "Barre Standard 20kg",
+            perSide: "Plaques par côté"
         },
         common: {
             loading: "Chargement...",

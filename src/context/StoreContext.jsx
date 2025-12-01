@@ -221,7 +221,13 @@ export const StoreProvider = ({ children }) => {
             workouts: {
                 ...prev.workouts,
                 [activeProfileId]: prev.workouts[activeProfileId].map(w =>
-                    w.id === updatedWorkout.id ? { ...w, ...updatedWorkout } : w
+                    w.id === updatedWorkout.id ? {
+                        ...w,
+                        ...updatedWorkout,
+                        // Explicitly preserve stats if not provided in update
+                        lastPerformed: updatedWorkout.lastPerformed !== undefined ? updatedWorkout.lastPerformed : w.lastPerformed,
+                        usageCount: updatedWorkout.usageCount !== undefined ? updatedWorkout.usageCount : w.usageCount
+                    } : w
                 )
             }
         }));
