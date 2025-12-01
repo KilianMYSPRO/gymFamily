@@ -225,11 +225,11 @@ const Planner = () => {
             }
 
             if (!Array.isArray(data.exercises)) {
-                throw new Error("Invalid format: 'exercises' must be an array.");
+                throw new Error(t('planner.invalidFormatArray'));
             }
 
             if (data.exercises.length === 0) {
-                throw new Error("Invalid format: 'exercises' array is empty.");
+                throw new Error(t('planner.invalidFormatEmpty'));
             }
 
             // Sanitize and add IDs
@@ -308,7 +308,7 @@ const Planner = () => {
             }
 
             if (!Array.isArray(parsed.exercises)) {
-                throw new Error("Invalid format: 'exercises' must be an array.");
+                throw new Error(t('planner.invalidFormatArray'));
             }
 
             // Ensure ID matches
@@ -359,9 +359,9 @@ const Planner = () => {
                                 <button
                                     onClick={handleFormat}
                                     className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-700 transition-colors flex items-center gap-1"
-                                    title="Format JSON code"
+                                    title={t('planner.formatJson')}
                                 >
-                                    <Braces size={12} /> Format
+                                    <Braces size={12} /> {t('planner.format')}
                                 </button>
                             </div>
                         </div>
@@ -438,8 +438,8 @@ const Planner = () => {
                     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full max-w-2xl relative flex flex-col h-[80vh]">
                         <div className="flex justify-between items-center mb-4 shrink-0">
                             <div>
-                                <h3 className="text-xl font-bold text-white">Edit JSON</h3>
-                                <p className="text-slate-400 text-sm">Directly edit workout data</p>
+                                <h3 className="text-xl font-bold text-white">{t('planner.editJson')}</h3>
+                                <p className="text-slate-400 text-sm">{t('planner.editJsonSubtitle')}</p>
                             </div>
                             <button onClick={() => setEditingJsonId(null)} className="text-slate-400 hover:text-white">
                                 <X size={24} />
@@ -450,9 +450,9 @@ const Planner = () => {
                             <button
                                 onClick={handleFormatJson}
                                 className="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded border border-slate-700 transition-colors flex items-center gap-1"
-                                title="Format JSON code"
+                                title={t('planner.formatJson')}
                             >
-                                <Braces size={12} /> Format
+                                <Braces size={12} /> {t('planner.format')}
                             </button>
                         </div>
 
@@ -727,7 +727,7 @@ const Planner = () => {
                                 <button
                                     onClick={() => handleEditJson(workout)}
                                     className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
-                                    title="Edit JSON"
+                                    title={t('planner.editJson')}
                                 >
                                     <FileJson size={18} />
                                 </button>
