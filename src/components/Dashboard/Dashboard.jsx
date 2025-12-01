@@ -224,19 +224,20 @@ const Dashboard = ({ onViewChange }) => {
                     <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
                         <Clock size={14} /> {t('dashboard.weeklySchedule')}
                     </h3>
-                    <div className="flex items-center justify-between gap-2 overflow-x-auto pb-2">
+                    <div className="flex justify-between items-center px-2">
                         {weeklyActivity.map((day, i) => (
-                            <div key={i} className="flex flex-col items-center gap-3 flex-1 min-w-[40px]">
-                                <div className="h-24 w-full flex items-end justify-center relative">
-                                    <div
-                                        className={clsx(
-                                            "w-2 rounded-full transition-all duration-500",
-                                            day.count > 0
-                                                ? "bg-gradient-to-t from-electric-500 to-neon-400 shadow-[0_0_10px_rgba(0,242,234,0.3)]"
-                                                : "bg-slate-800"
-                                        )}
-                                        style={{ height: day.count > 0 ? `${Math.min((day.count / maxActivity) * 100, 100)}%` : '4px' }}
-                                    />
+                            <div key={i} className="flex flex-col items-center gap-3">
+                                <div className={clsx(
+                                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300",
+                                    day.count > 0
+                                        ? "bg-electric-500/20 border-electric-400 text-electric-400 shadow-[0_0_15px_rgba(45,212,191,0.3)]"
+                                        : "bg-slate-800/50 border-slate-700 text-slate-600"
+                                )}>
+                                    {day.count > 0 ? (
+                                        <CheckCircle2 size={20} className="animate-enter" />
+                                    ) : (
+                                        <div className="w-2 h-2 rounded-full bg-slate-700" />
+                                    )}
                                 </div>
                                 <span className={clsx(
                                     "text-[10px] font-bold uppercase tracking-wider",
