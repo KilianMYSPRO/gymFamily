@@ -221,7 +221,7 @@ export const StoreProvider = ({ children }) => {
             workouts: {
                 ...prev.workouts,
                 [activeProfileId]: prev.workouts[activeProfileId].map(w =>
-                    w.id === updatedWorkout.id ? updatedWorkout : w
+                    w.id === updatedWorkout.id ? { ...w, ...updatedWorkout } : w
                 )
             }
         }));
@@ -245,7 +245,7 @@ export const StoreProvider = ({ children }) => {
             // 2. Update workout stats (lastPerformed, usageCount)
             const userWorkouts = prev.workouts[activeProfileId] || [];
             const updatedWorkouts = userWorkouts.map(w => {
-                if (w.id === session.id) {
+                if (w.id === (session.workoutId || session.id)) {
                     return {
                         ...w,
                         lastPerformed: new Date().toISOString(),
