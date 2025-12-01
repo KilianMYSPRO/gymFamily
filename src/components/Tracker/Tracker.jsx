@@ -1,25 +1,41 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun } from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
 import Tooltip from '../common/Tooltip';
 import ConfirmModal from '../common/ConfirmModal';
+import RestTimer from './RestTimer';
 import { useLanguage } from '../../context/LanguageContext';
+import exercisesData from '../../data/exercises.json';
 
-const Tracker = ({ initialWorkoutId }) => {
+const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const { t } = useLanguage();
-    const { workouts, activeWorkout, setActiveWorkout, saveWorkoutHistory } = useStore();
+    const { workouts, activeWorkout, setActiveWorkout, logSession } = useStore();
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [workoutData, setWorkoutData] = useState(null);
     const [expandedExercises, setExpandedExercises] = useState({});
     const [showCancelModal, setShowCancelModal] = useState(false);
+    const [showRestTimer, setShowRestTimer] = useState(false);
+    const [restTimerDuration, setRestTimerDuration] = useState(90);
+    const hasInitialized = useRef(false);
 
     // Wake Lock
     const { isLocked, request: requestWakeLock, release: releaseWakeLock, type } = useWakeLock();
 
-    // Timer logic
+    // Sync workoutData to activeWorkout to persist state
+    useEffect(() => {
+        if (workoutData) {
+            setActiveWorkout(prev => ({
+                ...prev,
+                ...workoutData,
+                elapsedTime // Ensure time is also up to date
+            }));
+        }
+    }, [workoutData, elapsedTime, setActiveWorkout]);
+
+    // Timer logic & Auto-save
     useEffect(() => {
         let interval;
         if (isRunning) {
@@ -33,14 +49,21 @@ const Tracker = ({ initialWorkoutId }) => {
     // Initialize workout
     useEffect(() => {
         if (activeWorkout) {
-            setWorkoutData(activeWorkout);
-            setElapsedTime(activeWorkout.elapsedTime || 0);
+            // Only set workoutData if it's not already set to prevent overwriting local state with stale store data
+            if (!workoutData) {
+                setWorkoutData(activeWorkout);
+                setElapsedTime(activeWorkout.elapsedTime || 0);
+            }
             setIsRunning(true);
             requestWakeLock(); // Auto-enable wake lock on start
-        } else if (initialWorkoutId) {
+            setIsRunning(true);
+            requestWakeLock(); // Auto-enable wake lock on start
+            hasInitialized.current = true;
+        } else if (initialWorkoutId && !hasInitialized.current) {
             const template = workouts.find(w => w.id === initialWorkoutId);
             if (template) {
                 startWorkout(template);
+                hasInitialized.current = true;
             }
         }
     }, [initialWorkoutId, activeWorkout, workouts, requestWakeLock]);
@@ -53,6 +76,7 @@ const Tracker = ({ initialWorkoutId }) => {
     const startWorkout = (template) => {
         const newWorkout = {
             ...template,
+            name: template.name || t('tracker.unknownWorkout'),
             startTime: new Date().toISOString(),
             exercises: template.exercises.map(ex => ({
                 ...ex,
@@ -71,10 +95,14 @@ const Tracker = ({ initialWorkoutId }) => {
     };
 
     const finishWorkout = () => {
-        if (!workoutData) return;
+        if (!workoutData) {
+            return;
+        }
 
         const completedWorkout = {
             ...workoutData,
+            workoutId: workoutData.id,
+            name: workoutData.name || t('tracker.unknownWorkout'),
             endTime: new Date().toISOString(),
             duration: elapsedTime,
             exercises: workoutData.exercises.map(ex => ({
@@ -83,7 +111,10 @@ const Tracker = ({ initialWorkoutId }) => {
             })).filter(ex => ex.sets.length > 0) // Only save exercises with completed sets
         };
 
-        saveWorkoutHistory(completedWorkout);
+        // Calculate total completed sets
+        completedWorkout.completedSets = completedWorkout.exercises.reduce((acc, ex) => acc + ex.sets.length, 0);
+
+        logSession(completedWorkout);
         setActiveWorkout(null);
         setIsRunning(false);
         releaseWakeLock();
@@ -92,47 +123,109 @@ const Tracker = ({ initialWorkoutId }) => {
     const toggleSetComplete = (exerciseIndex, setIndex) => {
         if (!workoutData) return;
 
-        const newExercises = [...workoutData.exercises];
-        const set = newExercises[exerciseIndex].sets[setIndex];
-        set.completed = !set.completed;
+        const newExercises = workoutData.exercises.map((ex, i) => {
+            if (i === exerciseIndex) {
+                return {
+                    ...ex,
+                    sets: ex.sets.map((s, j) => {
+                        if (j === setIndex) {
+                            return { ...s, completed: !s.completed };
+                        }
+                        return s;
+                    })
+                };
+            }
+            return ex;
+        });
 
-        setWorkoutData({ ...workoutData, exercises: newExercises });
-        setActiveWorkout({ ...workoutData, exercises: newExercises, elapsedTime });
+        const updatedWorkout = { ...workoutData, exercises: newExercises };
+        setWorkoutData(updatedWorkout);
+        setActiveWorkout({ ...updatedWorkout, elapsedTime });
+
+        // Check if set was just completed (it was false before, now true)
+        // We need to check the new state
+        const isCompleted = newExercises[exerciseIndex].sets[setIndex].completed;
+
+        if (isCompleted) {
+            const exercise = newExercises[exerciseIndex];
+            const duration = parseInt(exercise.restTime) || 90;
+            setRestTimerDuration(duration);
+            setShowRestTimer(true);
+        }
     };
+
+    const handleCloseRestTimer = useCallback(() => {
+        setShowRestTimer(false);
+    }, []);
 
     const updateSet = (exerciseIndex, setIndex, field, value) => {
         if (!workoutData) return;
 
-        const newExercises = [...workoutData.exercises];
-        newExercises[exerciseIndex].sets[setIndex][field] = value;
+        const newExercises = workoutData.exercises.map((ex, i) => {
+            if (i === exerciseIndex) {
+                return {
+                    ...ex,
+                    sets: ex.sets.map((s, j) => {
+                        if (j === setIndex) {
+                            return { ...s, [field]: value };
+                        }
+                        return s;
+                    })
+                };
+            }
+            return ex;
+        });
 
-        setWorkoutData({ ...workoutData, exercises: newExercises });
-        setActiveWorkout({ ...workoutData, exercises: newExercises, elapsedTime });
+        const updatedWorkout = { ...workoutData, exercises: newExercises };
+        setWorkoutData(updatedWorkout);
+        setActiveWorkout({ ...updatedWorkout, elapsedTime });
     };
 
     const addSet = (exerciseIndex) => {
         if (!workoutData) return;
 
-        const newExercises = [...workoutData.exercises];
-        const previousSet = newExercises[exerciseIndex].sets[newExercises[exerciseIndex].sets.length - 1];
-
-        newExercises[exerciseIndex].sets.push({
-            id: Date.now(),
-            weight: previousSet ? previousSet.weight : '',
-            reps: previousSet ? previousSet.reps : '',
-            completed: false
+        const newExercises = workoutData.exercises.map((ex, i) => {
+            if (i === exerciseIndex) {
+                const previousSet = ex.sets[ex.sets.length - 1];
+                return {
+                    ...ex,
+                    sets: [
+                        ...ex.sets,
+                        {
+                            id: Date.now(),
+                            weight: previousSet ? previousSet.weight : '',
+                            reps: previousSet ? previousSet.reps : '',
+                            completed: false
+                        }
+                    ]
+                };
+            }
+            return ex;
         });
 
-        setWorkoutData({ ...workoutData, exercises: newExercises });
+        const updatedWorkout = { ...workoutData, exercises: newExercises };
+        setWorkoutData(updatedWorkout);
+        // Note: We don't necessarily need to sync to activeWorkout here unless we want to persist empty sets immediately,
+        // but for consistency let's do it.
+        setActiveWorkout({ ...updatedWorkout, elapsedTime });
     };
 
     const removeSet = (exerciseIndex, setIndex) => {
         if (!workoutData) return;
 
-        const newExercises = [...workoutData.exercises];
-        newExercises[exerciseIndex].sets.splice(setIndex, 1);
+        const newExercises = workoutData.exercises.map((ex, i) => {
+            if (i === exerciseIndex) {
+                return {
+                    ...ex,
+                    sets: ex.sets.filter((_, j) => j !== setIndex)
+                };
+            }
+            return ex;
+        });
 
-        setWorkoutData({ ...workoutData, exercises: newExercises });
+        const updatedWorkout = { ...workoutData, exercises: newExercises };
+        setWorkoutData(updatedWorkout);
+        setActiveWorkout({ ...updatedWorkout, elapsedTime });
     };
 
     const toggleExerciseExpand = (exerciseId) => {
@@ -148,7 +241,7 @@ const Tracker = ({ initialWorkoutId }) => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    if (!activeWorkout && !initialWorkoutId) {
+    if (!activeWorkout && (!initialWorkoutId || hasInitialized.current)) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-6 animate-fade-in">
                 <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(14,165,233,0.1)]">
@@ -213,16 +306,22 @@ const Tracker = ({ initialWorkoutId }) => {
                 isDestructive={true}
             />
 
+            <RestTimer
+                isOpen={showRestTimer}
+                onClose={handleCloseRestTimer}
+                defaultDuration={restTimerDuration}
+            />
+
             <>
                 <div className="space-y-6 pb-24 animate-enter">
                     <header className="sticky top-0 z-20 -mx-6 -mt-6 px-6 py-4 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 shadow-2xl">
                         <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
                             <div className="flex items-center gap-4">
                                 <button
-                                    onClick={() => setActiveWorkout(null)}
+                                    onClick={() => onViewChange && onViewChange('dashboard')}
                                     className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors"
                                 >
-                                    <X size={20} />
+                                    <ChevronLeft size={24} />
                                 </button>
                                 <div>
                                     <h2 className="text-xl font-black italic text-white tracking-tight">{workoutData.name}</h2>
@@ -263,7 +362,7 @@ const Tracker = ({ initialWorkoutId }) => {
                                                     }
                                                 }}
                                                 className={clsx(
-                                                    "flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border transition-all",
+                                                    "flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border transition-all",
                                                     type === 'nosleep'
                                                         ? "bg-electric-500/10 text-electric-400 border-electric-500/20 shadow-[0_0_10px_rgba(0,242,234,0.2)]"
                                                         : type === 'native'
@@ -271,7 +370,7 @@ const Tracker = ({ initialWorkoutId }) => {
                                                             : "bg-slate-800 text-slate-500 border-slate-700"
                                                 )}
                                             >
-                                                <Sun size={10} />
+                                                <Sun size={14} />
                                                 <span>{type === 'nosleep' ? `${t('tracker.awake')} ⚡` : isLocked ? t('tracker.awake') : t('tracker.sleep')}</span>
                                             </button>
                                         </Tooltip>
@@ -300,10 +399,67 @@ const Tracker = ({ initialWorkoutId }) => {
                                         className="flex items-center justify-between mb-4 cursor-pointer"
                                         onClick={() => toggleExerciseExpand(exercise.id)}
                                     >
-                                        <h3 className="font-bold text-lg text-white flex items-center gap-2">
+                                        <div className="flex items-center gap-2">
                                             {expandedExercises[exercise.id] ? <ChevronUp size={18} className="text-slate-500" /> : <ChevronDown size={18} className="text-slate-500" />}
-                                            {exercise.name}
-                                        </h3>
+                                            <h3 className="font-bold text-lg text-white">
+                                                {exercise.name}
+                                            </h3>
+                                            <div onClick={(e) => e.stopPropagation()}>
+                                                <Tooltip
+                                                    position="right"
+                                                    content={(() => {
+                                                        const exData = exercisesData.find(e => e.id === exercise.originalId || e.name === exercise.name);
+                                                        const hasCustomDesc = exercise.description && exercise.description.trim().length > 0;
+
+                                                        if (!exData && !hasCustomDesc) return <span className="text-slate-400">No details available</span>;
+
+                                                        return (
+                                                            <div className="space-y-2 max-w-xs">
+                                                                {exData && (
+                                                                    <div className="flex flex-wrap gap-1">
+                                                                        {(exData.primaryMuscles || []).map(m => (
+                                                                            <span key={m} className="text-[10px] bg-sky-500/20 text-sky-400 px-1.5 py-0.5 rounded uppercase tracking-wider font-bold">
+                                                                                {m}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+
+                                                                {hasCustomDesc ? (
+                                                                    <div className="text-slate-300 text-xs border-l-2 border-sky-500/50 pl-2 italic">
+                                                                        {exercise.description}
+                                                                    </div>
+                                                                ) : (
+                                                                    exData && exData.instructions && (
+                                                                        <ul className="list-disc list-inside text-slate-300 space-y-1">
+                                                                            {exData.instructions.slice(0, 3).map((inst, i) => (
+                                                                                <li key={i}>{inst}</li>
+                                                                            ))}
+                                                                        </ul>
+                                                                    )
+                                                                )}
+
+                                                                {exercise.link && (
+                                                                    <a
+                                                                        href={exercise.link}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="flex items-center gap-2 text-xs text-sky-400 hover:text-sky-300 font-medium pt-2 border-t border-white/10"
+                                                                    >
+                                                                        <ExternalLink size={12} />
+                                                                        {t('tracker.viewGuide') || 'View Guide'}
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })()}
+                                                >
+                                                    <div className="p-1 text-slate-500 hover:text-sky-400 transition-colors">
+                                                        <Info size={16} />
+                                                    </div>
+                                                </Tooltip>
+                                            </div>
+                                        </div>
                                         <button
                                             onClick={(e) => { e.stopPropagation(); addSet(exerciseIndex); }}
                                             className="p-2 hover:bg-white/10 rounded-lg text-sky-400 transition-colors"
@@ -329,7 +485,8 @@ const Tracker = ({ initialWorkoutId }) => {
                                                     <div className="col-span-1 text-center font-mono text-slate-400 font-bold">{setIndex + 1}</div>
                                                     <div className="col-span-3">
                                                         <input
-                                                            type="number"
+                                                            type="text"
+                                                            inputMode="decimal"
                                                             value={set.weight}
                                                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
                                                             className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
@@ -338,7 +495,8 @@ const Tracker = ({ initialWorkoutId }) => {
                                                     </div>
                                                     <div className="col-span-3">
                                                         <input
-                                                            type="number"
+                                                            type="text"
+                                                            inputMode="decimal"
                                                             value={set.reps}
                                                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
                                                             className="w-full bg-transparent text-center font-bold text-white focus:outline-none"

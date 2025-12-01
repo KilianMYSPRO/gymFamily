@@ -61,7 +61,10 @@ export const translations = {
             awake: "Awake",
             sleep: "Sleep",
             native: "Native",
-            simulated: "Simulated"
+            simulated: "Simulated",
+            restTimer: "Rest Timer",
+            skipRest: "Skip Rest",
+            viewGuide: "View Guide"
         },
         planner: {
             title: "Workout Planner",
@@ -274,7 +277,10 @@ export const translations = {
             awake: "Éveillé",
             sleep: "Veille",
             native: "Natif",
-            simulated: "Simulé"
+            simulated: "Simulé",
+            restTimer: "Minuteur de Repos",
+            skipRest: "Passer le Repos",
+            viewGuide: "Voir le Guide"
         },
         planner: {
             title: "Planificateur",

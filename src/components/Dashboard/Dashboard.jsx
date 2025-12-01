@@ -7,24 +7,8 @@ import { useLanguage } from '../../context/LanguageContext';
 
 const Dashboard = ({ onViewChange }) => {
     const { t } = useLanguage();
-    const { activeProfile, workouts = [], history = [], deleteLog } = useStore();
+    const { activeProfile, workouts = [], history = [], deleteLog, activeWorkout } = useStore();
     const [selectedSummary, setSelectedSummary] = useState(null);
-    const [resumeWorkout, setResumeWorkout] = useState(null);
-
-    // Check for unfinished workout
-    useEffect(() => {
-        const saved = localStorage.getItem('duogym-active-workout');
-        if (saved) {
-            try {
-                const parsed = JSON.parse(saved);
-                if (parsed && parsed.activeWorkout) {
-                    setResumeWorkout(parsed.activeWorkout);
-                }
-            } catch (e) {
-                console.error("Failed to parse saved workout", e);
-            }
-        }
-    }, []);
 
     // Calculate Most Used Plans
     const mostUsedWorkouts = React.useMemo(() => {
@@ -274,9 +258,9 @@ const Dashboard = ({ onViewChange }) => {
 
                             <div className="space-y-3">
                                 {/* Resume Option */}
-                                {resumeWorkout && (
+                                {activeWorkout && (
                                     <button
-                                        onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: resumeWorkout.id })}
+                                        onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: activeWorkout.id })}
                                         className="w-full relative overflow-hidden group/btn rounded-2xl p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
                                     >
                                         <div className="absolute inset-0 bg-gradient-to-r from-electric-600 to-neon-600 animate-gradient-x" />
@@ -284,7 +268,7 @@ const Dashboard = ({ onViewChange }) => {
                                         <div className="relative z-10 flex items-center justify-between">
                                             <div>
                                                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mb-1 block">{t('dashboard.resumeSession')}</span>
-                                                <span className="text-lg font-black italic text-white">{resumeWorkout.name}</span>
+                                                <span className="text-lg font-black italic text-white">{activeWorkout.name}</span>
                                             </div>
                                             <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
                                                 <Play size={20} className="fill-current ml-1" />
@@ -335,7 +319,7 @@ const Dashboard = ({ onViewChange }) => {
                             {recentHistory.map(h => (
                                 <div key={h.id || Math.random()} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
                                     <div>
-                                        <p className="font-bold text-slate-200 group-hover:text-white transition-colors">{h.workoutName || 'Unknown Workout'}</p>
+                                        <p className="font-bold text-slate-200 group-hover:text-white transition-colors">{h.workoutName || h.name || 'Unknown Workout'}</p>
                                         <p className="text-[10px] text-slate-500 font-mono uppercase">{new Date(h.date).toLocaleDateString()}</p>
                                     </div>
                                     <div className="flex items-center gap-2">

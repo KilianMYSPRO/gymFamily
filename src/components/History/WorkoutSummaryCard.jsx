@@ -25,27 +25,16 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
     const [showCopyFallback, setShowCopyFallback] = React.useState(false);
 
     // Calculate total volume (approximate)
-    const totalVolume = Object.entries(workout.detailedSets || {}).reduce((acc, [key, set]) => {
-        if (set.completed) {
-            // 1. Get Reps: Try set.reps first, then fallback to exercise default
-            let reps = 0;
-            if (set.reps) {
-                reps = parseInt(set.reps.toString().match(/\d+/)?.[0] || 0);
-            } else {
-                // Fallback for legacy data: find exercise default reps
-                // Key format is "exerciseId-setIndex"
-                const exerciseId = key.split('-')[0];
-                const exercise = workout.exercises?.find(e => e.id === exerciseId);
-                if (exercise && exercise.reps) {
-                    reps = parseInt(exercise.reps.toString().match(/\d+/)?.[0] || 0);
-                }
+    const totalVolume = (workout.exercises || []).reduce((acc, ex) => {
+        const exerciseVolume = (ex.sets || []).reduce((setAcc, set) => {
+            if (set.completed || set.completed === undefined) { // Handle legacy data or assume completed if in history
+                const weight = parseFloat(set.weight?.toString().replace(/[^\d.]/g, '')) || 0;
+                const reps = parseInt(set.reps?.toString().match(/\d+/)?.[0] || 0);
+                return setAcc + (weight * reps);
             }
-
-            // 2. Get Weight: Handle non-numeric weight
-            const weight = parseFloat(set.weight.toString().replace(/[^\d.]/g, '')) || 0;
-            return acc + (weight * reps);
-        }
-        return acc;
+            return setAcc;
+        }, 0);
+        return acc + exerciseVolume;
     }, 0);
 
     const getSummaryText = () => {
@@ -53,7 +42,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
             `📅 ${formatDate(workout.date)}\n` +
             `⏱️ ${t('summary.duration')} ${formatTime(workout.duration)}\n` +
             `📊 ${t('summary.sets')} ${workout.completedSets}\n` +
-            `💪 ${t('summary.volume')} ${totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} kg\n\n` +
+            `💪 ${t('summary.volume')} ${totalVolume.toLocaleString()} kg\n\n` +
             `${t('summary.trackedWith')}`;
     };
 
@@ -123,7 +112,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                         <div className="p-4 text-center">
                             <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">Volume</p>
                             <p className="text-white font-mono font-bold">
-                                {totalVolume >= 1000 ? (totalVolume / 1000).toFixed(1) + 'k' : totalVolume} <span className="text-xs text-slate-600">kg</span>
+                                {totalVolume.toLocaleString()} <span className="text-xs text-slate-600">kg</span>
                             </p>
                         </div>
                     </div>
@@ -133,7 +122,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">{t('summary.workoutSummary')}</h3>
                         {workout.exercises && workout.exercises.map((ex, i) => {
                             // Count completed sets for this exercise
-                            const completedCount = Object.keys(workout.detailedSets || {}).filter(k => k.startsWith(ex.id) && workout.detailedSets[k].completed).length;
+                            const completedCount = (ex.sets || []).filter(s => s.completed || s.completed === undefined).length;
 
                             if (completedCount === 0) return null;
 

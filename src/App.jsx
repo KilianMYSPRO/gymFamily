@@ -44,7 +44,7 @@ function AppContent() {
       case 'planner':
         return <Planner />;
       case 'workout':
-        return <Tracker initialWorkoutId={viewData?.initialWorkoutId} />;
+        return <Tracker initialWorkoutId={viewData?.initialWorkoutId} onViewChange={handleViewChange} />;
       case 'history':
         return <History />;
       case 'profile':

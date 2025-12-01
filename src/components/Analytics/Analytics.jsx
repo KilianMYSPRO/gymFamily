@@ -53,7 +53,8 @@ const Analytics = () => {
 
                 return {
                     date: new Date(session.date),
-                    weight: maxWeight
+                    weight: maxWeight,
+                    originalId: exerciseDef.originalId || null
                 };
             })
             .filter(item => item && item.weight > 0) // Filter out sessions with no weight logged
@@ -62,13 +63,34 @@ const Analytics = () => {
         return data;
     }, [history, selectedExercise]);
 
-    // 3. Helper to generate SVG path
+    // 3. Helper to calculate chart bounds
+    const getChartBounds = (data) => {
+        if (!data || data.length === 0) return { minVal: 0, maxVal: 100, range: 100 };
+
+        const values = data.map(d => d.weight);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const dataRange = max - min;
+
+        // Add 10% padding based on range, with a minimum fallback
+        let padding = dataRange * 0.1;
+        if (dataRange === 0) padding = 1; // Default padding for flat lines
+
+        const minVal = min - padding;
+        const maxVal = max + padding;
+
+        return {
+            minVal,
+            maxVal,
+            range: maxVal - minVal
+        };
+    };
+
+    // 4. Helper to generate SVG path
     const getPath = (data, width, height) => {
         if (data.length < 2) return '';
 
-        const maxVal = Math.max(...data.map(d => d.weight)) * 1.1; // Add 10% headroom
-        const minVal = Math.min(...data.map(d => d.weight)) * 0.9;
-        const range = maxVal - minVal || 1;
+        const { minVal, range } = getChartBounds(data);
 
         const points = data.map((d, i) => {
             const x = (i / (data.length - 1)) * width;
@@ -98,6 +120,9 @@ const Analytics = () => {
     const latestBodyWeight = weightChartData.length > 0 ? weightChartData[weightChartData.length - 1].weight : 0;
     const startBodyWeight = weightChartData.length > 0 ? weightChartData[0].weight : 0;
     const weightChange = latestBodyWeight - startBodyWeight;
+
+    const weightChartBounds = useMemo(() => getChartBounds(weightChartData), [weightChartData]);
+    const exerciseChartBounds = useMemo(() => getChartBounds(chartData), [chartData]);
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -140,9 +165,7 @@ const Analytics = () => {
                                 />
 
                                 {weightChartData.map((d, i) => {
-                                    const maxVal = Math.max(...weightChartData.map(d => d.weight)) * 1.1;
-                                    const minVal = Math.min(...weightChartData.map(d => d.weight)) * 0.9;
-                                    const range = maxVal - minVal || 1;
+                                    const { minVal, range } = weightChartBounds;
                                     const x = (i / (weightChartData.length - 1)) * 800;
                                     const y = 300 - ((d.weight - minVal) / range) * 300;
 
@@ -243,9 +266,7 @@ const Analytics = () => {
 
                                 {/* Data Points */}
                                 {chartData.map((d, i) => {
-                                    const maxVal = Math.max(...chartData.map(d => d.weight)) * 1.1;
-                                    const minVal = Math.min(...chartData.map(d => d.weight)) * 0.9;
-                                    const range = maxVal - minVal || 1;
+                                    const { minVal, range } = exerciseChartBounds;
                                     const x = (i / (chartData.length - 1)) * 800;
                                     const y = 300 - ((d.weight - minVal) / range) * 300;
 

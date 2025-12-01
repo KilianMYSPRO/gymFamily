@@ -132,6 +132,31 @@ app.post('/api/auth/reset-password', async (req, res) => {
     }
 });
 
+app.post('/api/auth/update-security', authenticateToken, async (req, res) => {
+    try {
+        const { securityQuestion, securityAnswer } = req.body;
+
+        if (!securityQuestion || !securityAnswer) {
+            return res.status(400).json({ error: 'Question and answer are required' });
+        }
+
+        const hashedAnswer = await bcrypt.hash(securityAnswer.toLowerCase(), 10);
+
+        await prisma.user.update({
+            where: { id: req.user.id },
+            data: {
+                securityQuestion,
+                securityAnswer: hashedAnswer
+            }
+        });
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Update security error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Sync Routes
 app.get('/api/sync', authenticateToken, async (req, res) => {
     try {
