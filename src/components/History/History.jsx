@@ -26,7 +26,12 @@ const History = () => {
 
     // Sort history by date descending
     const sortedHistory = useMemo(() => {
-        return [...history].sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (!Array.isArray(history)) return [];
+        return [...history].sort((a, b) => {
+            const dateA = new Date(a.date || 0);
+            const dateB = new Date(b.date || 0);
+            return dateB - dateA;
+        });
     }, [history]);
 
     return (
