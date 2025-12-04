@@ -22,6 +22,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [restTimerDuration, setRestTimerDuration] = useState(90);
     const [showPlateCalculator, setShowPlateCalculator] = useState(false);
     const [calculatorTargetWeight, setCalculatorTargetWeight] = useState('');
+    const [nextExerciseName, setNextExerciseName] = useState(null);
     const hasInitialized = useRef(false);
 
     // Wake Lock
@@ -57,8 +58,6 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                 setWorkoutData(activeWorkout);
                 setElapsedTime(activeWorkout.elapsedTime || 0);
             }
-            setIsRunning(true);
-            requestWakeLock(); // Auto-enable wake lock on start
             setIsRunning(true);
             requestWakeLock(); // Auto-enable wake lock on start
             hasInitialized.current = true;
@@ -153,6 +152,16 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
             const exercise = newExercises[exerciseIndex];
             const duration = parseInt(exercise.restTime) || 90;
             setRestTimerDuration(duration);
+
+            // Determine next exercise if this is the last set
+            const isLastSet = setIndex === exercise.sets.length - 1;
+            if (isLastSet) {
+                const nextExercise = newExercises[exerciseIndex + 1];
+                setNextExerciseName(nextExercise ? nextExercise.name : null);
+            } else {
+                setNextExerciseName(null);
+            }
+
             setShowRestTimer(true);
         }
     };
@@ -313,6 +322,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                 isOpen={showRestTimer}
                 onClose={handleCloseRestTimer}
                 defaultDuration={restTimerDuration}
+                nextExercise={nextExerciseName}
             />
 
             <PlateCalculator
@@ -416,11 +426,18 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                             <div className="flex items-center gap-2">
                                                 {expandedExercises[exercise.id] ? <ChevronUp size={18} className="text-slate-500" /> : <ChevronDown size={18} className="text-slate-500" />}
                                                 <div className="flex flex-col">
-                                                    {exercise.supersetId && (
-                                                        <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1 mb-0.5">
-                                                            <Link size={10} /> {t('tracker.superset')}
-                                                        </span>
-                                                    )}
+                                                    <div className="flex flex-wrap gap-2 mb-0.5">
+                                                        {exercise.supersetId && (
+                                                            <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1">
+                                                                <Link size={10} /> {t('tracker.superset')}
+                                                            </span>
+                                                        )}
+                                                        {exercise.isOptional && (
+                                                            <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider border border-amber-500/30 px-1.5 rounded">
+                                                                {t('planner.optional') || 'Optional'}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <h3 className="font-bold text-lg text-white">
                                                         {exercise.name}
                                                     </h3>
