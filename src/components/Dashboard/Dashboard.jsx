@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play } from 'lucide-react';
+import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap } from 'lucide-react';
 import clsx from 'clsx';
 import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
+import MuscleHeatmap from '../Recovery/MuscleHeatmap';
+import { calculateRecovery } from '../../utils/recovery';
 import { useLanguage } from '../../context/LanguageContext';
 
 const Dashboard = ({ onViewChange }) => {
@@ -26,6 +28,8 @@ const Dashboard = ({ onViewChange }) => {
             .sort((a, b) => b.count - a.count)
             .slice(0, 3);
     }, [history, workouts]);
+
+    const recoveryData = React.useMemo(() => calculateRecovery(history), [history]);
 
     const formatDuration = (seconds) => {
         if (!seconds) return '0m';
@@ -220,31 +224,48 @@ const Dashboard = ({ onViewChange }) => {
             {/* Quick Actions & Recent */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Weekly Activity Chart */}
-                <div className="lg:col-span-2 bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
-                    <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-                        <Clock size={14} /> {t('dashboard.weeklySchedule')}
-                    </h3>
-                    <div className="flex justify-between items-center px-2">
-                        {weeklyActivity.map((day, i) => (
-                            <div key={i} className="flex flex-col items-center gap-3">
-                                <div className={clsx(
-                                    "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300",
-                                    day.count > 0
-                                        ? "bg-electric-500/20 border-electric-400 text-electric-400 shadow-[0_0_15px_rgba(45,212,191,0.3)]"
-                                        : "bg-slate-800/50 border-slate-700 text-slate-600"
-                                )}>
-                                    {day.count > 0 ? (
-                                        <CheckCircle2 size={20} className="animate-enter" />
-                                    ) : (
-                                        <div className="w-2 h-2 rounded-full bg-slate-700" />
-                                    )}
+                {/* Left Column: Activity & Recovery */}
+                <div className="lg:col-span-2 space-y-8">
+                    {/* Weekly Activity Chart */}
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+                            <Clock size={14} /> {t('dashboard.weeklySchedule')}
+                        </h3>
+                        <div className="flex justify-between items-center px-2">
+                            {weeklyActivity.map((day, i) => (
+                                <div key={i} className="flex flex-col items-center gap-3">
+                                    <div className={clsx(
+                                        "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300",
+                                        day.count > 0
+                                            ? "bg-electric-500/20 border-electric-400 text-electric-400 shadow-[0_0_15px_rgba(45,212,191,0.3)]"
+                                            : "bg-slate-800/50 border-slate-700 text-slate-600"
+                                    )}>
+                                        {day.count > 0 ? (
+                                            <CheckCircle2 size={20} className="animate-enter" />
+                                        ) : (
+                                            <div className="w-2 h-2 rounded-full bg-slate-700" />
+                                        )}
+                                    </div>
+                                    <span className={clsx(
+                                        "text-[10px] font-bold uppercase tracking-wider",
+                                        day.count > 0 ? "text-white" : "text-slate-600"
+                                    )}>{day.day}</span>
                                 </div>
-                                <span className={clsx(
-                                    "text-[10px] font-bold uppercase tracking-wider",
-                                    day.count > 0 ? "text-white" : "text-slate-600"
-                                )}>{day.day}</span>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Muscle Recovery Heatmap */}
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Zap size={100} className="text-emerald-500" />
+                        </div>
+                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2 relative z-10">
+                            <Zap size={14} className="text-emerald-400" /> {t('dashboard.recovery') || 'Muscle Recovery'}
+                        </h3>
+                        <div className="relative z-10">
+                            <MuscleHeatmap recoveryData={recoveryData} />
+                        </div>
                     </div>
                 </div>
 
