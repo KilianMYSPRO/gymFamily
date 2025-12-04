@@ -803,7 +803,7 @@ const Planner = () => {
                                 </button>
                             </div>
 
-                            <div className="flex items-center gap-4 mb-4">
+                            <div className="flex items-center gap-4 mb-4 pr-36">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center border border-slate-600">
                                     <Dumbbell size={24} className="text-sky-400" />
                                 </div>
