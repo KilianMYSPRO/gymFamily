@@ -44,7 +44,16 @@ const CUSTOM_MAPPINGS = {
     "Face Pull (Poulie)": "Face Pull",
     "Curl Marteau (Haltères)": "Hammer Curls",
     "Dips (Poids du corps ou Lesté)": "Dips - Chest Version",
-    "Extension Triceps (Poulie)": "Triceps Pushdown"
+    "Extension Triceps (Poulie)": "Triceps Pushdown",
+    "Extension Triceps au-dessus de la tête (Haltère ou Câble)": "Cable Rope Overhead Triceps Extension",
+    "Extension Triceps Poulie (Corde ou Barre)": "Triceps Pushdown",
+    "Crunch Câble (à genoux) ou Enroulement Bassin": "Cable Crunch",
+    "Leg Extension (Priorité Quadriceps)": "Leg Extensions",
+    "Leg Curl Assis (Priorité Ischios)": "Seated Leg Curl",
+    "Presse à Cuisses horizontale (Pieds HAUTS & Écartés)": "Leg Press",
+    "Machine Adducteurs (Intérieur Cuisse)": "Adductor",
+    "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
+    "Tirage Vertical": "Wide-Grip Lat Pulldown"
 };
 
 const STOP_WORDS = new Set(["with", "using", "the", "a", "an", "on", "de", "du", "le", "la", "les", "en", "à", "au", "aux"]);
