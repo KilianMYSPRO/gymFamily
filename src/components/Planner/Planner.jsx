@@ -262,10 +262,17 @@ const Planner = () => {
                 };
             });
 
-            addWorkout({
-                name: data.name,
-                exercises: sanitizedExercises
-            });
+            if (isCreating) {
+                // Populate form instead of saving immediately
+                setNewWorkoutName(data.name);
+                setExercises(sanitizedExercises);
+            } else {
+                // Default behavior: Add to list immediately
+                addWorkout({
+                    name: data.name,
+                    exercises: sanitizedExercises
+                });
+            }
 
             setShowImportModal(false);
             setImportJson('');
@@ -584,10 +591,17 @@ const Planner = () => {
                                         </button>
                                     )}
                                     <button
+                                        onClick={() => setShowImportModal(true)}
+                                        className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
+                                        title={t('planner.import')}
+                                    >
+                                        <Download size={16} /> <span className="hidden sm:inline">{t('planner.import')}</span>
+                                    </button>
+                                    <button
                                         onClick={() => setShowTemplateModal(true)}
                                         className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
                                     >
-                                        <BookOpen size={16} /> {t('planner.loadTemplate')}
+                                        <BookOpen size={16} /> <span className="hidden sm:inline">{t('planner.loadTemplate')}</span>
                                     </button>
                                     <button onClick={() => setShowSelector(true)} className="text-sm text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1 px-2 py-1">
                                         <Plus size={16} /> {t('planner.addExercise')}
