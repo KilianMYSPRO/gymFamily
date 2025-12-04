@@ -12,6 +12,8 @@ services:
 
   backend:
     build: ./backend
+    ports:
+      - "3002:3001"
     volumes:
       - ./backend/prisma:/app/prisma
     environment:

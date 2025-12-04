@@ -83,48 +83,58 @@ const Layout = ({ children, currentView, onViewChange }) => {
                     </button>
                 </div>
 
-                {/* Mobile Nav */}
-                <div className="md:hidden flex justify-between items-center overflow-x-auto pb-2">
-                    <div className="flex gap-1 w-full justify-between items-center">
-                        <button
-                            onClick={() => onViewChange('dashboard')}
-                            className={clsx("p-2 rounded-lg", currentView === 'dashboard' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
-                        ><LayoutDashboard size={24} /></button>
-                        <button
-                            onClick={() => onViewChange('planner')}
-                            className={clsx("p-2 rounded-lg", currentView === 'planner' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
-                        ><Calendar size={24} /></button>
-                        <button
-                            onClick={() => onViewChange('workout')}
-                            className={clsx("p-2 rounded-lg", currentView === 'workout' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
-                        ><Dumbbell size={24} /></button>
-                        <button
-                            onClick={() => onViewChange('history')}
-                            className={clsx("p-2 rounded-lg", currentView === 'history' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
-                        ><Clock size={24} /></button>
-                        <button
-                            onClick={() => onViewChange('profile')}
-                            className={clsx("p-2 rounded-lg", currentView === 'profile' ? "text-sky-400 bg-sky-400/10" : "text-slate-400")}
-                        ><UserCircle2 size={24} /></button>
 
-                        <div className="w-px h-6 bg-slate-800 mx-1"></div>
-
-                        <button
-                            onClick={toggleLanguage}
-                            className="p-2 rounded-lg text-slate-400 hover:text-white"
-                        >
-                            <Languages size={24} />
-                        </button>
-                    </div>
-                </div>
             </aside>
 
+            {/* Mobile Nav */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 p-2 z-50 pb-safe">
+                <div className="grid grid-cols-5 items-center">
+                    <button
+                        onClick={() => onViewChange('dashboard')}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1", currentView === 'dashboard' ? "text-sky-400" : "text-slate-400")}
+                    >
+                        <LayoutDashboard size={24} />
+                        <span className="text-[10px] font-medium">{t('nav.dashboard')}</span>
+                    </button>
+                    <button
+                        onClick={() => onViewChange('planner')}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1", currentView === 'planner' ? "text-sky-400" : "text-slate-400")}
+                    >
+                        <Calendar size={24} />
+                        <span className="text-[10px] font-medium">{t('nav.planner')}</span>
+                    </button>
+                    <button
+                        onClick={() => onViewChange('workout')}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1", currentView === 'workout' ? "text-sky-400" : "text-slate-400")}
+                    >
+                        <div className={clsx("p-2 rounded-full flex items-center justify-center", currentView === 'workout' ? "bg-sky-500 text-white shadow-lg shadow-sky-500/30" : "bg-slate-800 text-slate-400")}>
+                            <Dumbbell size={24} />
+                        </div>
+                        <span className="text-[10px] font-medium">{t('nav.workout')}</span>
+                    </button>
+                    <button
+                        onClick={() => onViewChange('history')}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1", currentView === 'history' ? "text-sky-400" : "text-slate-400")}
+                    >
+                        <Clock size={24} />
+                        <span className="text-[10px] font-medium">{t('nav.history')}</span>
+                    </button>
+                    <button
+                        onClick={() => onViewChange('profile')}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1", currentView === 'profile' ? "text-sky-400" : "text-slate-400")}
+                    >
+                        <UserCircle2 size={24} />
+                        <span className="text-[10px] font-medium">{t('nav.profile')}</span>
+                    </button>
+                </div>
+            </div>
+
             {/* Main Content */}
-            < main className="flex-1 p-4 md:p-8 overflow-y-auto" >
+            <main className="flex-1 p-4 md:p-8 overflow-y-auto pb-24 md:pb-8">
                 <div className="max-w-5xl mx-auto animate-fade-in">
                     {children}
                 </div>
-            </main >
+            </main>
         </div >
     );
 };
