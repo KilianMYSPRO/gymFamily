@@ -66,9 +66,7 @@ const StreakCard = ({ stats }) => {
                             className={clsx("h-full transition-all duration-1000 relative", level.color.replace('text-', 'bg-'))}
                             style={{ width: `${progress}%` }}
                         >
-                            <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite_linear]"
-                                style={{ backgroundImage: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)' }}
-                            />
+
                         </div>
                     </div>
                 </div>

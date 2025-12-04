@@ -232,6 +232,21 @@ export const translations = {
             weightTooLow: "Weight too low",
             enterWeight: "Enter weight"
         },
+        heatmap: {
+            front: "Front",
+            back: "Back",
+            fresh: "Fresh",
+            recovering: "Recov",
+            fatigued: "Tired"
+        },
+        gamification: {
+            currentRank: "Current Rank",
+            workoutsCompleted: "Workouts Completed",
+            momentum: "Momentum",
+            progressTo: "Progress to",
+            dayStreak: "Day Streak",
+            consistency: "Consistency"
+        },
         common: {
             loading: "Loading...",
             error: "Error",
@@ -475,6 +490,21 @@ export const translations = {
             perSide: "Plaques par côté",
             weightTooLow: "Poids trop faible",
             enterWeight: "Entrez le poids"
+        },
+        heatmap: {
+            front: "Face",
+            back: "Dos",
+            fresh: "Frais",
+            recovering: "Récup",
+            fatigued: "Fatigué"
+        },
+        gamification: {
+            currentRank: "Rang Actuel",
+            workoutsCompleted: "Entraînements Terminés",
+            momentum: "Momentum",
+            progressTo: "Progression vers",
+            dayStreak: "Série",
+            consistency: "Constance"
         },
         common: {
             loading: "Chargement...",
