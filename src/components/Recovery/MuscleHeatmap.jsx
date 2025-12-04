@@ -50,27 +50,51 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
         setTooltip({ ...tooltip, visible: false });
     };
 
-    // Simplified SVG Paths (Abstract representation)
+    // Detailed Organic SVG Paths
     const PATHS = {
         front: [
-            { id: 'chest', name: 'Chest', d: 'M 85 60 Q 100 70 115 60 L 115 80 Q 100 90 85 80 Z' }, // Chest
-            { id: 'abs', name: 'Abs', d: 'M 90 80 L 110 80 L 108 110 L 92 110 Z' }, // Abs
-            { id: 'shoulders', name: 'Shoulders', d: 'M 70 60 Q 80 55 85 60 L 85 75 Q 75 75 70 60 Z M 130 60 Q 120 55 115 60 L 115 75 Q 125 75 130 60 Z' }, // Delts
-            { id: 'biceps', name: 'Biceps', d: 'M 70 75 L 65 95 L 75 95 L 80 75 Z M 130 75 L 135 95 L 125 95 L 120 75 Z' }, // Biceps
-            { id: 'forearms', name: 'Forearms', d: 'M 65 95 L 60 115 L 70 115 L 75 95 Z M 135 95 L 140 115 L 130 115 L 125 95 Z' }, // Forearms
-            { id: 'quads', name: 'Quads', d: 'M 85 115 L 115 115 L 112 150 L 100 155 L 88 150 Z' }, // Quads (merged for simplicity)
-            { id: 'legs_inner', name: 'Adductors', d: 'M 98 115 L 102 115 L 101 140 L 99 140 Z' }, // Inner Thighs
-            { id: 'neck', name: 'Neck', d: 'M 95 45 L 105 45 L 105 55 L 95 55 Z' }, // Neck
+            // Neck
+            { id: 'neck', name: 'Neck', d: 'M 94 42 Q 100 45 106 42 L 106 50 Q 100 52 94 50 Z' },
+            // Traps (Front view)
+            { id: 'traps', name: 'Traps', d: 'M 94 45 L 80 52 L 85 55 L 94 50 Z M 106 45 L 120 52 L 115 55 L 106 50 Z' },
+            // Shoulders (Delts)
+            { id: 'shoulders', name: 'Shoulders', d: 'M 80 52 Q 65 52 65 65 Q 65 75 75 75 L 82 68 Z M 120 52 Q 135 52 135 65 Q 135 75 125 75 L 118 68 Z' },
+            // Chest (Pecs)
+            { id: 'chest', name: 'Chest', d: 'M 85 58 Q 100 65 115 58 L 115 75 Q 100 85 85 75 Z' },
+            // Biceps
+            { id: 'biceps', name: 'Biceps', d: 'M 75 75 Q 68 85 70 95 L 80 95 Q 82 85 82 75 Z M 125 75 Q 132 85 130 95 L 120 95 Q 118 85 118 75 Z' },
+            // Forearms
+            { id: 'forearms', name: 'Forearms', d: 'M 70 95 Q 60 105 62 120 L 75 120 Q 78 105 80 95 Z M 130 95 Q 140 105 138 120 L 125 120 Q 122 105 120 95 Z' },
+            // Abs
+            { id: 'abs', name: 'Abs', d: 'M 88 78 L 112 78 L 110 105 Q 100 110 90 105 Z' },
+            // Obliques (part of abs/core)
+            { id: 'abs', name: 'Obliques', d: 'M 88 78 Q 82 90 85 105 L 90 105 L 88 78 Z M 112 78 Q 118 90 115 105 L 110 105 L 112 78 Z' },
+            // Quads
+            { id: 'quads', name: 'Quads', d: 'M 85 110 Q 70 130 75 155 L 92 160 L 95 115 Z M 115 110 Q 130 130 125 155 L 108 160 L 105 115 Z' },
+            // Adductors
+            { id: 'legs_inner', name: 'Adductors', d: 'M 95 115 L 92 145 L 100 140 L 108 145 L 105 115 Z' },
+            // Calves (Front)
+            { id: 'calves', name: 'Calves', d: 'M 78 165 Q 72 175 75 190 L 88 190 L 90 165 Z M 122 165 Q 128 175 125 190 L 112 190 L 110 165 Z' },
         ],
         back: [
-            { id: 'traps', name: 'Traps', d: 'M 90 55 L 110 55 L 115 65 L 85 65 Z' }, // Traps
-            { id: 'lats', name: 'Lats', d: 'M 85 65 L 115 65 L 110 90 L 90 90 Z' }, // Lats
-            { id: 'lower_back', name: 'Lower Back', d: 'M 90 90 L 110 90 L 110 100 L 90 100 Z' }, // Lower Back
-            { id: 'glutes', name: 'Glutes', d: 'M 85 100 L 115 100 L 115 115 L 85 115 Z' }, // Glutes
-            { id: 'hamstrings', name: 'Hamstrings', d: 'M 88 115 L 112 115 L 110 145 L 90 145 Z' }, // Hams
-            { id: 'calves', name: 'Calves', d: 'M 90 145 L 110 145 L 108 170 L 92 170 Z' }, // Calves
-            { id: 'triceps', name: 'Triceps', d: 'M 70 65 L 80 65 L 78 85 L 72 85 Z M 130 65 L 120 65 L 122 85 L 128 85 Z' }, // Triceps
-            { id: 'shoulders', name: 'Rear Delts', d: 'M 70 60 Q 80 55 85 60 L 85 70 L 70 65 Z M 130 60 Q 120 55 115 60 L 115 70 L 130 65 Z' }, // Rear Delts
+            // Traps
+            { id: 'traps', name: 'Traps', d: 'M 92 45 L 108 45 L 115 55 L 100 75 L 85 55 Z' },
+            // Shoulders (Rear Delts)
+            { id: 'shoulders', name: 'Rear Delts', d: 'M 75 55 L 85 55 L 85 65 L 70 62 Z M 125 55 L 115 55 L 115 65 L 130 62 Z' },
+            // Lats
+            { id: 'lats', name: 'Lats', d: 'M 85 60 L 75 80 L 90 95 L 95 75 Z M 115 60 L 125 80 L 110 95 L 105 75 Z' },
+            // Triceps
+            { id: 'triceps', name: 'Triceps', d: 'M 70 65 Q 62 75 65 90 L 75 90 Q 78 75 80 65 Z M 130 65 Q 138 75 135 90 L 125 90 Q 122 75 120 65 Z' },
+            // Forearms (Back)
+            { id: 'forearms', name: 'Forearms', d: 'M 65 90 Q 58 105 60 120 L 72 120 Q 75 105 75 90 Z M 135 90 Q 142 105 140 120 L 128 120 Q 125 105 125 90 Z' },
+            // Lower Back
+            { id: 'lower_back', name: 'Lower Back', d: 'M 90 95 L 110 95 L 108 110 L 92 110 Z' },
+            // Glutes
+            { id: 'glutes', name: 'Glutes', d: 'M 85 110 Q 75 120 85 130 L 100 130 L 100 110 Z M 115 110 Q 125 120 115 130 L 100 130 L 100 110 Z' },
+            // Hamstrings
+            { id: 'hamstrings', name: 'Hamstrings', d: 'M 85 130 L 82 160 L 95 160 L 98 130 Z M 115 130 L 118 160 L 105 160 L 102 130 Z' },
+            // Calves (Back)
+            { id: 'calves', name: 'Calves', d: 'M 82 165 Q 75 175 82 190 L 92 190 Q 95 175 95 165 Z M 118 165 Q 125 175 118 190 L 108 190 Q 105 175 105 165 Z' },
         ]
     };
 
@@ -156,15 +180,15 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                         <path d="M20,100 L180,100" />
                     </g>
 
-                    {/* Silhouette / Body Outline */}
+                    {/* Silhouette / Body Outline - Refined */}
                     <g opacity="0.1" fill="currentColor" className="text-slate-300">
-                        <path d="M100,20 C115,20 120,35 120,45 C120,55 135,60 145,65 C155,70 150,110 145,120 C140,130 135,125 135,140 C135,155 130,190 125,195 C120,200 110,195 110,180 C110,165 105,150 100,150 C95,150 90,165 90,180 C90,195 80,200 75,195 C70,190 65,155 65,140 C65,125 60,130 55,120 C50,110 45,70 55,65 C65,60 80,55 80,45 C80,35 85,20 100,20 Z" />
+                        <path d="M100,35 C105,35 108,38 108,42 L115,45 L135,50 C145,52 145,65 140,75 L135,100 L140,120 L130,120 L125,100 L125,150 L115,190 L105,190 L102,150 L100,140 L98,150 L95,190 L85,190 L75,150 L75,100 L70,120 L60,120 L65,100 L60,75 C55,65 55,52 65,50 L85,45 L92,42 C92,38 95,35 100,35 Z" />
                     </g>
 
                     {/* Muscle Groups */}
-                    {PATHS[view].map(muscle => (
+                    {PATHS[view].map((muscle, idx) => (
                         <MusclePath
-                            key={muscle.id}
+                            key={`${muscle.id}-${idx}`} // Use index to allow duplicate IDs (e.g. split abs)
                             {...muscle}
                             recovery={recoveryData[muscle.id] !== undefined ? recoveryData[muscle.id] : 100}
                             onHover={handleHover}
