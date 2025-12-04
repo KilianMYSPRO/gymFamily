@@ -85,8 +85,8 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
             <div className="relative w-64 h-96 bg-slate-900/50 rounded-3xl border border-white/5 p-4 flex items-center justify-center">
                 <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl">
                     {/* Silhouette / Body Outline */}
-                    <g opacity="0.1">
-                        {/* Placeholder for body outline if needed */}
+                    <g opacity="0.1" fill="currentColor" className="text-slate-400">
+                        <path d="M100,20 C115,20 120,35 120,45 C120,55 135,60 145,65 C155,70 150,110 145,120 C140,130 135,125 135,140 C135,155 130,190 125,195 C120,200 110,195 110,180 C110,165 105,150 100,150 C95,150 90,165 90,180 C90,195 80,200 75,195 C70,190 65,155 65,140 C65,125 60,130 55,120 C50,110 45,70 55,65 C65,60 80,55 80,45 C80,35 85,20 100,20 Z" />
                     </g>
 
                     {/* Muscle Groups */}
