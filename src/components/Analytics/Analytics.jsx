@@ -5,6 +5,8 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
+import { normalizeExercise } from '../../utils/exerciseNormalization';
+
 const Analytics = () => {
     const { t } = useLanguage();
     const { history, weightHistory } = useStore();
@@ -16,7 +18,10 @@ const Analytics = () => {
         const names = new Set();
         history.forEach(session => {
             if (session.exercises) {
-                session.exercises.forEach(ex => names.add(ex.name));
+                session.exercises.forEach(ex => {
+                    const normalizedName = normalizeExercise(ex.name, ex.originalId);
+                    names.add(normalizedName);
+                });
             }
         });
         return Array.from(names).sort();
@@ -27,42 +32,47 @@ const Analytics = () => {
         if (!selectedExercise) return [];
 
         const data = history
-            .filter(session => session.exercises && session.exercises.some(ex => ex.name === selectedExercise))
+            // Filter sessions that contain the selected exercise (normalized)
+            .filter(session => session.exercises && session.exercises.some(ex => normalizeExercise(ex.name, ex.originalId) === selectedExercise))
             .map(session => {
-                // Find the exercise ID in this session
-                const exerciseDef = session.exercises.find(ex => ex.name === selectedExercise);
-                if (!exerciseDef) return null;
+                // Find all exercise instances in this session that match the selected normalized name
+                const exerciseDefs = session.exercises.filter(ex => normalizeExercise(ex.name, ex.originalId) === selectedExercise);
 
-                // Find max weight lifted for this exercise in this session
-                let maxWeight = 0;
-                Object.keys(session.detailedSets || {}).forEach(key => {
-                    if (key.startsWith(exerciseDef.id) && session.detailedSets[key].completed) {
-                        const weight = parseFloat(session.detailedSets[key].weight);
-                        const reps = parseFloat(session.detailedSets[key].reps || 0); // Default to 0 if missing
+                if (exerciseDefs.length === 0) return null;
 
-                        if (!isNaN(weight)) {
-                            if (metric === 'weight') {
-                                if (weight > maxWeight) maxWeight = weight;
-                            } else {
-                                // Volume = Weight * Reps
-                                const volume = weight * reps;
-                                if (volume > maxWeight) maxWeight = volume;
+                // Find max weight/volume across all matching exercises in this session
+                let maxVal = 0;
+
+                exerciseDefs.forEach(exerciseDef => {
+                    Object.keys(session.detailedSets || {}).forEach(key => {
+                        if (key.startsWith(exerciseDef.id) && session.detailedSets[key].completed) {
+                            const weight = parseFloat(session.detailedSets[key].weight);
+                            const reps = parseFloat(session.detailedSets[key].reps || 0);
+
+                            if (!isNaN(weight)) {
+                                if (metric === 'weight') {
+                                    if (weight > maxVal) maxVal = weight;
+                                } else {
+                                    // Volume = Weight * Reps
+                                    const volume = weight * reps;
+                                    if (volume > maxVal) maxVal = volume;
+                                }
                             }
                         }
-                    }
+                    });
                 });
 
                 return {
                     date: new Date(session.date),
-                    weight: maxWeight,
-                    originalId: exerciseDef.originalId || null
+                    weight: maxVal,
+                    // We don't strictly need originalId for the chart points
                 };
             })
             .filter(item => item && item.weight > 0) // Filter out sessions with no weight logged
             .sort((a, b) => a.date - b.date);
 
         return data;
-    }, [history, selectedExercise]);
+    }, [history, selectedExercise, metric]);
 
     // Custom Tooltip Component
     const CustomTooltip = ({ active, payload, label }) => {

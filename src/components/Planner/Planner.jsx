@@ -148,7 +148,8 @@ const Planner = () => {
 
     const handleEdit = (workout) => {
         setNewWorkoutName(workout.name);
-        setExercises(workout.exercises);
+        // Regenerate IDs to ensure uniqueness and prevent linked-editing bugs
+        setExercises(workout.exercises.map(ex => ({ ...ex, id: generateUUID() })));
         setEditingId(workout.id);
         setIsCreating(true);
     };
@@ -326,6 +327,12 @@ const Planner = () => {
                 // Force the ID to match the one we are editing to prevent duplicates/confusion
                 parsed.id = editingJsonId;
             }
+
+            // Regenerate IDs for all exercises to prevent duplicates from copy-paste
+            parsed.exercises = parsed.exercises.map(ex => ({
+                ...ex,
+                id: generateUUID()
+            }));
 
             updateWorkout(parsed);
             setEditingJsonId(null);
