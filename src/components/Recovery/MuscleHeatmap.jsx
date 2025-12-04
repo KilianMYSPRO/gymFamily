@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
+import { useLanguage } from '../../context/LanguageContext';
 
 const MusclePath = ({ id, d, name, recovery = 100, onHover, onLeave, onClick }) => {
     // Determine color state
@@ -33,6 +34,7 @@ const MusclePath = ({ id, d, name, recovery = 100, onHover, onLeave, onClick }) 
 };
 
 const MuscleHeatmap = ({ recoveryData = {} }) => {
+    const { t } = useLanguage();
     const [view, setView] = useState('front'); // 'front' or 'back'
     const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' });
 
@@ -127,7 +129,7 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                             : "text-slate-400 hover:text-white hover:bg-white/5"
                     )}
                 >
-                    FRONT
+                    {t('heatmap.front')}
                 </button>
                 <button
                     onClick={() => setView('back')}
@@ -138,7 +140,7 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                             : "text-slate-400 hover:text-white hover:bg-white/5"
                     )}
                 >
-                    BACK
+                    {t('heatmap.back')}
                 </button>
             </div>
 
@@ -200,13 +202,13 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                 {/* Legend */}
                 <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-4 text-[10px] text-slate-400 font-mono uppercase tracking-wider">
                     <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]"></div> Fresh
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]"></div> {t('heatmap.fresh')}
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"></div> Recov
+                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"></div> {t('heatmap.recovering')}
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)] animate-pulse"></div> Tired
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)] animate-pulse"></div> {t('heatmap.fatigued')}
                     </div>
                 </div>
             </div>
