@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap } from 'lucide-react';
 import clsx from 'clsx';
-import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
-import MuscleHeatmap from '../Recovery/MuscleHeatmap';
-import { calculateRecovery } from '../../utils/recovery';
-import { useLanguage } from '../../context/LanguageContext';
+import StreakCard from '../Gamification/StreakCard';
+import { calculateGamificationStats } from '../../utils/gamification';
 
 const Dashboard = ({ onViewChange }) => {
     const { t } = useLanguage();
@@ -30,6 +28,7 @@ const Dashboard = ({ onViewChange }) => {
     }, [history, workouts]);
 
     const recoveryData = React.useMemo(() => calculateRecovery(history), [history]);
+    const gamificationStats = React.useMemo(() => calculateGamificationStats(history), [history]);
 
     const formatDuration = (seconds) => {
         if (!seconds) return '0m';
@@ -68,65 +67,6 @@ const Dashboard = ({ onViewChange }) => {
 
     const weeklyActivity = getWeeklyActivity();
     const maxActivity = Math.max(...weeklyActivity.map(d => d.count), 1);
-
-    // Streak Calculation
-    const weeklyGoal = (activeProfile && activeProfile.id && useStore().profileDetails[activeProfile.id]?.weeklyGoal) || 3;
-
-    const calculateStreak = () => {
-        if (!history || history.length === 0) return { streak: 0, currentWeekCount: 0 };
-
-        // Helper to get week key (YYYY-Www)
-        const getWeekKey = (date) => {
-            const d = new Date(date);
-            d.setHours(0, 0, 0, 0);
-            d.setDate(d.getDate() + 4 - (d.getDay() || 7)); // Thursday of the week
-            const yearStart = new Date(d.getFullYear(), 0, 1);
-            const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-            return `${d.getFullYear()}-W${weekNo}`;
-        };
-
-        // Group history by week
-        const historyByWeek = {};
-        history.forEach(h => {
-            if (h && h.date) {
-                const key = getWeekKey(new Date(h.date));
-                historyByWeek[key] = (historyByWeek[key] || 0) + 1;
-            }
-        });
-
-        // Calculate current week count
-        const today = new Date();
-        const currentWeekKey = getWeekKey(today);
-        const currentWeekCount = historyByWeek[currentWeekKey] || 0;
-
-        // Calculate streak (going backwards from last week)
-        let streak = 0;
-
-        // If current week meets goal, it adds to streak
-        if (currentWeekCount >= weeklyGoal) {
-            streak++;
-        }
-
-        // Check previous weeks
-        let checkDate = new Date(today);
-        checkDate.setDate(checkDate.getDate() - 7); // Start from last week
-
-        while (true) {
-            const weekKey = getWeekKey(checkDate);
-            const count = historyByWeek[weekKey] || 0;
-
-            if (count >= weeklyGoal) {
-                streak++;
-                checkDate.setDate(checkDate.getDate() - 7); // Go back another week
-            } else {
-                break; // Streak broken
-            }
-        }
-
-        return { streak, currentWeekCount };
-    };
-
-    const { streak, currentWeekCount } = calculateStreak();
 
     // Safe History Processing
     const recentHistory = Array.isArray(history) ? history
@@ -182,42 +122,9 @@ const Dashboard = ({ onViewChange }) => {
                     </div>
                 </div>
 
-                {/* Weekly Progress & Streak */}
-                <div className="col-span-2 grid grid-cols-2 gap-4">
-                    <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl flex flex-col justify-center gap-1 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-r from-acid-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <h3 className="text-slate-400 text-xs uppercase tracking-wider font-bold flex items-center gap-2">
-                            <TrendingUp size={14} className="text-acid-400" /> {t('dashboard.weeklyGoal')}
-                        </h3>
-                        <div className="flex items-baseline gap-2 relative z-10">
-                            <p className={clsx(
-                                "text-3xl font-black italic",
-                                currentWeekCount >= weeklyGoal ? "text-acid-400" : "text-white"
-                            )}>{currentWeekCount}</p>
-                            <span className="text-xs text-slate-500 font-mono">/ {weeklyGoal}</span>
-                        </div>
-                        {/* Progress Bar */}
-                        <div className="w-full h-1 bg-slate-800 rounded-full mt-2 overflow-hidden">
-                            <div
-                                className="h-full bg-acid-400 transition-all duration-500"
-                                style={{ width: `${Math.min((currentWeekCount / weeklyGoal) * 100, 100)}%` }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="p-4 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-800 rounded-2xl flex flex-col justify-center gap-1 relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                        <h3 className="text-slate-400 text-xs uppercase tracking-wider font-bold flex items-center gap-2">
-                            <span className="text-orange-500">🔥</span> {t('dashboard.streak')}
-                        </h3>
-                        <div className="flex items-baseline gap-2 relative z-10">
-                            <p className="text-3xl font-black italic text-white">{streak}</p>
-                            <span className="text-xs text-slate-500 font-mono">{t('dashboard.weeks')}</span>
-                        </div>
-                        {streak > 0 && (
-                            <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider mt-1">{t('dashboard.keepItUp')}</p>
-                        )}
-                    </div>
+                {/* Gamification Streak Card */}
+                <div className="col-span-2">
+                    <StreakCard stats={gamificationStats} />
                 </div>
             </div>
 
