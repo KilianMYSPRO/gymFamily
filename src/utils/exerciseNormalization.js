@@ -21,6 +21,32 @@ const SYNONYMS = {
     "poids": "bodyweight"
 };
 
+const CUSTOM_MAPPINGS = {
+    // French mappings
+    "Développé Couché (Haltères ou Machine)": "Barbell Bench Press - Medium Grip",
+    "Développé Couché": "Barbell Bench Press - Medium Grip",
+    "Développé Militaire Assis (Haltères ou Machine)": "Seated Barbell Military Press",
+    "Développé Militaire": "Military Press",
+    "Écarté Poulie Vis-à-vis (Cable Fly)": "Cable Crossover",
+    "Écarté Poulie": "Cable Crossover",
+    "Élévations Latérales (Haltères ou Poulie)": "Side Lateral Raise",
+    "Élévations Latérales": "Side Lateral Raise",
+    "Curl Incliné (Haltères)": "Incline Dumbbell Curl",
+    "Curl Pupitre (Machine)": "Preacher Curl",
+    "Enroulement de Bassin": "Hanging Leg Raise", // Approximation
+    "Leg Extension (Machine)": "Leg Extensions",
+    "Presse à Cuisses (Machine)": "Leg Press",
+    "Leg Curl Assis (Machine)": "Seated Leg Curl",
+    "Mollets Debout (Machine)": "Standing Calf Raises",
+    "Tirage Vertical (Machine)": "Cable Pulldown", // Lat Pulldown
+    "Tirage Horizontal (Machine)": "Seated Cable Rows",
+    "Rowing Barre (T-Bar ou Yates)": "Bent Over Barbell Row",
+    "Face Pull (Poulie)": "Face Pull",
+    "Curl Marteau (Haltères)": "Hammer Curls",
+    "Dips (Poids du corps ou Lesté)": "Dips - Chest Version",
+    "Extension Triceps (Poulie)": "Triceps Pushdown"
+};
+
 const STOP_WORDS = new Set(["with", "using", "the", "a", "an", "on", "de", "du", "le", "la", "les", "en", "à", "au", "aux"]);
 
 /**
@@ -75,7 +101,12 @@ export const normalizeExercise = (name, originalId = null) => {
         if (match) return match.name;
     }
 
-    // 2. Check explicit aliases
+    // 2. Check custom mappings (exact match)
+    if (CUSTOM_MAPPINGS[name]) {
+        return CUSTOM_MAPPINGS[name];
+    }
+
+    // 3. Check explicit aliases
     if (EXERCISE_ALIASES[name]) {
         return EXERCISE_ALIASES[name];
     }
