@@ -555,27 +555,27 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                         </div>
 
                                         {(!expandedExercises[exercise.id]) && (
-                                            <div className="space-y-2">
-                                                <div className="grid grid-cols-10 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
-                                                    <div className="col-span-1 text-center">Set</div>
-                                                    <div className="col-span-3 text-center">kg</div>
+                                            <div className="space-y-3">
+                                                <div className="grid grid-cols-12 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
+                                                    <div className="col-span-2 text-center flex items-center justify-center">Set</div>
+                                                    <div className="col-span-4 text-center">kg</div>
                                                     <div className="col-span-3 text-center">Reps</div>
                                                     <div className="col-span-3 text-center">Done</div>
                                                 </div>
 
                                                 {exercise.sets.map((set, setIndex) => (
                                                     <div key={set.id} className={clsx(
-                                                        "grid grid-cols-10 gap-2 items-center p-2 rounded-xl transition-all",
+                                                        "grid grid-cols-12 gap-2 items-center p-3 rounded-xl transition-all",
                                                         set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
                                                     )}>
-                                                        <div className="col-span-1 text-center font-mono text-slate-400 font-bold">{setIndex + 1}</div>
-                                                        <div className="col-span-3 relative">
+                                                        <div className="col-span-2 text-center font-mono text-slate-400 font-bold text-lg">{setIndex + 1}</div>
+                                                        <div className="col-span-4 relative">
                                                             <input
                                                                 type="text"
                                                                 inputMode="decimal"
                                                                 value={set.weight}
                                                                 onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                                className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
+                                                                className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                 placeholder="0"
                                                             />
                                                             <button
@@ -583,10 +583,10 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     setCalculatorTargetWeight(set.weight);
                                                                     setShowPlateCalculator(true);
                                                                 }}
-                                                                className="absolute right-0 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100"
+                                                                className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors p-2"
                                                                 title="Plate Calculator"
                                                             >
-                                                                <Calculator size={12} />
+                                                                <Calculator size={14} />
                                                             </button>
                                                         </div>
                                                         <div className="col-span-3">
@@ -595,7 +595,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                 inputMode="decimal"
                                                                 value={set.reps}
                                                                 onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                                className="w-full bg-transparent text-center font-bold text-white focus:outline-none"
+                                                                className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                 placeholder="0"
                                                             />
                                                         </div>
@@ -603,18 +603,18 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                             <button
                                                                 onClick={() => toggleSetComplete(exerciseIndex, setIndex)}
                                                                 className={clsx(
-                                                                    "w-8 h-8 rounded-lg flex items-center justify-center transition-all",
-                                                                    set.completed ? "bg-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]" : "bg-slate-800 text-slate-500 hover:bg-slate-700 hover:text-white"
+                                                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95",
+                                                                    set.completed ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]" : "bg-slate-800 text-slate-500 hover:bg-slate-700 hover:text-white"
                                                                 )}
                                                             >
-                                                                <Clock size={16} />
+                                                                <Clock size={20} />
                                                             </button>
                                                             {!set.completed && (
                                                                 <button
                                                                     onClick={() => removeSet(exerciseIndex, setIndex)}
-                                                                    className="w-8 h-8 rounded-lg flex items-center justify-center bg-slate-800 text-slate-500 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+                                                                    className="absolute -right-2 -top-2 w-6 h-6 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                 >
-                                                                    <Trash2 size={14} />
+                                                                    <Trash2 size={12} />
                                                                 </button>
                                                             )}
                                                         </div>

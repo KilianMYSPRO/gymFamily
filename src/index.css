@@ -78,3 +78,13 @@ h3 {
 .btn-success {
   @apply bg-acid-500 text-black font-bold shadow-lg shadow-acid-500/20 hover:shadow-acid-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200;
 }
+
+/* Mobile Input Fix (Prevent Auto-Zoom) */
+@media screen and (max-width: 768px) {
+
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

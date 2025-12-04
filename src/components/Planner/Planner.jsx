@@ -707,7 +707,7 @@ const Planner = () => {
                                                         placeholder={t('planner.setsPlaceholder')}
                                                         value={ex.sets}
                                                         onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                        className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
                                                     />
                                                 </div>
                                                 <div className="md:col-span-2">
@@ -717,7 +717,7 @@ const Planner = () => {
                                                         placeholder={t('planner.repsPlaceholder')}
                                                         value={ex.reps}
                                                         onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                        className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
                                                     />
                                                 </div>
                                                 <div className="md:col-span-3">
@@ -727,24 +727,24 @@ const Planner = () => {
                                                         placeholder={t('planner.restPlaceholder')}
                                                         value={ex.restTime || '90'}
                                                         onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-center text-sm"
+                                                        className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
                                                     />
                                                 </div>
 
-                                                <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                                                <div className="col-span-3 md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                                                     <input
                                                         type="text"
                                                         placeholder={t('planner.linkPlaceholder')}
                                                         value={ex.link || ''}
                                                         onChange={(e) => updateExercise(ex.id, 'link', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
+                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-sm transition-all"
                                                     />
                                                     <input
                                                         type="text"
                                                         placeholder={t('planner.descPlaceholder')}
                                                         value={ex.description || ''}
                                                         onChange={(e) => updateExercise(ex.id, 'description', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-slate-400 px-2 py-1 outline-none text-xs"
+                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-sm transition-all"
                                                     />
                                                 </div>
                                             </div>
