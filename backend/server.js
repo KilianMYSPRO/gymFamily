@@ -5,13 +5,45 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
+const http = require('http');
+const { Server } = require('socket.io');
+
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Allow all origins for now, restrict in prod
+        methods: ["GET", "POST"]
+    }
+});
+
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 const JWT_SECRET = process.env.JWT_SECRET || 'duogym-secret-key-change-me';
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Allow larger payloads for sync
+
+// Socket.io Logic
+io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+
+    socket.on('join_room', (roomId) => {
+        socket.join(roomId);
+        console.log(`User ${socket.id} joined room: ${roomId}`);
+        socket.to(roomId).emit('partner_joined', { id: socket.id });
+    });
+
+    socket.on('workout_update', (data) => {
+        // data should contain: roomId, exerciseName, sets, reps, weight, etc.
+        const { roomId, ...workoutData } = data;
+        socket.to(roomId).emit('workout_update', workoutData);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+    });
+});
 
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
@@ -27,7 +59,9 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Auth Routes
+// ... (Auth Routes and Sync Routes remain unchanged) ...
+
+
 app.post('/api/auth/register', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -213,6 +247,6 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
