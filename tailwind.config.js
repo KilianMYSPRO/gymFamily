@@ -32,6 +32,7 @@ export default {
             animation: {
                 'enter': 'enter 0.4s ease-out forwards',
                 'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 'glow': 'glow 2s ease-in-out infinite alternate',
                 'slide-up': 'slideUp 0.5s ease-out forwards',
             },
