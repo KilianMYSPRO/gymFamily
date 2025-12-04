@@ -133,8 +133,8 @@ const Analytics = () => {
                             </div>
                         </div>
 
-                        <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-64 w-full" style={{ height: 256 }}>
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                                 <LineChart data={weightChartData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                                     <XAxis
@@ -230,8 +230,8 @@ const Analytics = () => {
 
                         {/* Chart Area */}
                         {/* Chart Area */}
-                        <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <div className="h-64 w-full" style={{ height: 256 }}>
+                            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                                 <LineChart data={chartData}>
                                     <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
                                     <XAxis

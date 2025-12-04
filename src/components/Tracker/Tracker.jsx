@@ -11,10 +11,13 @@ import { useLanguage } from '../../context/LanguageContext';
 import exercisesData from '../../data/exercises.json';
 
 import { getSuggestedWeight } from '../../utils/progression';
+import DuoPanel from '../Duo/DuoPanel';
+import { useDuo } from '../../context/DuoContext';
 
 const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const { t } = useLanguage();
     const { workouts, activeWorkout, setActiveWorkout, logSession, history } = useStore();
+    const { broadcastUpdate } = useDuo();
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [workoutData, setWorkoutData] = useState(null);
@@ -173,10 +176,20 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         // We need to check the new state
         const isCompleted = newExercises[exerciseIndex].sets[setIndex].completed;
 
+        // ... (inside toggleSetComplete)
+
         if (isCompleted) {
             const exercise = newExercises[exerciseIndex];
             const duration = parseInt(exercise.restTime) || 90;
             setRestTimerDuration(duration);
+
+            // Broadcast update to partner
+            broadcastUpdate({
+                exerciseName: exercise.name,
+                setNumber: setIndex + 1,
+                reps: exercise.sets[setIndex].reps,
+                weight: exercise.sets[setIndex].weight
+            });
 
             // Determine next exercise if this is the last set
             const isLastSet = setIndex === exercise.sets.length - 1;
@@ -433,6 +446,11 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                     <Save size={18} /> <span className="uppercase tracking-wider font-bold">{t('tracker.finish')}</span>
                                 </button>
                             </div>
+                        </div>
+
+                        {/* Duo Panel */}
+                        <div className="mb-6">
+                            <DuoPanel />
                         </div>
 
                         {/* Exercise List */}

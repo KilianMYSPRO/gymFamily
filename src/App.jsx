@@ -71,11 +71,15 @@ function AppContent() {
 
 import { LanguageProvider } from './context/LanguageContext';
 
+import { DuoProvider } from './context/DuoContext';
+
 function App() {
   return (
     <StoreProvider>
       <LanguageProvider>
-        <AppContent />
+        <DuoProvider>
+          <AppContent />
+        </DuoProvider>
       </LanguageProvider>
     </StoreProvider>
   );
