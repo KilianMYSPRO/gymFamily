@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock, Download } from 'lucide-react';
 import Portal from '../common/Portal';
 import Auth from '../Auth/Auth';
 import Analytics from '../Analytics/Analytics';
@@ -31,6 +31,25 @@ const Profile = () => {
         answer: ''
     });
     const [securityStatus, setSecurityStatus] = useState(null); // 'success', 'error', 'loading'
+    const [deferredPrompt, setDeferredPrompt] = useState(null);
+
+    useEffect(() => {
+        const handler = (e) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
 
     useEffect(() => {
         setFormData(prev => ({
@@ -474,6 +493,32 @@ const Profile = () => {
                             <div>
                                 <h3 className="text-xl font-bold text-white">{t('profile.dataManagement')}</h3>
                                 <p className="text-slate-400">{t('profile.backupSubtitle')}</p>
+                            </div>
+                        </div>
+
+                        <div className="glass-card mb-6 animate-fade-in border-sky-500/30 bg-sky-500/5">
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
+                                        <Download size={24} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-white">{t('profile.installApp')}</h3>
+                                        <p className="text-slate-400">
+                                            {deferredPrompt
+                                                ? t('profile.appInstallSubtitle')
+                                                : "To install: Tap browser menu (⋮) → 'Install App' or 'Add to Home Screen'."}
+                                        </p>
+                                    </div>
+                                </div>
+                                {deferredPrompt && (
+                                    <button
+                                        onClick={handleInstallClick}
+                                        className="w-full md:w-auto px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 transition-all transform hover:scale-105"
+                                    >
+                                        {t('profile.installApp')}
+                                    </button>
+                                )}
                             </div>
                         </div>
 
