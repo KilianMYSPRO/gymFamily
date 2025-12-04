@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { RotateCcw } from 'lucide-react';
 import clsx from 'clsx';
-import Tooltip from '../common/Tooltip';
 
-const MusclePath = ({ id, d, name, recovery = 100, onClick }) => {
+const MusclePath = ({ id, d, name, recovery = 100, onHover, onLeave, onClick }) => {
     // Color scale: 0 (Red) -> 50 (Yellow) -> 100 (Green)
     const getColor = (score) => {
         if (score >= 90) return '#10b981'; // Emerald-500
@@ -16,23 +15,38 @@ const MusclePath = ({ id, d, name, recovery = 100, onClick }) => {
     const color = getColor(recovery);
 
     return (
-        <Tooltip content={`${name}: ${recovery}% Recovered`}>
-            <path
-                id={id}
-                d={d}
-                fill={color}
-                stroke="rgba(255,255,255,0.2)"
-                strokeWidth="1"
-                className="transition-all duration-500 hover:opacity-80 cursor-pointer hover:stroke-white"
-                onClick={() => onClick && onClick(id)}
-                style={{ filter: `drop-shadow(0 0 ${recovery < 50 ? '5px' : '0px'} ${color})` }}
-            />
-        </Tooltip>
+        <path
+            id={id}
+            d={d}
+            fill={color}
+            stroke="rgba(255,255,255,0.2)"
+            strokeWidth="1"
+            className="transition-all duration-500 hover:opacity-80 cursor-pointer hover:stroke-white"
+            onMouseEnter={(e) => onHover && onHover(e, name, recovery)}
+            onMouseLeave={onLeave}
+            onClick={() => onClick && onClick(id)}
+            style={{ filter: `drop-shadow(0 0 ${recovery < 50 ? '5px' : '0px'} ${color})` }}
+        />
     );
 };
 
 const MuscleHeatmap = ({ recoveryData = {} }) => {
     const [view, setView] = useState('front'); // 'front' or 'back'
+    const [tooltip, setTooltip] = useState({ visible: false, x: 0, y: 0, content: '' });
+
+    const handleHover = (e, name, recovery) => {
+        const rect = e.target.getBoundingClientRect();
+        setTooltip({
+            visible: true,
+            x: rect.left + rect.width / 2,
+            y: rect.top, // Position above the element
+            content: `${name}: ${recovery}% Recovered`
+        });
+    };
+
+    const handleLeave = () => {
+        setTooltip({ ...tooltip, visible: false });
+    };
 
     // Simplified SVG Paths (Abstract representation)
     // These are just placeholders. In a real app, we'd use a detailed SVG.
@@ -60,7 +74,17 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
     };
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center relative">
+            {/* Custom Tooltip Portal/Overlay */}
+            {tooltip.visible && (
+                <div
+                    className="fixed z-50 px-3 py-2 text-xs font-bold text-white bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-xl shadow-xl pointer-events-none transform -translate-x-1/2 -translate-y-full mb-2 transition-all duration-200"
+                    style={{ left: tooltip.x, top: tooltip.y }}
+                >
+                    {tooltip.content}
+                </div>
+            )}
+
             <div className="flex gap-4 mb-4">
                 <button
                     onClick={() => setView('front')}
@@ -95,6 +119,8 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                             key={muscle.id}
                             {...muscle}
                             recovery={recoveryData[muscle.id] !== undefined ? recoveryData[muscle.id] : 100}
+                            onHover={handleHover}
+                            onLeave={handleLeave}
                         />
                     ))}
                 </svg>
