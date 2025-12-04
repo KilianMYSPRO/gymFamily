@@ -15,10 +15,13 @@ const SYNONYMS = {
     "kettlebells": "kettlebell",
     "bw": "bodyweight",
     "body": "bodyweight",
-    // "weight bar" and "smith machine" are handled in pre-processing
+    "haltères": "dumbbell",
+    "halteres": "dumbbell",
+    "barre": "barbell",
+    "poids": "bodyweight"
 };
 
-const STOP_WORDS = new Set(["with", "using", "the", "a", "an", "on"]);
+const STOP_WORDS = new Set(["with", "using", "the", "a", "an", "on", "de", "du", "le", "la", "les", "en", "à", "au", "aux"]);
 
 /**
  * Generates a normalized fingerprint for an exercise name.

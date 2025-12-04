@@ -10,9 +10,11 @@ import PlateCalculator from './PlateCalculator';
 import { useLanguage } from '../../context/LanguageContext';
 import exercisesData from '../../data/exercises.json';
 
+import { getSuggestedWeight } from '../../utils/progression';
+
 const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const { t } = useLanguage();
-    const { workouts, activeWorkout, setActiveWorkout, logSession } = useStore();
+    const { workouts, activeWorkout, setActiveWorkout, logSession, history } = useStore();
     const [elapsedTime, setElapsedTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [workoutData, setWorkoutData] = useState(null);
@@ -23,6 +25,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [showPlateCalculator, setShowPlateCalculator] = useState(false);
     const [calculatorTargetWeight, setCalculatorTargetWeight] = useState('');
     const [nextExerciseName, setNextExerciseName] = useState(null);
+    const [suggestions, setSuggestions] = useState({});
     const hasInitialized = useRef(false);
 
     // Wake Lock
@@ -74,6 +77,28 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     useEffect(() => {
         return () => releaseWakeLock();
     }, [releaseWakeLock]);
+
+    const hasCalculatedSuggestions = useRef(false);
+
+    // Calculate suggestions
+    useEffect(() => {
+        if (workoutData && history && !hasCalculatedSuggestions.current) {
+            const newSuggestions = {};
+            workoutData.exercises.forEach(ex => {
+                const suggestion = getSuggestedWeight(ex.name, history);
+                if (suggestion) {
+                    newSuggestions[ex.id] = suggestion;
+                }
+            });
+
+            // Always mark as calculated so we don't retry endlessly if no suggestions found
+            hasCalculatedSuggestions.current = true;
+
+            if (Object.keys(newSuggestions).length > 0) {
+                setSuggestions(newSuggestions);
+            }
+        }
+    }, [workoutData, history]);
 
     const startWorkout = (template) => {
         const newWorkout = {
@@ -438,8 +463,13 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                             </span>
                                                         )}
                                                     </div>
-                                                    <h3 className="font-bold text-lg text-white">
+                                                    <h3 className="font-bold text-lg text-white flex items-center gap-2 flex-wrap">
                                                         {exercise.name}
+                                                        {suggestions[exercise.id] && (
+                                                            <span className="text-xs font-normal text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
+                                                                Suggest: {suggestions[exercise.id]}kg
+                                                            </span>
+                                                        )}
                                                     </h3>
                                                 </div>
                                                 <div onClick={(e) => e.stopPropagation()}>
