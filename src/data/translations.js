@@ -159,7 +159,9 @@ export const translations = {
             security: "Security",
             securitySubtitle: "Update your security question for account recovery.",
             updateSecurity: "Update Security",
-            securityUpdated: "Security settings updated!"
+            securityUpdated: "Security settings updated!",
+            installApp: "Install App",
+            appInstallSubtitle: "Install DuoGym on your device for offline access."
         },
         dashboard: {
             title: "Dashboard",
@@ -413,7 +415,9 @@ export const translations = {
             security: "Sécurité",
             securitySubtitle: "Mettez à jour votre question de sécurité pour la récupération du compte.",
             updateSecurity: "Mettre à jour la sécurité",
-            securityUpdated: "Paramètres de sécurité mis à jour !"
+            securityUpdated: "Paramètres de sécurité mis à jour !",
+            installApp: "Installer l'App",
+            appInstallSubtitle: "Installez DuoGym sur votre appareil pour un accès hors ligne."
         },
         dashboard: {
             letsCrushIt: "C'est parti,",
