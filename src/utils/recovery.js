@@ -48,16 +48,20 @@ export const calculateRecovery = (history) => {
 
     console.log('[Recovery] Recent history:', recentHistory);
 
-    recentHistory.forEach(session => {
+    console.log(`[Recovery] exercisesData length: ${exercisesData?.length}`);
+
+    recentHistory.forEach((session, sessionIdx) => {
         if (!session.exercises) return;
 
         const sessionDate = new Date(session.endTime);
         const diffTime = Math.abs(now - sessionDate);
         const daysAgo = diffTime / (1000 * 60 * 60 * 24); // Floating point days
 
-        console.log(`[Recovery] Processing session from ${daysAgo.toFixed(1)} days ago`);
+        console.log(`[Recovery] Processing session ${sessionIdx} from ${daysAgo.toFixed(1)} days ago. Exercises: ${session.exercises.length}`);
 
-        session.exercises.forEach(ex => {
+        session.exercises.forEach((ex, exIdx) => {
+            console.log(`[Recovery] Checking exercise ${exIdx}:`, ex);
+
             // Find exercise data
             // 1. Try by originalId
             // 2. Try by normalized name
