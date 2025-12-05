@@ -1,5 +1,68 @@
 [
   {
+    "name": "Running",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "body only",
+    "primaryMuscles": [
+      "cardio"
+    ],
+    "secondaryMuscles": [
+      "legs"
+    ],
+    "instructions": [
+      "Start at a comfortable pace.",
+      "Maintain a steady rhythm.",
+      "Focus on your breathing."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "running"
+  },
+  {
+    "name": "Treadmill",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "primaryMuscles": [
+      "cardio"
+    ],
+    "secondaryMuscles": [
+      "legs"
+    ],
+    "instructions": [
+      "Set the treadmill to your desired speed and incline.",
+      "Start walking and gradually increase speed.",
+      "Use safety clips if available."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "treadmill"
+  },
+  {
+    "name": "Cycling",
+    "force": "push",
+    "level": "beginner",
+    "mechanic": "compound",
+    "equipment": "machine",
+    "primaryMuscles": [
+      "cardio"
+    ],
+    "secondaryMuscles": [
+      "legs"
+    ],
+    "instructions": [
+      "Adjust the seat height so your leg is slightly bent at the bottom of the pedal stroke.",
+      "Start pedaling at a steady cadence.",
+      "Adjust resistance as needed."
+    ],
+    "category": "cardio",
+    "images": [],
+    "id": "cycling"
+  },
+  {
     "name": "3/4 Sit-Up",
     "force": "pull",
     "level": "beginner",
