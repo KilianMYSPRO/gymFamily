@@ -20,7 +20,7 @@ export const LanguageProvider = ({ children }) => {
         localStorage.setItem('duogym-language', language);
     }, [language]);
 
-    const t = (key) => {
+    const t = (key, params = {}) => {
         const keys = key.split('.');
         let value = translations[language];
 
@@ -31,6 +31,13 @@ export const LanguageProvider = ({ children }) => {
                 console.warn(`Translation missing for key: ${key} in language: ${language}`);
                 return key;
             }
+        }
+
+        // Interpolate params
+        if (typeof value === 'string' && params) {
+            Object.keys(params).forEach(param => {
+                value = value.replace(`{{${param}}}`, params[param]);
+            });
         }
 
         return value;
