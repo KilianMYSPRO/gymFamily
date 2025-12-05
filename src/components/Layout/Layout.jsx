@@ -28,7 +28,7 @@ const Layout = ({ children, currentView, onViewChange }) => {
     return (
         <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 text-slate-50">
             {/* Sidebar / Mobile Header */}
-            <aside className="w-full md:w-64 bg-slate-900/50 backdrop-blur-xl border-b md:border-b-0 md:border-r border-slate-800 p-4 flex flex-col justify-between sticky top-0 z-50 md:h-screen">
+            <aside className="hidden md:flex md:w-64 bg-slate-900/50 backdrop-blur-xl border-b md:border-b-0 md:border-r border-slate-800 p-4 flex-col justify-between sticky top-0 z-50 md:h-screen">
                 <div>
                     <div className="flex items-center gap-3 px-2 mb-8">
                         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
