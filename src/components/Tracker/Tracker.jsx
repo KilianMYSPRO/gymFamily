@@ -564,8 +564,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                         <div className="space-y-3">
                                             <div className="grid grid-cols-12 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
                                                 <div className="col-span-2 text-center flex items-center justify-center">Set</div>
-                                                <div className="col-span-4 text-center">kg</div>
-                                                <div className="col-span-3 text-center">Reps</div>
+                                                <div className="col-span-4 text-center">
+                                                    {exercise.category === 'cardio' ? t('tracker.distance') || 'Dist (km)' : 'kg'}
+                                                </div>
+                                                <div className="col-span-3 text-center">
+                                                    {exercise.category === 'cardio' ? t('tracker.time') || 'Time' : 'Reps'}
+                                                </div>
                                                 <div className="col-span-3 text-center">Done</div>
                                             </div>
 
@@ -582,18 +586,20 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                             value={set.weight}
                                                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
                                                             className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                            placeholder="0"
+                                                            placeholder={exercise.category === 'cardio' ? "km" : "0"}
                                                         />
-                                                        <button
-                                                            onClick={() => {
-                                                                setCalculatorTargetWeight(set.weight);
-                                                                setShowPlateCalculator(true);
-                                                            }}
-                                                            className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors p-2"
-                                                            title="Plate Calculator"
-                                                        >
-                                                            <Calculator size={14} />
-                                                        </button>
+                                                        {exercise.category !== 'cardio' && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setCalculatorTargetWeight(set.weight);
+                                                                    setShowPlateCalculator(true);
+                                                                }}
+                                                                className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors p-2"
+                                                                title="Plate Calculator"
+                                                            >
+                                                                <Calculator size={14} />
+                                                            </button>
+                                                        )}
                                                     </div>
                                                     <div className="col-span-3">
                                                         <input
@@ -602,7 +608,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                             value={set.reps}
                                                             onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
                                                             className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                            placeholder="0"
+                                                            placeholder={exercise.category === 'cardio' ? "min" : "0"}
                                                         />
                                                     </div>
                                                     <div className="col-span-3 flex justify-center gap-2">

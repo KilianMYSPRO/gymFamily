@@ -26,8 +26,9 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
 
     // Calculate total volume (approximate)
     const totalVolume = (workout.exercises || []).reduce((acc, ex) => {
+        if (ex.category === 'cardio') return acc; // Skip cardio for volume
         const exerciseVolume = (ex.sets || []).reduce((setAcc, set) => {
-            if (set.completed || set.completed === undefined) { // Handle legacy data or assume completed if in history
+            if (set.completed || set.completed === undefined) {
                 const weight = parseFloat(set.weight?.toString().replace(/[^\d.]/g, '')) || 0;
                 const reps = parseInt(set.reps?.toString().match(/\d+/)?.[0] || 0);
                 return setAcc + (weight * reps);
@@ -37,13 +38,31 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
         return acc + exerciseVolume;
     }, 0);
 
+    const totalDistance = (workout.exercises || []).reduce((acc, ex) => {
+        if (ex.category !== 'cardio') return acc;
+        return acc + (ex.sets || []).reduce((setAcc, set) => {
+            if (set.completed || set.completed === undefined) {
+                return setAcc + (parseFloat(set.weight) || 0); // weight is distance
+            }
+            return setAcc;
+        }, 0);
+    }, 0);
+
     const getSummaryText = () => {
-        return `🏋️ ${t('summary.workoutTitle')} ${workout.name}\n` +
+        let text = `🏋️ ${t('summary.workoutTitle')} ${workout.name}\n` +
             `📅 ${formatDate(workout.date)}\n` +
             `⏱️ ${t('summary.duration')} ${formatTime(workout.duration)}\n` +
-            `📊 ${t('summary.sets')} ${workout.completedSets}\n` +
-            `💪 ${t('summary.volume')} ${totalVolume.toLocaleString()} kg\n\n` +
-            `${t('summary.trackedWith')}`;
+            `📊 ${t('summary.sets')} ${workout.completedSets}\n`;
+
+        if (totalVolume > 0) {
+            text += `💪 ${t('summary.volume')} ${totalVolume.toLocaleString()} kg\n`;
+        }
+        if (totalDistance > 0) {
+            text += `🏃 ${t('summary.distance')} ${totalDistance.toFixed(2)} km\n`;
+        }
+
+        text += `\n${t('summary.trackedWith')}`;
+        return text;
     };
 
     const handleShare = async () => {
