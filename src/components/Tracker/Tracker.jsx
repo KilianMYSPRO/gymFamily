@@ -108,15 +108,19 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
             ...template,
             name: template.name || t('tracker.unknownWorkout'),
             startTime: new Date().toISOString(),
-            exercises: template.exercises.map(ex => ({
-                ...ex,
-                sets: Array.from({ length: parseInt(ex.sets) }).map((_, i) => ({
-                    id: `${ex.id}-${i}`, // Unique ID for each set
-                    weight: ex.weight || '',
-                    reps: ex.reps || '',
-                    completed: false
-                }))
-            }))
+            exercises: template.exercises.map((ex, i) => {
+                const exerciseId = ex.id || `ex-${Date.now()}-${i}`;
+                return {
+                    ...ex,
+                    id: exerciseId,
+                    sets: Array.from({ length: parseInt(ex.sets) }).map((_, j) => ({
+                        id: `${exerciseId}-set-${j}`, // Unique ID for each set
+                        weight: ex.weight || '',
+                        reps: ex.reps || '',
+                        completed: false
+                    }))
+                };
+            })
         };
         setActiveWorkout(newWorkout);
         setWorkoutData(newWorkout);
@@ -629,7 +633,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     </header>
                 </div>
             </>
-        </div>
+        </div >
     );
 };
 

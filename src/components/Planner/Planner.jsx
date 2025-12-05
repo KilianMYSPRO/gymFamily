@@ -397,7 +397,7 @@ const Planner = () => {
                                 setImportError(null);
                             }}
                             placeholder='{"name": "My Workout", "exercises": [...] }'
-                            className="w-full h-40 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4"
+                            className="w-full h-40 bg-slate-950 border border-slate-800 rounded-lg p-3 text-base md:text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4"
                         />
 
                         {importError && (
@@ -486,7 +486,7 @@ const Planner = () => {
                                 setJsonContent(e.target.value);
                                 setJsonError(null);
                             }}
-                            className="w-full flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4 resize-none"
+                            className="w-full flex-1 bg-slate-950 border border-slate-800 rounded-lg p-3 text-base md:text-xs font-mono text-slate-300 focus:outline-none focus:border-sky-500 mb-4 resize-none"
                         />
 
                         {jsonError && (
@@ -682,7 +682,7 @@ const Planner = () => {
                                                         placeholder={t('planner.exerciseName')}
                                                         value={ex.name}
                                                         onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-sm"
+                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-base md:text-sm"
                                                     />
                                                     <button
                                                         onClick={() => updateExercise(ex.id, 'isOptional', !ex.isOptional)}
@@ -737,14 +737,14 @@ const Planner = () => {
                                                         placeholder={t('planner.linkPlaceholder')}
                                                         value={ex.link || ''}
                                                         onChange={(e) => updateExercise(ex.id, 'link', e.target.value)}
-                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-sm transition-all"
+                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-base md:text-sm transition-all"
                                                     />
                                                     <input
                                                         type="text"
                                                         placeholder={t('planner.descPlaceholder')}
                                                         value={ex.description || ''}
                                                         onChange={(e) => updateExercise(ex.id, 'description', e.target.value)}
-                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-sm transition-all"
+                                                        className="w-full bg-slate-950/30 border border-slate-700/30 rounded-lg px-3 py-2 text-slate-400 focus:text-white focus:outline-none focus:border-sky-500 text-base md:text-sm transition-all"
                                                     />
                                                 </div>
                                             </div>
