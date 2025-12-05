@@ -505,25 +505,24 @@ const Planner = () => {
                 </div>
             )}
 
-            <header className="flex justify-between items-center">
+            <header className="flex justify-between items-center mb-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">{t('planner.title')}</h2>
-                    <p className="text-slate-400">{t('planner.subtitle')}</p>
+                    <h2 className="text-xl font-bold text-white">{t('planner.title')}</h2>
                 </div>
                 {!isCreating && (
                     <div className="flex gap-2">
                         <button
                             onClick={() => setShowImportModal(true)}
-                            className="btn btn-secondary"
+                            className="btn btn-secondary py-2 px-3 text-sm"
                         >
-                            <Download size={20} />
+                            <Download size={16} />
                             <span className="hidden md:inline">{t('planner.import')}</span>
                         </button>
                         <button
                             onClick={() => setIsCreating(true)}
-                            className="btn btn-primary"
+                            className="btn btn-primary py-2 px-3 text-sm"
                         >
-                            <Plus size={20} />
+                            <Plus size={16} />
                             <span className="hidden md:inline">{t('planner.newPlan')}</span>
                             <span className="md:hidden">{t('planner.create')}</span>
                         </button>

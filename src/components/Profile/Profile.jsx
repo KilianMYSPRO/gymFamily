@@ -148,39 +148,38 @@ const Profile = () => {
 
     return (
         <div className="max-w-4xl mx-auto space-y-6">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-white mb-2">{t('profile.title')}</h2>
-                    <p className="text-slate-400">{t('profile.subtitle')}</p>
+                    <h2 className="text-xl font-bold text-white">{t('profile.title')}</h2>
                 </div>
 
-                <div className="flex bg-slate-800/50 p-1 rounded-xl border border-slate-700/50">
+                <div className="flex bg-slate-800/50 p-1 rounded-xl border border-slate-700/50 overflow-x-auto">
                     <button
                         onClick={() => setActiveTab('details')}
                         className={clsx(
-                            "px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all",
+                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
                             activeTab === 'details' ? "bg-slate-700 text-white shadow-sm" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <Settings size={16} /> {t('profile.details')}
+                        <Settings size={14} /> {t('profile.details')}
                     </button>
                     <button
                         onClick={() => setActiveTab('analytics')}
                         className={clsx(
-                            "px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all",
+                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
                             activeTab === 'analytics' ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <TrendingUp size={16} /> {t('profile.analytics')}
+                        <TrendingUp size={14} /> {t('profile.analytics')}
                     </button>
                     <button
                         onClick={() => setActiveTab('data')}
                         className={clsx(
-                            "px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition-all",
+                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
                             activeTab === 'data' ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white"
                         )}
                     >
-                        <Database size={16} /> {t('profile.data')}
+                        <Database size={14} /> {t('profile.data')}
                     </button>
                 </div>
             </header>
