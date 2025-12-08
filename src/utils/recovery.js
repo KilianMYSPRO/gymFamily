@@ -5,9 +5,11 @@ import { normalizeExercise } from './exerciseNormalization';
 // These keys should match the IDs in the SVG component
 const MUSCLE_MAPPING = {
     "abdominals": "abs",
+    "abs": "abs",
     "hamstrings": "hamstrings",
     "calves": "calves",
     "pectorals": "chest",
+    "chest": "chest",
     "triceps": "triceps",
     "biceps": "biceps",
     "shoulders": "shoulders",
@@ -16,6 +18,7 @@ const MUSCLE_MAPPING = {
     "lower back": "lower_back",
     "traps": "traps",
     "quadriceps": "quads",
+    "quads": "quads",
     "glutes": "glutes",
     "forearms": "forearms",
     "adductors": "legs_inner",
@@ -66,7 +69,30 @@ export const calculateRecovery = (history) => {
                 exerciseDef = exercisesData.find(e => e.name === normalizedName);
             }
 
+            // Fallback: Infer muscles from name keywords (Robustness for custom/translated names)
             if (!exerciseDef) {
+                const lowerName = ex.name.toLowerCase();
+                const inferredMuscles = [];
+                const inferredSecondary = [];
+
+                if (lowerName.includes("bench") || lowerName.includes("chest") || lowerName.includes("couché") || lowerName.includes("pectoraux")) inferredMuscles.push("chest");
+                if (lowerName.includes("squat") || lowerName.includes("leg press") || lowerName.includes("cuisses")) inferredMuscles.push("quads");
+                if (lowerName.includes("deadlift") || lowerName.includes("row") || lowerName.includes("pull") || lowerName.includes("dos") || lowerName.includes("tirage")) inferredMuscles.push("lats");
+                if (lowerName.includes("shoulder") || lowerName.includes("military") || lowerName.includes("press") || lowerName.includes("latérales") || lowerName.includes("militaire") || lowerName.includes("écarté")) inferredMuscles.push("shoulders");
+                if (lowerName.includes("curl") || lowerName.includes("biceps")) inferredMuscles.push("biceps");
+                if (lowerName.includes("triceps") || lowerName.includes("extension") || lowerName.includes("barre front") || lowerName.includes("dips")) inferredMuscles.push("triceps");
+                if (lowerName.includes("abs") || lowerName.includes("crunch") || lowerName.includes("sit-up") || lowerName.includes("gainage")) inferredMuscles.push("abs");
+
+                if (inferredMuscles.length > 0) {
+                    exerciseDef = {
+                        primaryMuscles: inferredMuscles,
+                        secondaryMuscles: inferredSecondary
+                    };
+                }
+            }
+
+            if (!exerciseDef) {
+                console.warn(`Could not identify muscles for exercise: ${ex.name}`);
                 return;
             }
 

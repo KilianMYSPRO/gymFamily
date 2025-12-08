@@ -110,8 +110,8 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                 >
                     <div className="flex items-center gap-2">
                         <div className={clsx("w-2 h-2 rounded-full",
-                            tooltip.content.includes("100%") ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" :
-                                tooltip.content.includes("Recovering") ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" :
+                            parseInt(tooltip.content.split(': ')[1]) === 100 ? "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" :
+                                parseInt(tooltip.content.split(': ')[1]) > 50 ? "bg-yellow-400 shadow-[0_0_8px_rgba(250,204,21,0.8)]" :
                                     "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.8)]"
                         )} />
                         {tooltip.content}

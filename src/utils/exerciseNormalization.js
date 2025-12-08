@@ -24,36 +24,50 @@ const SYNONYMS = {
 const CUSTOM_MAPPINGS = {
     // French mappings
     "Développé Couché (Haltères ou Machine)": "Barbell Bench Press - Medium Grip",
+    "Développé Couché (Haltères)": "Dumbbell Bench Press",
     "Développé Couché": "Barbell Bench Press - Medium Grip",
     "Développé Militaire Assis (Haltères ou Machine)": "Seated Barbell Military Press",
+    "Développé Militaire Assis (Haltères)": "Seated Dumbbell Press",
     "Développé Militaire": "Military Press",
+    "Dips Assis (Machine)": "Dips - Chest Version",
     "Écarté Poulie Vis-à-vis (Cable Fly)": "Cable Crossover",
+    "Écarté Poulie Vis-à-vis": "Cable Crossover",
     "Écarté Poulie": "Cable Crossover",
     "Élévations Latérales (Haltères ou Poulie)": "Side Lateral Raise",
+    "Élévations Latérales Assis (Machine)": "Side Lateral Raise",
     "Élévations Latérales": "Side Lateral Raise",
-    "Curl Incliné (Haltères)": "Incline Dumbbell Curl",
-    "Curl Pupitre (Machine)": "Preacher Curl",
-    "Enroulement de Bassin": "Hanging Leg Raise", // Approximation
-    "Leg Extension (Machine)": "Leg Extensions",
-    "Presse à Cuisses (Machine)": "Leg Press",
-    "Leg Curl Assis (Machine)": "Seated Leg Curl",
-    "Mollets Debout (Machine)": "Standing Calf Raises",
-    "Tirage Vertical (Machine)": "Cable Pulldown", // Lat Pulldown
-    "Tirage Horizontal (Machine)": "Seated Cable Rows",
-    "Rowing Barre (T-Bar ou Yates)": "Bent Over Barbell Row",
-    "Face Pull (Poulie)": "Face Pull",
-    "Curl Marteau (Haltères)": "Hammer Curls",
-    "Dips (Poids du corps ou Lesté)": "Dips - Chest Version",
-    "Extension Triceps (Poulie)": "Triceps Pushdown",
-    "Extension Triceps au-dessus de la tête (Haltère ou Câble)": "Cable Rope Overhead Triceps Extension",
+    "Overhead Triceps": "Seated Dumbbell Overhead Triceps Extension",
+    "Extension Triceps Poulie (Corde)": "Triceps Pushdown - Rope Attachment",
     "Extension Triceps Poulie (Corde ou Barre)": "Triceps Pushdown",
+    "Crunch Câble (À genoux)": "Cable Crunch",
     "Crunch Câble (à genoux) ou Enroulement Bassin": "Cable Crunch",
     "Leg Extension (Priorité Quadriceps)": "Leg Extensions",
     "Leg Curl Assis (Priorité Ischios)": "Seated Leg Curl",
     "Presse à Cuisses horizontale (Pieds HAUTS & Écartés)": "Leg Press",
     "Machine Adducteurs (Intérieur Cuisse)": "Adductor",
     "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
-    "Tirage Vertical": "Wide-Grip Lat Pulldown"
+    "Tirage Vertical": "Wide-Grip Lat Pulldown",
+
+    // English Common Aliases
+    "Bench Press": "Barbell Bench Press - Medium Grip",
+    "Barbell Bench Press": "Barbell Bench Press - Medium Grip",
+    "Incline Bench Press": "Barbell Incline Bench Press - Medium Grip",
+    "Incline Press": "Barbell Incline Bench Press - Medium Grip",
+    "Dumbbell Press": "Dumbbell Bench Press",
+    "Dumbbell Bench Press": "Dumbbell Bench Press",
+    "Shoulder Press": "Seated Barbell Military Press",
+    "Overhead Press": "Seated Barbell Military Press",
+    "Military Press": "Seated Barbell Military Press",
+    "Squat": "Barbell Squat",
+    "Back Squat": "Barbell Squat",
+    "Deadlift": "Barbell Deadlift",
+    "Conventional Deadlift": "Barbell Deadlift",
+    "Dips": "Dips - Chest Version",
+    "Pull up": "Pullups",
+    "Pull Up": "Pullups",
+    "Pullups": "Pullups",
+    "Chin Up": "Chin-Up",
+    "Chinup": "Chin-Up"
 };
 
 const STOP_WORDS = new Set(["with", "using", "the", "a", "an", "on", "de", "du", "le", "la", "les", "en", "à", "au", "aux"]);
@@ -110,9 +124,11 @@ export const normalizeExercise = (name, originalId = null) => {
         if (match) return match.name;
     }
 
-    // 2. Check custom mappings (exact match)
-    if (CUSTOM_MAPPINGS[name]) {
-        return CUSTOM_MAPPINGS[name];
+    // 2. Check custom mappings (case-insensitive)
+    const lowerName = name.toLowerCase();
+    const mapped = Object.keys(CUSTOM_MAPPINGS).find(key => key.toLowerCase() === lowerName);
+    if (mapped) {
+        return CUSTOM_MAPPINGS[mapped];
     }
 
     // 3. Check explicit aliases
