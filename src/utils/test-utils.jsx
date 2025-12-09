@@ -1,5 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import { StoreContext } from '../context/StoreContext';
 import { LanguageContext } from '../context/LanguageContext';
 import { DuoContext } from '../context/DuoContext';

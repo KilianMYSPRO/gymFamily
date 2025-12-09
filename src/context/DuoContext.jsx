@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DuoContext = createContext();
 
 // Use window.location.hostname to connect to the same host (handles localhost vs network IP)
