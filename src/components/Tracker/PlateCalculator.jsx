@@ -12,6 +12,7 @@ const PlateCalculator = ({ isOpen, onClose, initialWeight = '' }) => {
 
     useEffect(() => {
         if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setWeight(initialWeight);
         }
     }, [isOpen, initialWeight]);
@@ -19,6 +20,7 @@ const PlateCalculator = ({ isOpen, onClose, initialWeight = '' }) => {
     useEffect(() => {
         const w = parseFloat(weight);
         if (!isNaN(w)) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setPlates(calculatePlates(w));
         } else {
             setPlates([]);

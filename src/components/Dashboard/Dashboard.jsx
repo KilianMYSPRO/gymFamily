@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap } from 'lucide-react';
 import clsx from 'clsx';
@@ -63,14 +63,14 @@ const Dashboard = ({ onViewChange }) => {
                     h && h.date && h.date.startsWith(dayStr)
                 ).length : 0;
                 return { day: days[date.getDay()], count, isToday: false };
-            } catch (e) {
+            } catch {
                 return { day: days[date.getDay()], count: 0, isToday: false };
             }
         });
     };
 
     const weeklyActivity = getWeeklyActivity();
-    const maxActivity = Math.max(...weeklyActivity.map(d => d.count), 1);
+
 
     // Safe History Processing
     const recentHistory = Array.isArray(history) ? history
@@ -78,8 +78,8 @@ const Dashboard = ({ onViewChange }) => {
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 3) : [];
 
-    const lastWorkoutId = recentHistory[0]?.workoutId;
-    const lastWorkout = Array.isArray(workouts) ? workouts.find(w => w.id === lastWorkoutId) : null;
+
+
 
     if (!activeProfile) return <div className="text-white p-8">{t('common.loading')}</div>;
 
@@ -249,8 +249,8 @@ const Dashboard = ({ onViewChange }) => {
                     <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
                         <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{t('dashboard.recentHistory')}</h3>
                         <div className="space-y-1">
-                            {recentHistory.map(h => (
-                                <div key={h.id || Math.random()} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
+                            {recentHistory.map((h, i) => (
+                                <div key={h.id || i} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
                                     <div>
                                         <p className="font-bold text-slate-200 group-hover:text-white transition-colors">{h.workoutName || h.name || 'Unknown Workout'}</p>
                                         <p className="text-[10px] text-slate-500 font-mono uppercase">{new Date(h.date).toLocaleDateString()}</p>

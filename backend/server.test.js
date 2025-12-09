@@ -1,3 +1,5 @@
+/* eslint-env node, jest */
+/* global describe, it, expect */
 const request = require('supertest');
 const express = require('express');
 

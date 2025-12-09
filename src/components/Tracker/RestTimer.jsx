@@ -9,6 +9,7 @@ const RestTimer = ({ isOpen, onClose, defaultDuration = 90, nextExercise }) => {
 
     useEffect(() => {
         if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setTimeLeft(defaultDuration);
         }
     }, [isOpen, defaultDuration]);

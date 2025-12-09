@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useDuo } from '../../context/DuoContext';
 import { Users, Wifi, WifiOff, Activity } from 'lucide-react';
-import { useLanguage } from '../../context/LanguageContext';
+
 
 const DuoPanel = () => {
-    const { t } = useLanguage();
+    // const { t } = useLanguage();
     const { isConnected, roomId, partner, partnerWorkout, connectToRoom, disconnectFromRoom } = useDuo();
     const [inputRoom, setInputRoom] = useState('');
 

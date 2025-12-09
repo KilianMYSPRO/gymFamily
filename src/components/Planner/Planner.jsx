@@ -622,11 +622,9 @@ const Planner = () => {
                                 const isSelected = selectedExercises.includes(ex.id);
                                 const isSuperset = !!ex.supersetId;
                                 // Find if previous/next exercise is in same superset for visual grouping
-                                const prevEx = exercises[idx - 1];
-                                const nextEx = exercises[idx + 1];
-                                const isSupersetStart = isSuperset && (!prevEx || prevEx.supersetId !== ex.supersetId);
-                                const isSupersetEnd = isSuperset && (!nextEx || nextEx.supersetId !== ex.supersetId);
-                                const isSupersetMiddle = isSuperset && !isSupersetStart && !isSupersetEnd;
+
+
+
 
                                 return (
                                     <div key={ex.id} className={clsx(

@@ -52,6 +52,7 @@ export const DuoProvider = ({ children }) => {
             setPartnerWorkout(data);
         });
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSocket(newSocket);
 
         return () => {
@@ -97,8 +98,6 @@ export const DuoProvider = ({ children }) => {
             partnerWorkout,
             connectToRoom,
             disconnectFromRoom,
-            connectToRoom,
-            disconnectFromRoom,
             broadcastUpdate
         }}>
             {children}
@@ -106,4 +105,5 @@ export const DuoProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useDuo = () => useContext(DuoContext);

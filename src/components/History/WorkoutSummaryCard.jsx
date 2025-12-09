@@ -1,11 +1,11 @@
 import React from 'react';
 import { Calendar, Clock, Dumbbell, Trophy, Share2, X } from 'lucide-react';
-import clsx from 'clsx';
+
 import { useLanguage } from '../../context/LanguageContext';
 
 const WorkoutSummaryCard = ({ workout, onClose }) => {
     const { t } = useLanguage();
-    if (!workout) return null;
+    const [showCopyFallback, setShowCopyFallback] = React.useState(false);
 
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -22,7 +22,7 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
         return `${mins}m ${secs}s`;
     };
 
-    const [showCopyFallback, setShowCopyFallback] = React.useState(false);
+    if (!workout) return null;
 
     // Calculate total volume (approximate)
     const totalVolume = (workout.exercises || []).reduce((acc, ex) => {

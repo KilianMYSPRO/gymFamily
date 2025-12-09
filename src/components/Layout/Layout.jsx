@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStore } from '../../context/StoreContext';
+
 import { LayoutDashboard, Calendar, Dumbbell, UserCircle2, LogOut, Clock, Languages } from 'lucide-react';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
@@ -22,7 +22,6 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
 
 
 const Layout = ({ children, currentView, onViewChange }) => {
-    const { activeProfile } = useStore();
     const { t, language, toggleLanguage } = useLanguage();
 
     return (

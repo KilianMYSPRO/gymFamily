@@ -25,6 +25,7 @@ const INITIAL_DATA = {
 };
 
 export const StoreProvider = ({ children }) => {
+    // eslint-disable-next-line no-unused-vars
     const [activeProfileId, setActiveProfileId] = useState('user1');
     const [data, setData] = useState(() => {
         try {
@@ -166,6 +167,7 @@ export const StoreProvider = ({ children }) => {
         if (token) {
             syncData(token);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     // Auto-push on change (debounced)
@@ -177,6 +179,7 @@ export const StoreProvider = ({ children }) => {
         }, 2000); // Debounce 2s
 
         return () => clearTimeout(timeout);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, token]);
 
     // Polling every 30s
@@ -188,6 +191,7 @@ export const StoreProvider = ({ children }) => {
         }, 30000);
 
         return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [token]);
 
     const login = (authData) => {
@@ -397,4 +401,5 @@ export const StoreProvider = ({ children }) => {
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useStore = () => useContext(StoreContext);

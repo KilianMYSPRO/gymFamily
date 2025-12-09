@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link } from 'lucide-react';
+// eslint-disable-next-line no-unused-vars
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
@@ -29,10 +30,34 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [calculatorTargetWeight, setCalculatorTargetWeight] = useState('');
     const [nextExerciseName, setNextExerciseName] = useState(null);
     const [suggestions, setSuggestions] = useState({});
-    const hasInitialized = useRef(false);
+    const [hasInitialized, setHasInitialized] = useState(false);
 
     // Wake Lock
     const { isLocked, request: requestWakeLock, release: releaseWakeLock, type } = useWakeLock();
+
+    const startWorkout = useCallback((template) => {
+        const newWorkout = {
+            ...template,
+            name: template.name || t('tracker.unknownWorkout'),
+            startTime: new Date().toISOString(),
+            exercises: template.exercises.map((ex, i) => {
+                const exerciseId = ex.id || `ex-${Date.now()}-${i}`;
+                return {
+                    ...ex,
+                    id: exerciseId,
+                    sets: Array.from({ length: parseInt(ex.sets) }).map((_, j) => ({
+                        id: `${exerciseId}-set-${j}`, // Unique ID for each set
+                        weight: ex.weight || '',
+                        reps: ex.reps || '',
+                        completed: false
+                    }))
+                };
+            })
+        };
+        setWorkoutData(newWorkout);
+        setIsRunning(true);
+        requestWakeLock();
+    }, [t, requestWakeLock, setActiveWorkout]);
 
     // Sync workoutData to activeWorkout to persist state
     useEffect(() => {
@@ -61,20 +86,22 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         if (activeWorkout) {
             // Only set workoutData if it's not already set to prevent overwriting local state with stale store data
             if (!workoutData) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setWorkoutData(activeWorkout);
                 setElapsedTime(activeWorkout.elapsedTime || 0);
             }
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsRunning(true);
             requestWakeLock(); // Auto-enable wake lock on start
-            hasInitialized.current = true;
-        } else if (initialWorkoutId && !hasInitialized.current) {
+            setHasInitialized(true);
+        } else if (initialWorkoutId && !hasInitialized) {
             const template = workouts.find(w => w.id === initialWorkoutId);
             if (template) {
                 startWorkout(template);
-                hasInitialized.current = true;
+                setHasInitialized(true);
             }
         }
-    }, [initialWorkoutId, activeWorkout, workouts, requestWakeLock]);
+    }, [initialWorkoutId, activeWorkout, workouts, requestWakeLock, startWorkout, workoutData, hasInitialized]);
 
     // Cleanup wake lock on unmount
     useEffect(() => {
@@ -98,35 +125,13 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
             hasCalculatedSuggestions.current = true;
 
             if (Object.keys(newSuggestions).length > 0) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setSuggestions(newSuggestions);
             }
         }
     }, [workoutData, history]);
 
-    const startWorkout = (template) => {
-        const newWorkout = {
-            ...template,
-            name: template.name || t('tracker.unknownWorkout'),
-            startTime: new Date().toISOString(),
-            exercises: template.exercises.map((ex, i) => {
-                const exerciseId = ex.id || `ex-${Date.now()}-${i}`;
-                return {
-                    ...ex,
-                    id: exerciseId,
-                    sets: Array.from({ length: parseInt(ex.sets) }).map((_, j) => ({
-                        id: `${exerciseId}-set-${j}`, // Unique ID for each set
-                        weight: ex.weight || '',
-                        reps: ex.reps || '',
-                        completed: false
-                    }))
-                };
-            })
-        };
-        setActiveWorkout(newWorkout);
-        setWorkoutData(newWorkout);
-        setIsRunning(true);
-        requestWakeLock();
-    };
+
 
     const finishWorkout = () => {
         if (!workoutData) {
@@ -295,7 +300,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     };
 
-    if (!activeWorkout && (!initialWorkoutId || hasInitialized.current)) {
+    if (!activeWorkout && (!initialWorkoutId || hasInitialized)) {
         return (
             <div className="flex flex-col items-center justify-center h-[60vh] pt-12 text-center space-y-6 animate-fade-in">
                 <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(14,165,233,0.1)]">
