@@ -74,20 +74,7 @@ const Analytics = () => {
         return data;
     }, [history, selectedExercise, metric]);
 
-    // Custom Tooltip Component
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-slate-800 text-white text-xs rounded px-2 py-1 text-center shadow-lg border border-slate-700">
-                    <p className="font-bold">{payload[0].value} {metric === 'weight' ? 'kg' : (payload[0].unit || 'kg')}</p>
-                    <p className="text-[10px] text-slate-400">{new Date(label).toLocaleDateString()}</p>
-                </div>
-            );
-        }
-        return null;
-    };
 
-    const maxWeight = chartData.length > 0 ? Math.max(...chartData.map(d => d.weight)) : 0;
     const latestWeight = chartData.length > 0 ? chartData[chartData.length - 1].weight : 0;
     const firstWeight = chartData.length > 0 ? chartData[0].weight : 0;
     const progress = latestWeight - firstWeight;
@@ -154,7 +141,7 @@ const Analytics = () => {
                                         axisLine={false}
                                         width={30}
                                     />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                    <Tooltip content={<CustomTooltip metric="weight" />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
                                     <Line
                                         type="monotone"
                                         dataKey="weight"
@@ -251,7 +238,7 @@ const Analytics = () => {
                                         axisLine={false}
                                         width={30}
                                     />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                    <Tooltip content={<CustomTooltip metric={metric} />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
                                     <Line
                                         type="monotone"
                                         dataKey="weight"

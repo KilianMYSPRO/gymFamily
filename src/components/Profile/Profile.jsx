@@ -68,6 +68,7 @@ const Profile = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         updateProfileName(formData.name);
+        // eslint-disable-next-line no-unused-vars
         const { name, ...details } = formData;
         updateProfileDetails(details);
         setIsSaved(true);
@@ -97,7 +98,7 @@ const Profile = () => {
             setSecurityStatus('success');
             setSecurityData(prev => ({ ...prev, answer: '' }));
             setTimeout(() => setSecurityStatus(null), 3000);
-        } catch (error) {
+        } catch {
             setSecurityStatus('error');
             setTimeout(() => setSecurityStatus(null), 3000);
         }

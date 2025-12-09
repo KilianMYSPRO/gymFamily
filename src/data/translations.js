@@ -440,11 +440,6 @@ export const translations = {
             noHistory: "Pas encore d'historique. Allez soulever de la fonte !",
             title: "Tableau de Bord",
             subtitle: "Aperçu de votre activité et de vos progrès.",
-            mostUsed: "Plans les plus utilisés",
-            plays: "séances",
-            streak: "Série en cours",
-            weeks: "semaines",
-            keepItUp: "Continuez comme ça !",
             recovery: "Récupération Musculaire"
         },
         summary: {

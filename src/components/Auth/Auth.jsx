@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, Lock, ArrowRight, Loader2, AlertCircle, HelpCircle, ArrowLeft } from 'lucide-react';
-import clsx from 'clsx';
+
 import { useLanguage } from '../../context/LanguageContext';
 
 const Auth = ({ onLogin }) => {

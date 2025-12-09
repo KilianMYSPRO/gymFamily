@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+// import { render, screen } from '@testing-library/react';
 import App from './App';
-import { describe as describeVitest } from 'vitest';
 
 // Mock the context providers if necessary, or wrap the App render
 // For a smoke test, simple rendering might fail if contexts are missing.
