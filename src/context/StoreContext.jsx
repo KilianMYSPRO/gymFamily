@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { generateUUID } from '../utils/uuid';
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const StoreContext = createContext();
 
 const INITIAL_DATA = {

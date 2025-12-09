@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import Planner from '../Planner/Planner';
 import { renderWithProviders } from '../../utils/test-utils';
 
