@@ -4,6 +4,7 @@ import { LayoutDashboard, Calendar, Dumbbell, UserCircle2, LogOut, Clock, Langua
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
+// eslint-disable-next-line no-unused-vars
 const NavItem = ({ icon: Icon, label, active, onClick }) => (
     <button
         onClick={onClick}

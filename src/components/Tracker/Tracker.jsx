@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link } from 'lucide-react';
-// eslint-disable-next-line no-unused-vars
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
@@ -57,7 +56,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         setWorkoutData(newWorkout);
         setIsRunning(true);
         requestWakeLock();
-    }, [t, requestWakeLock, setActiveWorkout]);
+    }, [t, requestWakeLock]);
 
     // Sync workoutData to activeWorkout to persist state
     useEffect(() => {
@@ -90,7 +89,6 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                 setWorkoutData(activeWorkout);
                 setElapsedTime(activeWorkout.elapsedTime || 0);
             }
-            // eslint-disable-next-line react-hooks/set-state-in-effect
             setIsRunning(true);
             requestWakeLock(); // Auto-enable wake lock on start
             setHasInitialized(true);
