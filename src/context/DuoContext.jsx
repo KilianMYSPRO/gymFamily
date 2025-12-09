@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
 
-const DuoContext = createContext();
+export const DuoContext = createContext();
 
 // Use window.location.hostname to connect to the same host (handles localhost vs network IP)
 const SOCKET_URL = `http://${window.location.hostname}:3002`;

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from '../data/translations';
 
-const LanguageContext = createContext();
+export const LanguageContext = createContext();
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useLanguage = () => {

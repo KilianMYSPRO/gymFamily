@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { generateUUID } from '../utils/uuid';
 
-const StoreContext = createContext();
+export const StoreContext = createContext();
 
 const INITIAL_DATA = {
     profiles: [

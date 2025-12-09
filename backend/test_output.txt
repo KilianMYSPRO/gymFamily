@@ -1,0 +1,133 @@
+
+> duo-gym-backend@1.0.0 test
+> jest
+
+  console.error
+    Register error: PrismaClientUnknownRequestError: 
+    Invalid `prisma.user.create()` invocation in
+    /home/kikozaurus/duo-gym/backend/server.js:103:40
+    
+      100 const hashedPassword = await bcrypt.hash(password, 10);
+      101 const hashedAnswer = req.body.securityAnswer ? await bcrypt.hash(req.body.securityAnswer.toLowerCase(), 10) : null;
+      102 
+    → 103 const user = await prisma.user.create(
+    Error occurred during query execution:
+    ConnectorError(ConnectorError { user_facing_error: None, kind: QueryError(SqliteError { extended_code: 8, message: Some("attempt to write a readonly database") }), transient: false })
+        at $n.handleRequestError (/home/kikozaurus/duo-gym/backend/node_modules/@prisma/client/runtime/library.js:121:7505)
+        at $n.handleAndLogRequestError (/home/kikozaurus/duo-gym/backend/node_modules/@prisma/client/runtime/library.js:121:6623)
+        at $n.request (/home/kikozaurus/duo-gym/backend/node_modules/@prisma/client/runtime/library.js:121:6307)
+        at l (/home/kikozaurus/duo-gym/backend/node_modules/@prisma/client/runtime/library.js:130:9633)
+        at /home/kikozaurus/duo-gym/backend/server.js:103:22 {
+      clientVersion: '5.22.0'
+    }
+
+      113 |         res.json({ token, user: { id: user.id, username: user.username } });
+      114 |     } catch (error) {
+    > 115 |         console.error('Register error:', error);
+          |                 ^
+      116 |         res.status(500).json({ error: 'Internal server error' });
+      117 |     }
+      118 | });
+
+      at error (server.js:115:17)
+
+FAIL ./server.test.js
+  Backend Integration Tests
+    ✕ health check should pass (151 ms)
+    ✕ should register a new user (476 ms)
+    ✕ should login with created user (26 ms)
+    ✓ should fail login with existing username but wrong password (23 ms)
+    ✕ should sync data (authenticated) (44 ms)
+    ✕ should retrieve synced data (authenticated) (14 ms)
+    ✓ should deny sync without token (14 ms)
+
+  ● Backend Integration Tests › health check should pass
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 200
+    Received: 404
+
+      42 |     it('health check should pass', async () => {
+      43 |         const res = await request(app).get('/api/health');
+    > 44 |         expect(res.statusCode).toEqual(200);
+         |                                ^
+      45 |         expect(res.body).toHaveProperty('status', 'ok');
+      46 |     });
+      47 |
+
+      at Object.toEqual (server.test.js:44:32)
+
+  ● Backend Integration Tests › should register a new user
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 200
+    Received: 500
+
+      50 |             .post('/api/auth/register')
+      51 |             .send(testUser);
+    > 52 |         expect(res.statusCode).toEqual(200);
+         |                                ^
+      53 |         expect(res.body).toHaveProperty('token');
+      54 |         expect(res.body.user).toHaveProperty('username', testUser.username);
+      55 |     });
+
+      at Object.toEqual (server.test.js:52:32)
+
+  ● Backend Integration Tests › should login with created user
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 200
+    Received: 401
+
+      62 |                 password: testUser.password
+      63 |             });
+    > 64 |         expect(res.statusCode).toEqual(200);
+         |                                ^
+      65 |         expect(res.body).toHaveProperty('token');
+      66 |         authToken = res.body.token;
+      67 |     });
+
+      at Object.toEqual (server.test.js:64:32)
+
+  ● Backend Integration Tests › should sync data (authenticated)
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 200
+    Received: 403
+
+      87 |             .send({ data: syncData });
+      88 |
+    > 89 |         expect(res.statusCode).toEqual(200);
+         |                                ^
+      90 |         expect(res.body).toHaveProperty('success', true);
+      91 |     });
+      92 |
+
+      at Object.toEqual (server.test.js:89:32)
+
+  ● Backend Integration Tests › should retrieve synced data (authenticated)
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 200
+    Received: 403
+
+       96 |             .set('Authorization', `Bearer ${authToken}`);
+       97 |
+    >  98 |         expect(res.statusCode).toEqual(200);
+          |                                ^
+       99 |         expect(res.body.data).toHaveProperty('workouts');
+      100 |         expect(res.body.data.workouts).toHaveProperty('name', 'Test Workout');
+      101 |     });
+
+      at Object.toEqual (server.test.js:98:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       5 failed, 2 passed, 7 total
+Snapshots:   0 total
+Time:        2.982 s, estimated 3 s
+Ran all test suites.
