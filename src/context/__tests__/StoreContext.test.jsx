@@ -137,4 +137,36 @@ describe('StoreContext Logic', () => {
 
         expect(res.success).toBe(false);
     });
+    it('syncData preserves local workouts that are not on server', async () => {
+        const { result } = renderHook(() => useStore(), { wrapper });
+
+        // 1. Setup initial state with a local workout
+        const localWorkout = { id: 'local-w1', name: 'Local Only', exercises: [] };
+        await act(async () => {
+            result.current.addWorkout(localWorkout);
+        });
+
+        // 2. Mock Server Data (empty workouts for this user)
+        const serverData = {
+            workouts: {
+                user1: [] // Server knows of no workouts
+            }
+        };
+
+        window.fetch.mockResolvedValueOnce({
+            ok: true,
+            json: async () => ({ data: serverData })
+        });
+
+        // 3. Trigger Sync
+        await act(async () => {
+            await result.current.syncData('mock-token');
+        });
+
+        // 4. Assert local workout still exists
+        // Note: addWorkout generates a UUID, so we check by name or existence
+        const workouts = result.current.workouts;
+        expect(workouts.length).toBeGreaterThan(0);
+        expect(workouts.some(w => w.name === 'Local Only')).toBe(true);
+    });
 });
