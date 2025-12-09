@@ -1,7 +1,6 @@
 services:
   duo-gym:
-    # Use the image built by CD pipeline
-    image: ghcr.io/${REPO_LOWER}/duo-gym:latest
+    image: ghcr.io/kilianmyspro/gymfamily/duo-gym:latest
     container_name: duo-gym
     restart: always
     ports:
@@ -12,18 +11,16 @@ services:
       - NODE_ENV=production
 
   backend:
-    # Use the image built by CD pipeline
-    image: ghcr.io/${REPO_LOWER}/backend:latest
+    image: ghcr.io/kilianmyspro/gymfamily/backend:latest
     container_name: duo-gym-backend
     restart: always
     ports:
       - "3002:3001"
     volumes:
-      # Only persist the database
       - ./backend/prisma:/app/prisma
     environment:
       - DATABASE_URL=file:./dev.db
-      - JWT_SECRET=${JWT_SECRET}
+      - JWT_SECRET=duogym-secret-prod
       - PORT=3001
       - NODE_ENV=production
     command: sh -c "npx prisma db push && npm start"

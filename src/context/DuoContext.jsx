@@ -22,21 +22,17 @@ export const DuoProvider = ({ children }) => {
 
         newSocket.on('connect', () => {
             setIsConnected(true);
-            console.log('Socket connected');
         });
 
         newSocket.on('disconnect', () => {
             setIsConnected(false);
-            console.log('Socket disconnected');
         });
 
         newSocket.on('partner_joined', (data) => {
-            console.log('Partner joined:', data);
             setPartner(data);
         });
 
-        newSocket.on('request_sync', (data) => {
-            console.log('Request sync received:', data);
+        newSocket.on('request_sync', () => {
             // Someone asked who is here. Tell them!
             if (roomIdRef.current) {
                 newSocket.emit('partner_sync', { roomId: roomIdRef.current, id: newSocket.id });
@@ -44,12 +40,10 @@ export const DuoProvider = ({ children }) => {
         });
 
         newSocket.on('partner_sync', (data) => {
-            console.log('Partner sync received:', data);
             setPartner(data);
         });
 
         newSocket.on('workout_update', (data) => {
-            console.log('Workout update received:', data);
             setPartnerWorkout(data);
         });
 
@@ -65,7 +59,6 @@ export const DuoProvider = ({ children }) => {
         if (socket && room) {
             socket.connect();
             socket.emit('join_room', room, () => {
-                console.log(`Successfully joined room ${room}, requesting sync...`);
                 // Ask if anyone is already here
                 socket.emit('request_sync', { roomId: room });
             });

@@ -36,7 +36,6 @@ export const getSuggestedWeight = (exerciseName, history, increment = 2.5) => {
     }
 
     if (!lastSession || !lastExerciseData) {
-        // console.log(`[Progression] No valid session found for "${exerciseName}"`);
         return null;
     }
 

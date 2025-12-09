@@ -36,10 +36,8 @@ const useWakeLock = () => {
                 setType('native');
                 isLockedRef.current = true;
                 typeRef.current = 'native';
-                console.log('Wake Lock active (Native)');
 
                 lock.addEventListener('release', () => {
-                    console.log('Wake Lock released (Native)');
                     // Only reset state if we haven't switched to nosleep or another lock
                     if (wakeLockRef.current === lock) {
                         setIsLocked(false);
@@ -69,7 +67,6 @@ const useWakeLock = () => {
                 setType('nosleep');
                 isLockedRef.current = true;
                 typeRef.current = 'nosleep';
-                console.log('Wake Lock active (NoSleep.js)');
             }
         } catch (err) {
             console.error('NoSleep Wake Lock failed:', err);
