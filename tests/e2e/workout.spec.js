@@ -22,7 +22,7 @@ test('complete workout flow', async ({ page }) => {
     await page.getByRole('button', { name: /Planner|Planificateur/i }).click();
 
     // Click "New Plan" (or "Create" on mobile)
-    await page.getByRole('button', { name: /New Plan|Create|Nouveau Plan|Créer/i }).click();
+    await page.getByRole('button', { name: /New Plan|Create|Nouveau Plan|Créer/i }).first().click();
 
     // 4. Create Routine
     await page.getByPlaceholder(/e.g. Push Day/i).fill('Full Body Blast');
