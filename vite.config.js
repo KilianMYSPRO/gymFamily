@@ -37,4 +37,12 @@ export default defineConfig({
     setupFiles: './src/setupTests.js',
     exclude: ['backend/**', 'node_modules/**'],
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+    }
+  },
 })
