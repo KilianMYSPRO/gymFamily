@@ -59,33 +59,31 @@ jobs:
             ghcr.io/${{ env.REPO_LOWER }}/backend:${{ github.sha }}
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build-and-push
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     steps:
-      - uses: actions/checkout@v4
-      
       - name: Lowercase Repository Name
         run: |
           echo "REPO_LOWER=$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
-      - name: Deploy to Raspberry Pi
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to Production
         env:
           REPO_LOWER: ${{ env.REPO_LOWER }}
           JWT_SECRET: ${{ secrets.JWT_SECRET || 'duogym-secret-prod' }}
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEY }}
-          port: ${{ secrets.PORT || 22 }}
-          envs: REPO_LOWER,JWT_SECRET
-          script: |
-            # Navigate to app directory (create if missing)
+        run: |
+            # We are running directly ON the Raspberry Pi now
             mkdir -p ~/duo-gym
             cd ~/duo-gym
             
-            # Export env vars for docker-compose
+            # Export env vars explicitly for the heredoc
             export REPO_LOWER=$REPO_LOWER
             export JWT_SECRET=$JWT_SECRET
             
