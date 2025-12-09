@@ -1,6 +1,6 @@
-FROM node:22-alpine
+FROM node:20-bookworm-slim
 
-RUN apk add --no-cache openssl python3 make g++
+RUN apt-get update -y && apt-get install -y openssl python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
