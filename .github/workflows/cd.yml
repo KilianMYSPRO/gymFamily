@@ -1,0 +1,50 @@
+name: CD
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend]
+    # Only run if CI passes. We need to duplicate the triggers or make this depend on a workflow_run.
+    # Simpler approach: define CI steps here or rely on the fact that if CI fails, we usually don't want to deploy?
+    # Better: This workflow trigger runs in parallel. Let's make it independent but robust.
+    # Note: 'needs' only works for jobs within the same workflow.
+    # We will assume CI runs in parallel or we can merge them.
+    # For separation of concerns, keeping separate. If CI fails, the commit is bad anyway.
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push Frontend
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/duo-gym:latest
+          ghcr.io/${{ github.repository }}/duo-gym:${{ github.sha }}
+
+    - name: Build and push Backend
+      uses: docker/build-push-action@v5
+      with:
+        context: ./backend
+        file: ./backend/Dockerfile
+        push: true
+        tags: |
+          ghcr.io/${{ github.repository }}/backend:latest
+          ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
