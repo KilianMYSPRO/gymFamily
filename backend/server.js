@@ -25,6 +25,10 @@ const JWT_SECRET = process.env.JWT_SECRET || 'duogym-secret-key-change-me';
 app.use(cors());
 app.use(express.json({ limit: '10mb' })); // Allow larger payloads for sync
 
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'ok' });
+});
+
 // Socket.io Logic
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
@@ -269,6 +273,10 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
     }
 });
 
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+    server.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+module.exports = { app, server, prisma };
