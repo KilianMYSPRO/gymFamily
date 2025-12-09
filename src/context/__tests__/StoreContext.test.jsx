@@ -14,14 +14,14 @@ vi.mock('../../utils/uuid', () => ({
 }));
 
 // Mock API calls
-global.fetch = vi.fn();
+window.fetch = vi.fn();
 
 describe('StoreContext Logic', () => {
     beforeEach(() => {
         uuidCounter = 0;
         vi.clearAllMocks();
         localStorage.clear();
-        global.fetch.mockResolvedValue({
+        window.fetch.mockResolvedValue({
             ok: true,
             json: async () => ({ data: {} })
         });
