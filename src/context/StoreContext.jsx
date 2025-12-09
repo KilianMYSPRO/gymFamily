@@ -125,7 +125,50 @@ export const StoreProvider = ({ children }) => {
                         ...prev,
                         ...serverData,
                         // Ensure arrays are arrays and merge them
-                        profiles: Array.isArray(serverData.profiles) ? serverData.profiles : prev.profiles,
+                        // 1. Merge Profiles
+                        profiles: (() => {
+                            const serverProfileIds = new Set((serverData.profiles || []).map(p => p.id));
+                            const localUniqueProfiles = prev.profiles.filter(p => !serverProfileIds.has(p.id));
+                            return [...(serverData.profiles || []), ...localUniqueProfiles];
+                        })(),
+
+                        // 2. Merge Workouts (deep merge per profile)
+                        workouts: (() => {
+                            const incomingWorkouts = serverData.workouts || {};
+                            const mergedWorkouts = { ...prev.workouts };
+
+                            Object.keys(incomingWorkouts).forEach(profileId => {
+                                const serverUserWorkouts = incomingWorkouts[profileId] || [];
+                                const localUserWorkouts = mergedWorkouts[profileId] || [];
+                                mergedWorkouts[profileId] = mergeArrays(localUserWorkouts, serverUserWorkouts);
+                            });
+
+                            // Ensure we don't lose local-only profiles' workouts
+                            Object.keys(mergedWorkouts).forEach(profileId => {
+                                if (!incomingWorkouts[profileId] && prev.workouts[profileId]) {
+                                    // It's already in mergedWorkouts from initialization, just explicit clarity
+                                }
+                            });
+
+                            return mergedWorkouts;
+                        })(),
+
+                        // 3. Merge Profile Details
+                        profileDetails: (() => {
+                            const incomingDetails = serverData.profileDetails || {};
+                            const mergedDetails = { ...prev.profileDetails };
+
+                            Object.keys(incomingDetails).forEach(profileId => {
+                                mergedDetails[profileId] = {
+                                    ...(mergedDetails[profileId] || {}),
+                                    ...incomingDetails[profileId]
+                                };
+                            });
+
+                            return mergedDetails;
+                        })(),
+
+                        // 4. Merge Arrays
                         history: Array.isArray(serverData.history)
                             ? mergeArrays(prev.history, serverData.history)
                             : prev.history,

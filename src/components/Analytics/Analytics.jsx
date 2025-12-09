@@ -7,6 +7,26 @@ import { useLanguage } from '../../context/LanguageContext';
 
 import { normalizeExercise } from '../../utils/exerciseNormalization';
 
+const CustomTooltip = ({ active, payload, label, metric }) => {
+    if (active && payload && payload.length) {
+        return (
+            <div className="bg-slate-900 border border-slate-700 p-3 rounded-lg shadow-xl">
+                <p className="text-slate-400 text-xs mb-1">{new Date(label).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</p>
+                <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-sky-500"></div>
+                    <p className="text-white font-mono font-bold">
+                        {payload[0].value}
+                        <span className="text-slate-500 text-xs ml-1 font-sans">
+                            {metric === 'weight' ? 'kg' : 'vol'}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        );
+    }
+    return null;
+};
+
 const Analytics = () => {
     const { t } = useLanguage();
     const { history, weightHistory } = useStore();
