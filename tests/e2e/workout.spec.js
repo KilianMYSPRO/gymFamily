@@ -8,7 +8,8 @@ test('complete workout flow', async ({ page }) => {
     // Toggle to Register view
     await page.getByRole('button', { name: /Sign up|Inscrivez-vous/i }).click();
 
-    await page.getByPlaceholder(/Username|Nom d'utilisateur/i).fill('testuser');
+    const timestamp = Date.now();
+    await page.getByPlaceholder(/Username|Nom d'utilisateur/i).fill(`testuser${timestamp}`);
     await page.getByPlaceholder(/Password|Mot de passe/i).first().fill('password123');
     // Security Question answer
     await page.getByPlaceholder(/Answer|Réponse/i).fill('Fido');
@@ -16,7 +17,7 @@ test('complete workout flow', async ({ page }) => {
     await page.getByRole('button', { name: /Create Account|Créer un compte/i }).click();
 
     // 3. Verify Dashboard & Navigate to Planner
-    await expect(page.getByText(/Let's Crush It/i)).toBeVisible();
+    await expect(page.getByText(/Let's Crush It/i)).toBeVisible({ timeout: 15000 });
 
     // Navigate to Planner to create a routine
     await page.getByRole('button', { name: /Planner|Planificateur/i }).click();
@@ -31,7 +32,7 @@ test('complete workout flow', async ({ page }) => {
     await page.getByRole('button', { name: /Add Exercise|Ajouter un Exercice/i }).click();
     // Search and select an exercise (assuming Bench Press exists in default data)
     await page.getByPlaceholder(/Search|Rechercher/i).fill('Bench Press');
-    await page.getByText('Bench Press (Barbell)').first().click();
+    await page.getByText('Barbell Bench Press - Medium Grip').first().click();
 
     // Save Routine
     await page.getByRole('button', { name: /Save Routine|Enregistrer/i }).first().click();

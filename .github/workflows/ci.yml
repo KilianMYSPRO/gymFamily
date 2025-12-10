@@ -61,7 +61,7 @@ jobs:
     env:
       DATABASE_URL: "file:./e2e.db"
       JWT_SECRET: "test-secret"
-      PORT: 3001
+      PORT: 3000
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js
@@ -78,13 +78,6 @@ jobs:
         cd backend
         npm ci
         npx prisma db push
-        npm start &
-        echo "Backend started"
-        
-    - name: Setup Frontend
-      run: |
-        npm run dev &
-        npx wait-on http://localhost:5173
         
     - name: Run E2E Tests
       run: npm run test:e2e
