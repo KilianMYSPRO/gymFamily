@@ -5,29 +5,16 @@ import { generateUUID } from '../utils/uuid';
 export const StoreContext = createContext();
 
 const INITIAL_DATA = {
-    profiles: [
-        { id: 'user1', name: 'My Profile', theme: 'blue' }
-    ],
-    workouts: {
-        user1: []
-    },
+    profiles: [],
+    workouts: {},
     weightHistory: [],
     history: [],
-    profileDetails: {
-        user1: {
-            age: '',
-            weight: '',
-            height: '',
-            gender: 'prefer-not-to-say',
-            goal: 'general-fitness',
-            weeklyGoal: 3
-        }
-    }
+    profileDetails: {}
 };
 
 export const StoreProvider = ({ children }) => {
     // eslint-disable-next-line no-unused-vars
-    const [activeProfileId, setActiveProfileId] = useState('user1');
+    const [activeProfileId, setActiveProfileId] = useState(null);
     const [data, setData] = useState(() => {
         try {
             const saved = localStorage.getItem('duogym-data');
@@ -71,6 +58,21 @@ export const StoreProvider = ({ children }) => {
     useEffect(() => {
         localStorage.setItem('duogym-data', JSON.stringify(data));
     }, [data]);
+
+    // Initialize Default Profile if Empty
+    useEffect(() => {
+        if (!data.profiles || data.profiles.length === 0) {
+            const newProfileId = generateUUID();
+            const newProfile = { id: newProfileId, name: 'My Profile', theme: 'blue' };
+            setData(prev => ({
+                ...prev,
+                profiles: [newProfile]
+            }));
+            setActiveProfileId(newProfileId);
+        } else if (!activeProfileId && data.profiles.length > 0) {
+            setActiveProfileId(data.profiles[0].id);
+        }
+    }, [data.profiles, activeProfileId]);
 
     useEffect(() => {
         if (token) {
@@ -249,7 +251,7 @@ export const StoreProvider = ({ children }) => {
         setSyncStatus('idle');
     };
 
-    const activeProfile = (Array.isArray(data.profiles) ? data.profiles.find(p => p.id === activeProfileId) : null) || INITIAL_DATA.profiles[0];
+    const activeProfile = (Array.isArray(data.profiles) ? data.profiles.find(p => p.id === activeProfileId) : null) || (data.profiles && data.profiles[0]) || null;
 
 
 
