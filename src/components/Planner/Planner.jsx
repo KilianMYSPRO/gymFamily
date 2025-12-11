@@ -300,6 +300,29 @@ const Planner = () => {
         setShowTemplateModal(false);
     };
 
+    const handleOpenImport = () => {
+        if (isCreating && (exercises.length > 0 || newWorkoutName)) {
+            const currentData = {
+                name: newWorkoutName,
+                exercises: exercises.map(ex => ({
+                    name: ex.name,
+                    sets: ex.sets,
+                    reps: ex.reps,
+                    restTime: ex.restTime,
+                    weight: ex.weight,
+                    link: ex.link,
+                    description: ex.description,
+                    isOptional: ex.isOptional || false,
+                }))
+            };
+            setImportJson(JSON.stringify(currentData, null, 2));
+        } else {
+            setImportJson('');
+        }
+        setImportError(null);
+        setShowImportModal(true);
+    };
+
     // JSON Editor Logic
     const handleEditJson = (workout) => {
         setEditingJsonId(workout.id);
@@ -512,7 +535,7 @@ const Planner = () => {
                 {!isCreating && (
                     <div className="flex gap-2">
                         <button
-                            onClick={() => setShowImportModal(true)}
+                            onClick={handleOpenImport}
                             className="btn btn-secondary py-2 px-3 text-sm"
                         >
                             <Download size={16} />
@@ -590,7 +613,7 @@ const Planner = () => {
                                         </button>
                                     )}
                                     <button
-                                        onClick={() => setShowImportModal(true)}
+                                        onClick={handleOpenImport}
                                         className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
                                         title={t('planner.import')}
                                     >
