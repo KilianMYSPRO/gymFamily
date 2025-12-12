@@ -191,9 +191,10 @@ export const StoreProvider = ({ children }) => {
 
     const pushData = async (authToken = token) => {
         if (!authToken) return;
+        setSyncStatus('syncing');
 
         try {
-            await fetch('/api/sync', {
+            const response = await fetch('/api/sync', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -201,8 +202,16 @@ export const StoreProvider = ({ children }) => {
                 },
                 body: JSON.stringify({ data: data })
             });
+
+            if (!response.ok) {
+                throw new Error(`Push failed: ${response.status}`);
+            }
+
+            setSyncStatus('success');
+            setTimeout(() => setSyncStatus('idle'), 2000);
         } catch (error) {
             console.error('Push error:', error);
+            setSyncStatus('error');
         }
     };
 
