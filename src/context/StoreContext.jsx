@@ -204,7 +204,9 @@ export const StoreProvider = ({ children }) => {
             });
 
             if (!response.ok) {
-                throw new Error(`Push failed: ${response.status}`);
+                const errorText = await response.text();
+                console.error('Push failed details:', errorText);
+                throw new Error(`Push failed: ${response.status} - ${errorText}`);
             }
 
             setSyncStatus('success');
