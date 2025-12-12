@@ -78,10 +78,21 @@ const authenticateToken = (req, res, next) => {
 
     if (!token) return res.sendStatus(401);
 
-    jwt.verify(token, JWT_SECRET, (err, user) => {
+    jwt.verify(token, JWT_SECRET, async (err, user) => {
         if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
+
+        try {
+            // Verify user exists in DB to prevent orphaned tokens
+            const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+            if (!dbUser) {
+                return res.sendStatus(401); // Invalid/Deleted user
+            }
+            req.user = user;
+            next();
+        } catch (dbError) {
+            console.error('Auth verification error:', dbError);
+            res.sendStatus(500);
+        }
     });
 };
 
