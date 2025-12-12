@@ -107,7 +107,14 @@ export const StoreProvider = ({ children }) => {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
 
-            if (!response.ok) throw new Error('Sync failed');
+            if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    console.warn('Auth token invalid/orphaned. Logging out.');
+                    logout();
+                    return;
+                }
+                throw new Error('Sync failed');
+            }
 
             const { data: serverData } = await response.json();
 
@@ -204,6 +211,11 @@ export const StoreProvider = ({ children }) => {
             });
 
             if (!response.ok) {
+                if (response.status === 401 || response.status === 403) {
+                    console.warn('Auth token invalid/orphaned. Logging out.');
+                    logout();
+                    return;
+                }
                 const errorText = await response.text();
                 console.error('Push failed details:', errorText);
                 throw new Error(`Push failed: ${response.status} - ${errorText}`);
