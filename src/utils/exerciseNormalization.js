@@ -91,6 +91,9 @@ const getFingerprint = (name) => {
 
     let processed = name.toLowerCase();
 
+    // Remove accents (NFD normalization)
+    processed = processed.normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
     // Remove punctuation
     processed = processed.replace(/[()\-,.]/g, " ");
 
