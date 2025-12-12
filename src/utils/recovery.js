@@ -75,13 +75,13 @@ export const calculateRecovery = (history) => {
                 const inferredMuscles = [];
                 const inferredSecondary = [];
 
-                if (lowerName.includes("bench") || lowerName.includes("chest") || lowerName.includes("couché") || lowerName.includes("pectoraux")) inferredMuscles.push("chest");
-                if (lowerName.includes("squat") || lowerName.includes("leg press") || lowerName.includes("cuisses")) inferredMuscles.push("quads");
-                if (lowerName.includes("deadlift") || lowerName.includes("row") || lowerName.includes("pull") || lowerName.includes("dos") || lowerName.includes("tirage")) inferredMuscles.push("lats");
-                if (lowerName.includes("shoulder") || lowerName.includes("military") || lowerName.includes("press") || lowerName.includes("latérales") || lowerName.includes("militaire") || lowerName.includes("écarté")) inferredMuscles.push("shoulders");
+                if (lowerName.includes("bench") || lowerName.includes("chest") || lowerName.includes("couché") || lowerName.includes("pectoraux") || lowerName.includes("développé") || lowerName.includes("developpe")) inferredMuscles.push("chest");
+                if (lowerName.includes("squat") || lowerName.includes("leg press") || lowerName.includes("cuisses") || lowerName.includes("presse")) inferredMuscles.push("quads");
+                if (lowerName.includes("deadlift") || lowerName.includes("row") || lowerName.includes("pull") || lowerName.includes("dos") || lowerName.includes("tirage") || lowerName.includes("soulevé") || lowerName.includes("souleve")) inferredMuscles.push("lats");
+                if (lowerName.includes("shoulder") || lowerName.includes("military") || lowerName.includes("press") || lowerName.includes("latérales") || lowerName.includes("militaire") || lowerName.includes("écarté") || lowerName.includes("oiseau")) inferredMuscles.push("shoulders");
                 if (lowerName.includes("curl") || lowerName.includes("biceps")) inferredMuscles.push("biceps");
                 if (lowerName.includes("triceps") || lowerName.includes("extension") || lowerName.includes("barre front") || lowerName.includes("dips")) inferredMuscles.push("triceps");
-                if (lowerName.includes("abs") || lowerName.includes("crunch") || lowerName.includes("sit-up") || lowerName.includes("gainage")) inferredMuscles.push("abs");
+                if (lowerName.includes("abs") || lowerName.includes("crunch") || lowerName.includes("sit-up") || lowerName.includes("gainage") || lowerName.includes("enroulement")) inferredMuscles.push("abs");
 
                 if (inferredMuscles.length > 0) {
                     exerciseDef = {
