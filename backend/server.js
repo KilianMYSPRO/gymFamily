@@ -269,7 +269,12 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
         res.json({ success: true, timestamp: new Date().toISOString() });
     } catch (error) {
         console.error('Sync save error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({
+            error: 'Sync save failed',
+            details: error.message,
+            code: error.code,
+            meta: error.meta
+        });
     }
 });
 
