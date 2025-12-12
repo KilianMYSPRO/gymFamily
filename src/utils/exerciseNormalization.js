@@ -46,7 +46,17 @@ const CUSTOM_MAPPINGS = {
     "Presse à Cuisses horizontale (Pieds HAUTS & Écartés)": "Leg Press",
     "Machine Adducteurs (Intérieur Cuisse)": "Adductor",
     "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
+    "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
     "Tirage Vertical": "Wide-Grip Lat Pulldown",
+    "Oiseau à la poulie haute": "Cable Rear Delt Fly",
+    "Oiseau a la poulie haute": "Cable Rear Delt Fly",
+    "Oiseau à la poulie": "Cable Rear Delt Fly",
+    "Oiseau a la poulie": "Cable Rear Delt Fly",
+    "Enroulement de Bassin": "Reverse Crunch",
+    "Soulevé de Terre Roumain (Barre)": "Romanian Deadlift",
+    "Soulevé de Terre Roumain": "Romanian Deadlift",
+    "Développé Incliné (Haltères)": "Incline Dumbbell Press",
+    "Développé Incliné (Halteres)": "Incline Dumbbell Press",
 
     // English Common Aliases
     "Bench Press": "Barbell Bench Press - Medium Grip",
