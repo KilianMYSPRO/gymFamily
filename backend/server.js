@@ -3,20 +3,15 @@ const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const http = require('http');
-const { Server } = require('socket.io');
+const setupSocket = require('./socket');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-    cors: {
-        origin: "*", // Allow all origins for now, restrict in prod
-        methods: ["GET", "POST"]
-    }
-});
+const io = setupSocket(server);
 
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
@@ -29,47 +24,8 @@ app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
 });
 
-// Socket.io Logic
-io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
-
-    socket.on('join_room', (roomId, callback) => {
-        socket.join(roomId);
-        console.log(`User ${socket.id} joined room: ${roomId}`);
-        socket.to(roomId).emit('partner_joined', { id: socket.id });
-        if (callback) callback();
-    });
-
-    socket.on('workout_update', (data) => {
-        // data should contain: roomId, exerciseName, sets, reps, weight, etc.
-        const { roomId, ...workoutData } = data;
-        socket.to(roomId).emit('workout_update', workoutData);
-    });
-
-    socket.on('partner_sync', (data) => {
-        console.log('Server received partner_sync:', data);
-        const { roomId, ...syncData } = data;
-        if (roomId) {
-            socket.to(roomId).emit('partner_sync', syncData);
-            console.log(`Relayed partner_sync to room ${roomId}`);
-        } else {
-            console.warn('partner_sync received without roomId');
-        }
-    });
-
-    socket.on('request_sync', (data) => {
-        console.log('Server received request_sync:', data);
-        const { roomId } = data;
-        if (roomId) {
-            socket.to(roomId).emit('request_sync', { id: socket.id });
-            console.log(`Relayed request_sync to room ${roomId}`);
-        }
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-    });
-});
+// Use Auth Routes
+app.use('/api/auth', authRoutes);
 
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
@@ -95,138 +51,6 @@ const authenticateToken = (req, res, next) => {
         }
     });
 };
-
-// ... (Auth Routes and Sync Routes remain unchanged) ...
-
-
-app.post('/api/auth/register', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-
-        if (!username || !password) {
-            return res.status(400).json({ error: 'Username and password required' });
-        }
-
-        const existingUser = await prisma.user.findUnique({ where: { username } });
-        if (existingUser) {
-            return res.status(400).json({ error: 'Username already exists' });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const hashedAnswer = req.body.securityAnswer ? await bcrypt.hash(req.body.securityAnswer.toLowerCase(), 10) : null;
-
-        const user = await prisma.user.create({
-            data: {
-                username,
-                password: hashedPassword,
-                securityQuestion: req.body.securityQuestion,
-                securityAnswer: hashedAnswer
-            }
-        });
-
-        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-        res.json({ token, user: { id: user.id, username: user.username } });
-    } catch (error) {
-        console.error('Register error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await prisma.user.findUnique({ where: { username } });
-
-        if (!user || !(await bcrypt.compare(password, user.password))) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
-
-        const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET);
-        res.json({ token, user: { id: user.id, username: user.username } });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.get('/api/auth/get-security-question/:username', async (req, res) => {
-    try {
-        const { username } = req.params;
-        const user = await prisma.user.findUnique({ where: { username } });
-
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        if (!user.securityQuestion) {
-            return res.status(400).json({ error: 'No security question set for this user' });
-        }
-
-        res.json({ question: user.securityQuestion });
-    } catch (error) {
-        console.error('Get security question error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.post('/api/auth/reset-password', async (req, res) => {
-    try {
-        const { username, securityAnswer, newPassword } = req.body;
-
-        if (!username || !securityAnswer || !newPassword) {
-            return res.status(400).json({ error: 'All fields are required' });
-        }
-
-        const user = await prisma.user.findUnique({ where: { username } });
-
-        if (!user || !user.securityAnswer) {
-            return res.status(400).json({ error: 'Invalid request' });
-        }
-
-        const isAnswerValid = await bcrypt.compare(securityAnswer.toLowerCase(), user.securityAnswer);
-
-        if (!isAnswerValid) {
-            return res.status(401).json({ error: 'Incorrect security answer' });
-        }
-
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
-
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { password: hashedPassword }
-        });
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Reset password error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.post('/api/auth/update-security', authenticateToken, async (req, res) => {
-    try {
-        const { securityQuestion, securityAnswer } = req.body;
-
-        if (!securityQuestion || !securityAnswer) {
-            return res.status(400).json({ error: 'Question and answer are required' });
-        }
-
-        const hashedAnswer = await bcrypt.hash(securityAnswer.toLowerCase(), 10);
-
-        await prisma.user.update({
-            where: { id: req.user.id },
-            data: {
-                securityQuestion,
-                securityAnswer: hashedAnswer
-            }
-        });
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error('Update security error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
 
 // Sync Routes
 app.get('/api/sync', authenticateToken, async (req, res) => {
