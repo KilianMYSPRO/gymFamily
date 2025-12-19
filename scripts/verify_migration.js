@@ -1,6 +1,6 @@
-
+/* eslint-env node */
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 const PORT = 3002;
 const BASE_URL = `http://localhost:${PORT}`;
 

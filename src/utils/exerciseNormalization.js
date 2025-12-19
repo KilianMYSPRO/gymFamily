@@ -46,7 +46,6 @@ const CUSTOM_MAPPINGS = {
     "Presse à Cuisses horizontale (Pieds HAUTS & Écartés)": "Leg Press",
     "Machine Adducteurs (Intérieur Cuisse)": "Adductor",
     "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
-    "Machine Abducteurs (Extérieur Fessier)": "Thigh Abductor",
     "Tirage Vertical": "Wide-Grip Lat Pulldown",
     "Oiseau à la poulie haute": "Cable Rear Delt Fly",
     "Oiseau a la poulie haute": "Cable Rear Delt Fly",
