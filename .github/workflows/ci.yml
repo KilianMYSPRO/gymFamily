@@ -61,7 +61,7 @@ jobs:
     env:
       DATABASE_URL: "file:./e2e.db"
       JWT_SECRET: "test-secret"
-      PORT: 3001
+      PORT: 3002
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js
