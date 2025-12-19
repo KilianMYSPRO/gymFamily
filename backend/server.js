@@ -11,7 +11,7 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 const server = http.createServer(app);
-const io = setupSocket(server);
+setupSocket(server);
 
 const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
