@@ -115,13 +115,13 @@ jobs:
                 container_name: duo-gym-backend
                 restart: always
                 ports:
-                  - "3002:3001"
+                  - "3002:3002"
                 volumes:
                   - ./data:/app/data
                 environment:
                   - DATABASE_URL=file:/app/data/dev.db
                   - JWT_SECRET=$JWT_SECRET
-                  - PORT=3001
+                  - PORT=3002
                   - NODE_ENV=production
                 command: sh -c "npx prisma db push && npm start"
             EOF
