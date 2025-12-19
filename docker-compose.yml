@@ -17,7 +17,7 @@ services:
     volumes:
       - ./backend/prisma:/app/prisma
     environment:
-      - DATABASE_URL=file:./dev.db
+      - DATABASE_URL=file:./prisma/dev.db
       - JWT_SECRET=duogym-secret-key-change-me
       - PORT=3001
       - NODE_ENV=production
