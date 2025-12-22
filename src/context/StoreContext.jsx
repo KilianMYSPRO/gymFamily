@@ -97,9 +97,64 @@ export const StoreProvider = ({ children }) => {
     }, [activeWorkout]);
 
     // Sync Logic
+    const reconcileWorkoutsWithHistory = (currentData) => {
+        const newData = { ...currentData };
+        const history = newData.history || [];
+        const profiles = newData.profiles || [];
+
+        let hasChanges = false;
+
+        profiles.forEach(profile => {
+            const profileId = profile.id;
+            const userHistory = history.filter(h => h.profileId === profileId);
+            const userWorkouts = (newData.workouts && newData.workouts[profileId]) || [];
+
+            // Map workoutId -> latest history date
+            const latestHistoryDates = {};
+            userHistory.forEach(h => {
+                const wid = h.workoutId;
+                const date = new Date(h.date).getTime();
+                if (!latestHistoryDates[wid] || date > latestHistoryDates[wid]) {
+                    latestHistoryDates[wid] = date;
+                }
+            });
+
+            const updatedWorkouts = userWorkouts.map(w => {
+                const latestDate = latestHistoryDates[w.id];
+                const currentLastPerformed = w.lastPerformed ? new Date(w.lastPerformed).getTime() : 0;
+
+                if (latestDate && latestDate > currentLastPerformed) {
+                    hasChanges = true;
+                    return {
+                        ...w,
+                        lastPerformed: new Date(latestDate).toISOString(),
+                        // Optional: Recalculate usage count?
+                        // usageCount: userHistory.filter(h => h.workoutId === w.id).length
+                    };
+                }
+                return w;
+            });
+
+            if (newData.workouts) {
+                newData.workouts[profileId] = updatedWorkouts;
+            }
+        });
+
+        return { data: newData, hasChanges };
+    };
+
     const syncData = async (authToken = token) => {
         if (!authToken) return;
         setSyncStatus('syncing');
+
+        // Self-heal before syncing to ensure we send correct data
+        let currentLocalData = data;
+        const { data: healedData, hasChanges } = reconcileWorkoutsWithHistory(currentLocalData);
+        if (hasChanges) {
+            console.log("Self-healing applied: Updated stale workout dates from history.");
+            setData(healedData);
+            currentLocalData = healedData;
+        }
 
         try {
             // 1. Fetch latest from server
