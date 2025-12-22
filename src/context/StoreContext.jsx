@@ -139,7 +139,7 @@ export const StoreProvider = ({ children }) => {
                             return [...(serverData.profiles || []), ...localUniqueProfiles];
                         })(),
 
-                        // 2. Merge Workouts (deep merge per profile)
+                        // 2. Merge Workouts (Smart Merge per profile)
                         workouts: (() => {
                             const incomingWorkouts = serverData.workouts || {};
                             const mergedWorkouts = { ...prev.workouts };
@@ -147,15 +147,52 @@ export const StoreProvider = ({ children }) => {
                             Object.keys(incomingWorkouts).forEach(profileId => {
                                 const serverUserWorkouts = incomingWorkouts[profileId] || [];
                                 const localUserWorkouts = mergedWorkouts[profileId] || [];
-                                mergedWorkouts[profileId] = mergeArrays(localUserWorkouts, serverUserWorkouts);
+
+                                // Map by ID for easier lookup
+                                const localMap = new Map(localUserWorkouts.map(w => [w.id, w]));
+                                const serverMap = new Map(serverUserWorkouts.map(w => [w.id, w]));
+
+                                // Get all unique IDs
+                                const allIds = new Set([...localMap.keys(), ...serverMap.keys()]);
+                                const resultArray = [];
+
+                                allIds.forEach(id => {
+                                    const local = localMap.get(id);
+                                    const server = serverMap.get(id);
+
+                                    if (local && server) {
+                                        // Conflict: Compare lastPerformed
+                                        const localDate = local.lastPerformed ? new Date(local.lastPerformed).getTime() : 0;
+                                        const serverDate = server.lastPerformed ? new Date(server.lastPerformed).getTime() : 0;
+
+                                        if (localDate > serverDate) {
+                                            resultArray.push(local); // Keep local (it's newer)
+                                        } else if (serverDate > localDate) {
+                                            resultArray.push(server); // Keep server (it's newer)
+                                        } else {
+                                            // Tie-breaker: Usage count
+                                            const localCount = local.usageCount || 0;
+                                            const serverCount = server.usageCount || 0;
+                                            if (localCount >= serverCount) {
+                                                resultArray.push(local);
+                                            } else {
+                                                resultArray.push(server);
+                                            }
+                                        }
+                                    } else if (local) {
+                                        resultArray.push(local); // Local only
+                                    } else if (server) {
+                                        resultArray.push(server); // Server only
+                                    }
+                                });
+
+                                mergedWorkouts[profileId] = resultArray;
                             });
 
                             // Ensure we don't lose local-only profiles' workouts
-                            Object.keys(mergedWorkouts).forEach(profileId => {
-                                if (!incomingWorkouts[profileId] && prev.workouts[profileId]) {
-                                    // It's already in mergedWorkouts from initialization, just explicit clarity
-                                }
-                            });
+                            // (Already handled by spreading ...prev.workouts initially, 
+                            //  but the iteration above only updates profiles present in serverData.
+                            //  If serverData doesn't have a profile key, that profile's local workouts remain untouched.)
 
                             return mergedWorkouts;
                         })(),
