@@ -72,8 +72,8 @@ export const calculateGamificationStats = (history) => {
         return diff < 14 * 24 * 60 * 60 * 1000;
     }).length;
 
-    // Cap at 8 workouts in 2 weeks (4x/week) = 100% momentum
-    const momentum = Math.min(100, (recentWorkouts / 8) * 100);
+    // Cap at 6 workouts in 2 weeks (3x/week) = 100% momentum
+    const momentum = Math.min(100, (recentWorkouts / 6) * 100);
 
     return {
         level,
