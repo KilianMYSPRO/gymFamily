@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link } from 'lucide-react';
+import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link, Check } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
@@ -466,10 +466,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     <div className="space-y-4 px-4">
                         {workoutData.exercises.map((exercise, exerciseIndex) => {
                             const isSuperset = !!exercise.supersetId;
+                            const isExerciseCompleted = exercise.sets.length > 0 && exercise.sets.every(s => s.completed);
                             return (
                                 <div key={exercise.id} className={clsx(
                                     "glass-card p-4 rounded-2xl animate-fade-in relative transition-all",
-                                    isSuperset && "border-l-4 border-l-indigo-500"
+                                    isSuperset && "border-l-4 border-l-indigo-500",
+                                    isExerciseCompleted && "border-l-4 border-l-emerald-500 bg-emerald-500/5"
                                 )} style={{ animationDelay: `${exerciseIndex * 100}ms` }}>
                                     <div
                                         className="flex items-center justify-between mb-4 cursor-pointer"
@@ -492,7 +494,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                 </div>
                                                 <h3 className="font-bold text-lg text-white flex items-center gap-2 flex-wrap">
                                                     {exercise.name}
-                                                    {suggestions[exercise.id] && (
+                                                    {isExerciseCompleted && (
+                                                        <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1 whitespace-nowrap">
+                                                            <Check size={12} /> {t('tracker.exerciseComplete')}
+                                                        </span>
+                                                    )}
+                                                    {suggestions[exercise.id] && !isExerciseCompleted && (
                                                         <span className="text-xs font-normal text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 whitespace-nowrap">
                                                             Suggest: {suggestions[exercise.id]}kg
                                                         </span>

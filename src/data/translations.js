@@ -65,7 +65,8 @@ export const translations = {
             restTimer: "Rest Timer",
             skipRest: "Skip Rest",
             viewGuide: "View Guide",
-            upNext: "Up Next"
+            upNext: "Up Next",
+            exerciseComplete: "Done"
         },
         planner: {
             title: "Workout Planner",
@@ -321,7 +322,8 @@ export const translations = {
             restTimer: "Minuteur de Repos",
             skipRest: "Passer le Repos",
             viewGuide: "Voir le Guide",
-            upNext: "À suivre"
+            upNext: "À suivre",
+            exerciseComplete: "Terminé"
         },
         planner: {
             title: "Planificateur",
