@@ -1,16 +1,17 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { StoreProvider, useStore } from './context/StoreContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { DuoProvider } from './context/DuoContext';
 import Layout from './components/Layout/Layout';
 import Landing from './components/Landing/Landing';
 import Loading from './components/common/Loading';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 const Dashboard = lazy(() => import('./components/Dashboard/Dashboard'));
 const Planner = lazy(() => import('./components/Planner/Planner'));
 const Tracker = lazy(() => import('./components/Tracker/Tracker'));
 const History = lazy(() => import('./components/History/History'));
 const Profile = lazy(() => import('./components/Profile/Profile'));
-
-import ErrorBoundary from './components/common/ErrorBoundary';
 
 function AppContent() {
   const { token, login } = useStore();
@@ -68,10 +69,6 @@ function AppContent() {
     </Layout>
   );
 }
-
-import { LanguageProvider } from './context/LanguageContext';
-
-import { DuoProvider } from './context/DuoContext';
 
 function App() {
   return (
