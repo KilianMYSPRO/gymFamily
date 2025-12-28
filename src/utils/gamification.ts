@@ -1,4 +1,6 @@
-export const LEVELS = [
+import type { Level, GamificationStats, WorkoutSession } from '../types';
+
+export const LEVELS: Level[] = [
     { name: "Rookie", minWorkouts: 0, color: "text-slate-400", icon: "🌱" },
     { name: "Regular", minWorkouts: 10, color: "text-emerald-400", icon: "🌿" },
     { name: "Gym Rat", minWorkouts: 50, color: "text-blue-400", icon: "🐀" },
@@ -13,16 +15,27 @@ const MOMENTUM_WINDOW_DAYS = 14;
 const MOMENTUM_TARGET_WORKOUTS = 6;
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
+interface HistoryEntry {
+    endTime?: string | null;
+    [key: string]: unknown;
+}
+
 /**
  * Validates a history entry has a valid endTime
  */
-const isValidHistoryEntry = (entry) => {
+const isValidHistoryEntry = (entry: HistoryEntry): boolean => {
     if (!entry?.endTime) return false;
     const date = new Date(entry.endTime);
     return !isNaN(date.getTime());
 };
 
-export const calculateGamificationStats = (history) => {
+/**
+ * Calculates gamification statistics from workout history.
+ * 
+ * @param history - Array of workout sessions with endTime
+ * @returns GamificationStats object with level, progress, streak, momentum
+ */
+export const calculateGamificationStats = (history: HistoryEntry[] | null | undefined): GamificationStats => {
     // Filter to only valid entries with parseable dates
     const validHistory = Array.isArray(history)
         ? history.filter(isValidHistoryEntry)
@@ -59,18 +72,20 @@ export const calculateGamificationStats = (history) => {
 
     // 2. Calculate Streak
     let currentStreak = 0;
-    const sortedHistory = [...validHistory].sort((a, b) => new Date(b.endTime) - new Date(a.endTime));
+    const sortedHistory = [...validHistory].sort((a, b) =>
+        new Date(b.endTime!).getTime() - new Date(a.endTime!).getTime()
+    );
 
     const now = new Date();
-    const lastWorkout = new Date(sortedHistory[0].endTime);
-    const daysSinceLast = (now - lastWorkout) / MS_PER_DAY;
+    const lastWorkout = new Date(sortedHistory[0].endTime!);
+    const daysSinceLast = (now.getTime() - lastWorkout.getTime()) / MS_PER_DAY;
 
     if (daysSinceLast < MAX_REST_DAYS_FOR_STREAK) {
         currentStreak = 1;
         for (let i = 0; i < sortedHistory.length - 1; i++) {
-            const d1 = new Date(sortedHistory[i].endTime);
-            const d2 = new Date(sortedHistory[i + 1].endTime);
-            const gap = (d1 - d2) / MS_PER_DAY;
+            const d1 = new Date(sortedHistory[i].endTime!);
+            const d2 = new Date(sortedHistory[i + 1].endTime!);
+            const gap = (d1.getTime() - d2.getTime()) / MS_PER_DAY;
 
             if (gap < MAX_REST_DAYS_FOR_STREAK) {
                 currentStreak++;
@@ -82,7 +97,7 @@ export const calculateGamificationStats = (history) => {
 
     // 3. Momentum Score (0-100)
     const recentWorkouts = validHistory.filter(s => {
-        const diff = now - new Date(s.endTime);
+        const diff = now.getTime() - new Date(s.endTime!).getTime();
         return diff < MOMENTUM_WINDOW_DAYS * MS_PER_DAY;
     }).length;
 
