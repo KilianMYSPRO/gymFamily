@@ -49,9 +49,13 @@ const RestTimer = ({ isOpen, onClose, defaultDuration = 90, nextExercise }) => {
                 if (prev <= 6 && prev > 1) {
                     // Play normal beep for 5, 4, 3, 2, 1 seconds left
                     playBeep(800);
+                    // Haptic pulse for countdown
+                    if (navigator.vibrate) navigator.vibrate(50);
                 } else if (prev === 1) {
                     // Play high beep for completion
                     playBeep(1200);
+                    // Strong haptic for finish
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
                 }
 
                 if (prev <= 1) {
@@ -67,6 +71,7 @@ const RestTimer = ({ isOpen, onClose, defaultDuration = 90, nextExercise }) => {
     }, [isOpen, onClose]);
 
     const adjustTime = (seconds) => {
+        if (navigator.vibrate) navigator.vibrate(10);
         setTimeLeft((prev) => Math.max(0, prev + seconds));
     };
 

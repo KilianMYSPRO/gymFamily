@@ -670,26 +670,29 @@ const Planner = () => {
                                             </div>
                                         )}
                                         <div className="absolute top-2 right-2 flex items-center gap-1">
-                                            <div className="flex flex-col mr-2">
+                                            <div className="flex flex-col">
                                                 <button
                                                     onClick={() => moveExercise(idx, 'up')}
                                                     disabled={idx === 0 || selectionMode}
-                                                    className="text-slate-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed p-0.5"
+                                                    className="w-10 h-10 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                                                     title={t('planner.moveUp')}
                                                 >
-                                                    <ChevronUp size={16} />
+                                                    <ChevronUp size={20} />
                                                 </button>
                                                 <button
                                                     onClick={() => moveExercise(idx, 'down')}
                                                     disabled={idx === exercises.length - 1 || selectionMode}
-                                                    className="text-slate-500 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed p-0.5"
+                                                    className="w-10 h-10 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
                                                     title={t('planner.moveDown')}
                                                 >
-                                                    <ChevronDown size={16} />
+                                                    <ChevronDown size={20} />
                                                 </button>
                                             </div>
-                                            <button onClick={() => removeExercise(ex.id)} className="text-slate-500 hover:text-red-400 p-2">
-                                                <Trash2 size={18} />
+                                            <button
+                                                onClick={() => removeExercise(ex.id)}
+                                                className="w-10 h-10 md:w-8 md:h-8 flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all active:scale-95"
+                                            >
+                                                <Trash2 size={20} />
                                             </button>
                                         </div>
 

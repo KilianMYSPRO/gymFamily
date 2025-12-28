@@ -573,75 +573,132 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                     {(!expandedExercises[exercise.id]) && (
                                         <div className="space-y-3">
                                             <div className="grid grid-cols-12 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
-                                                <div className="col-span-2 text-center flex items-center justify-center">Set</div>
-                                                <div className="col-span-4 text-center">
+                                                <div className="col-span-1 text-center flex items-center justify-center">Set</div>
+                                                <div className="col-span-5 text-center">
                                                     {exercise.category === 'cardio' ? t('tracker.distance') || 'Dist (km)' : 'kg'}
                                                 </div>
-                                                <div className="col-span-3 text-center">
+                                                <div className="col-span-4 text-center">
                                                     {exercise.category === 'cardio' ? t('tracker.time') || 'Time' : 'Reps'}
                                                 </div>
-                                                <div className="col-span-3 text-center">Done</div>
+                                                <div className="col-span-2 text-center">✓</div>
                                             </div>
 
-                                            {exercise.sets.map((set, setIndex) => (
-                                                <div key={set.id} className={clsx(
-                                                    "grid grid-cols-12 gap-2 items-center p-3 rounded-xl transition-all",
-                                                    set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
-                                                )}>
-                                                    <div className="col-span-2 text-center font-mono text-slate-400 font-bold text-lg">{setIndex + 1}</div>
-                                                    <div className="col-span-4 relative">
-                                                        <input
-                                                            type="text"
-                                                            inputMode="decimal"
-                                                            value={set.weight}
-                                                            onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                            className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                            placeholder={exercise.category === 'cardio' ? "km" : "0"}
-                                                        />
-                                                        {exercise.category !== 'cardio' && (
+
+                                            {exercise.sets.map((set, setIndex) => {
+                                                const triggerHaptic = () => {
+                                                    if (navigator.vibrate) navigator.vibrate(10);
+                                                };
+                                                const adjustWeight = (delta) => {
+                                                    triggerHaptic();
+                                                    const current = parseFloat(set.weight) || 0;
+                                                    const newVal = Math.max(0, current + delta);
+                                                    updateSet(exerciseIndex, setIndex, 'weight', newVal.toString());
+                                                };
+                                                const adjustReps = (delta) => {
+                                                    triggerHaptic();
+                                                    const current = parseInt(set.reps) || 0;
+                                                    const newVal = Math.max(0, current + delta);
+                                                    updateSet(exerciseIndex, setIndex, 'reps', newVal.toString());
+                                                };
+                                                return (
+                                                    <div key={set.id} className={clsx(
+                                                        "grid grid-cols-12 gap-2 items-center p-3 rounded-xl transition-all group relative",
+                                                        set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
+                                                    )}>
+                                                        <div className="col-span-1 text-center font-mono text-slate-400 font-bold text-lg">{setIndex + 1}</div>
+
+                                                        {/* Weight with steppers */}
+                                                        <div className="col-span-5 flex items-center gap-1">
+                                                            <button
+                                                                onClick={() => adjustWeight(-2.5)}
+                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                            >
+                                                                −
+                                                            </button>
+                                                            <div className="relative flex-1">
+                                                                <input
+                                                                    type="text"
+                                                                    inputMode="decimal"
+                                                                    value={set.weight}
+                                                                    onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
+                                                                    className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                    placeholder={exercise.category === 'cardio' ? "km" : "0"}
+                                                                />
+                                                                {exercise.category !== 'cardio' && (
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setCalculatorTargetWeight(set.weight);
+                                                                            setShowPlateCalculator(true);
+                                                                        }}
+                                                                        className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors p-1"
+                                                                        title="Plate Calculator"
+                                                                    >
+                                                                        <Calculator size={14} />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            <button
+                                                                onClick={() => adjustWeight(2.5)}
+                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Reps with steppers */}
+                                                        <div className="col-span-4 flex items-center gap-1">
+                                                            <button
+                                                                onClick={() => adjustReps(-1)}
+                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                            >
+                                                                −
+                                                            </button>
+                                                            <input
+                                                                type="text"
+                                                                inputMode="decimal"
+                                                                value={set.reps}
+                                                                onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
+                                                                className="flex-1 min-w-0 bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                placeholder={exercise.category === 'cardio' ? "min" : "0"}
+                                                            />
+                                                            <button
+                                                                onClick={() => adjustReps(1)}
+                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Done button - larger touch target */}
+                                                        <div className="col-span-2 flex justify-center">
                                                             <button
                                                                 onClick={() => {
-                                                                    setCalculatorTargetWeight(set.weight);
-                                                                    setShowPlateCalculator(true);
+                                                                    if (navigator.vibrate) navigator.vibrate(set.completed ? 10 : [10, 50, 20]);
+                                                                    toggleSetComplete(exerciseIndex, setIndex);
                                                                 }}
-                                                                className="absolute right-1 top-1/2 -translate-y-1/2 text-slate-600 hover:text-indigo-400 transition-colors p-2"
-                                                                title="Plate Calculator"
+                                                                className={clsx(
+                                                                    "w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all active:scale-95",
+                                                                    set.completed
+                                                                        ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+                                                                        : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-600 hover:border-sky-500"
+                                                                )}
                                                             >
-                                                                <Calculator size={14} />
+                                                                <Check size={24} />
                                                             </button>
-                                                        )}
-                                                    </div>
-                                                    <div className="col-span-3">
-                                                        <input
-                                                            type="text"
-                                                            inputMode="decimal"
-                                                            value={set.reps}
-                                                            onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                            className="w-full bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                            placeholder={exercise.category === 'cardio' ? "min" : "0"}
-                                                        />
-                                                    </div>
-                                                    <div className="col-span-3 flex justify-center gap-2">
-                                                        <button
-                                                            onClick={() => toggleSetComplete(exerciseIndex, setIndex)}
-                                                            className={clsx(
-                                                                "w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95",
-                                                                set.completed ? "bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.4)]" : "bg-slate-800 text-slate-500 hover:bg-slate-700 hover:text-white"
-                                                            )}
-                                                        >
-                                                            <Clock size={20} />
-                                                        </button>
+                                                        </div>
+
+                                                        {/* Delete button */}
                                                         {!set.completed && (
                                                             <button
                                                                 onClick={() => removeSet(exerciseIndex, setIndex)}
-                                                                className="absolute -right-2 -top-2 w-6 h-6 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                className="absolute -right-2 -top-2 w-7 h-7 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all"
                                                             >
-                                                                <Trash2 size={12} />
+                                                                <Trash2 size={14} />
                                                             </button>
                                                         )}
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </div>
