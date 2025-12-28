@@ -572,7 +572,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
                                     {(!expandedExercises[exercise.id]) && (
                                         <div className="space-y-3">
-                                            <div className="grid grid-cols-12 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
+                                            <div className="hidden md:grid grid-cols-12 gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 px-2">
                                                 <div className="col-span-1 text-center flex items-center justify-center">Set</div>
                                                 <div className="col-span-5 text-center">
                                                     {exercise.category === 'cardio' ? t('tracker.distance') || 'Dist (km)' : 'kg'}
@@ -602,87 +602,91 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                 };
                                                 return (
                                                     <div key={set.id} className={clsx(
-                                                        "grid grid-cols-12 gap-2 items-center p-3 rounded-xl transition-all group relative",
+                                                        "p-3 rounded-xl transition-all group relative",
                                                         set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
                                                     )}>
-                                                        <div className="col-span-1 text-center font-mono text-slate-400 font-bold text-lg">{setIndex + 1}</div>
-
-                                                        {/* Weight with steppers */}
-                                                        <div className="col-span-5 flex items-center gap-1">
-                                                            <button
-                                                                onClick={() => adjustWeight(-2.5)}
-                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
-                                                            >
-                                                                −
-                                                            </button>
-                                                            <input
-                                                                type="text"
-                                                                inputMode="decimal"
-                                                                value={set.weight}
-                                                                onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                                className="flex-1 min-w-0 bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                                placeholder={exercise.category === 'cardio' ? "km" : "0"}
-                                                            />
-                                                            <button
-                                                                onClick={() => adjustWeight(2.5)}
-                                                                className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
-                                                            >
-                                                                +
-                                                            </button>
-                                                            {exercise.category !== 'cardio' && (
-                                                                <button
-                                                                    onClick={() => {
-                                                                        setCalculatorTargetWeight(set.weight);
-                                                                        setShowPlateCalculator(true);
-                                                                    }}
-                                                                    className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 flex items-center justify-center transition-all shrink-0"
-                                                                    title="Plate Calculator"
-                                                                >
-                                                                    <Calculator size={16} />
-                                                                </button>
-                                                            )}
-                                                        </div>
-
-                                                        {/* Reps with steppers */}
-                                                        <div className="col-span-4 flex flex-col gap-1">
-                                                            <div className="flex items-center gap-1">
-                                                                <button
-                                                                    onClick={() => adjustReps(-1)}
-                                                                    className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
-                                                                >
-                                                                    −
-                                                                </button>
-                                                                <input
-                                                                    type="text"
-                                                                    inputMode="decimal"
-                                                                    value={set.reps}
-                                                                    onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                                    className="flex-1 min-w-0 bg-slate-950/50 rounded-lg py-3 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                                    placeholder={exercise.reps || "0"}
-                                                                />
-                                                                <button
-                                                                    onClick={() => adjustReps(1)}
-                                                                    className="w-10 h-10 md:w-8 md:h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
-                                                                >
-                                                                    +
-                                                                </button>
+                                                        {/* Mobile: Stacked layout | Desktop: Inline */}
+                                                        <div className="flex items-start gap-3">
+                                                            {/* Set number */}
+                                                            <div className="w-8 h-12 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
+                                                                {setIndex + 1}
                                                             </div>
-                                                            {exercise.reps && (
-                                                                <div className="text-center text-xs text-slate-500">
-                                                                    Target: <span className="text-sky-400 font-medium">{exercise.reps}</span>
-                                                                </div>
-                                                            )}
-                                                        </div>
 
-                                                        {/* Done button - larger touch target */}
-                                                        <div className="col-span-2 flex justify-center">
+                                                            {/* Weight and Reps - stacks on mobile, inline on desktop */}
+                                                            <div className="flex-1 flex flex-col md:flex-row gap-2">
+                                                                {/* Weight row */}
+                                                                <div className="flex items-center gap-2 flex-1">
+                                                                    <span className="text-xs text-slate-500 w-8 shrink-0 md:hidden">kg</span>
+                                                                    <button
+                                                                        onClick={() => adjustWeight(-2.5)}
+                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                    >
+                                                                        −
+                                                                    </button>
+                                                                    <input
+                                                                        type="text"
+                                                                        inputMode="decimal"
+                                                                        value={set.weight}
+                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
+                                                                        className="flex-1 min-w-[60px] bg-slate-950/50 rounded-lg py-2 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        placeholder="0"
+                                                                    />
+                                                                    <button
+                                                                        onClick={() => adjustWeight(2.5)}
+                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                    >
+                                                                        +
+                                                                    </button>
+                                                                    {exercise.category !== 'cardio' && (
+                                                                        <button
+                                                                            onClick={() => {
+                                                                                setCalculatorTargetWeight(set.weight);
+                                                                                setShowPlateCalculator(true);
+                                                                            }}
+                                                                            className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 flex items-center justify-center transition-all shrink-0"
+                                                                            title="Plate Calculator"
+                                                                        >
+                                                                            <Calculator size={18} />
+                                                                        </button>
+                                                                    )}
+                                                                </div>
+
+                                                                {/* Reps row */}
+                                                                <div className="flex items-center gap-2 flex-1">
+                                                                    <span className="text-xs text-slate-500 w-8 shrink-0 md:hidden">
+                                                                        {exercise.reps ? `×${exercise.reps}` : 'reps'}
+                                                                    </span>
+                                                                    <button
+                                                                        onClick={() => adjustReps(-1)}
+                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                    >
+                                                                        −
+                                                                    </button>
+                                                                    <input
+                                                                        type="text"
+                                                                        inputMode="decimal"
+                                                                        value={set.reps}
+                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
+                                                                        className="flex-1 min-w-[60px] bg-slate-950/50 rounded-lg py-2 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        placeholder={exercise.reps || "0"}
+                                                                    />
+                                                                    <button
+                                                                        onClick={() => adjustReps(1)}
+                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                    >
+                                                                        +
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+
+                                                            {/* Done button */}
                                                             <button
                                                                 onClick={() => {
                                                                     if (navigator.vibrate) navigator.vibrate(set.completed ? 10 : [10, 50, 20]);
                                                                     toggleSetComplete(exerciseIndex, setIndex);
                                                                 }}
                                                                 className={clsx(
-                                                                    "w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center transition-all active:scale-95",
+                                                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
                                                                     set.completed
                                                                         ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
                                                                         : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-600 hover:border-sky-500"
