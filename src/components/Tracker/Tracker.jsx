@@ -47,7 +47,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     sets: Array.from({ length: parseInt(ex.sets) }).map((_, j) => ({
                         id: `${exerciseId}-set-${j}`, // Unique ID for each set
                         weight: ex.weight || '',
-                        reps: ex.reps || '',
+                        reps: '',  // Start empty - target is shown as placeholder
                         completed: false
                     }))
                 };
