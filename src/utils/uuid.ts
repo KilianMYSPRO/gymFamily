@@ -1,4 +1,8 @@
-export const generateUUID = () => {
+/**
+ * Generates a UUID v4 string.
+ * Uses crypto.randomUUID() when available, falls back to manual implementation.
+ */
+export const generateUUID = (): string => {
     if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         try {
             return crypto.randomUUID();
