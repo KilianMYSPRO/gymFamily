@@ -2,8 +2,17 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { vi } from 'vitest';
 import { StoreContext } from '../context/StoreContext';
+import { AuthContext } from '../context/AuthContext';
 import { LanguageContext } from '../context/LanguageContext';
 import { DuoContext } from '../context/DuoContext';
+
+const mockAuth = {
+    token: 'test-token',
+    user: { id: 'test-user', username: 'TestUser' },
+    login: vi.fn(),
+    logout: vi.fn(),
+    isAuthenticated: true
+};
 
 const mockStore = {
     workouts: [],
@@ -15,7 +24,9 @@ const mockStore = {
     deleteWorkout: vi.fn(),
     setActiveWorkout: vi.fn(),
     logSession: vi.fn(),
-    getWeeklyActivity: vi.fn().mockReturnValue([])
+    getWeeklyActivity: vi.fn().mockReturnValue([]),
+    syncStatus: 'idle',
+    syncData: vi.fn()
 };
 
 const mockLanguage = {
@@ -30,14 +41,17 @@ const mockDuo = {
     broadcastUpdate: vi.fn()
 };
 
-export const renderWithProviders = (ui, { store = {}, language = {}, duo = {} } = {}) => {
+export const renderWithProviders = (ui, { auth = {}, store = {}, language = {}, duo = {} } = {}) => {
     return render(
-        <LanguageContext.Provider value={{ ...mockLanguage, ...language }}>
-            <StoreContext.Provider value={{ ...mockStore, ...store }}>
-                <DuoContext.Provider value={{ ...mockDuo, ...duo }}>
-                    {ui}
-                </DuoContext.Provider>
-            </StoreContext.Provider>
-        </LanguageContext.Provider>
+        <AuthContext.Provider value={{ ...mockAuth, ...auth }}>
+            <LanguageContext.Provider value={{ ...mockLanguage, ...language }}>
+                <StoreContext.Provider value={{ ...mockStore, ...store }}>
+                    <DuoContext.Provider value={{ ...mockDuo, ...duo }}>
+                        {ui}
+                    </DuoContext.Provider>
+                </StoreContext.Provider>
+            </LanguageContext.Provider>
+        </AuthContext.Provider>
     );
 };
+

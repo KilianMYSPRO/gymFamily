@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
+import { useAuth } from '../../context/AuthContext';
 import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock, Download } from 'lucide-react';
 import Portal from '../common/Portal';
 import Auth from '../Auth/Auth';
@@ -9,7 +10,8 @@ import { useLanguage } from '../../context/LanguageContext';
 
 const Profile = () => {
     const { t } = useLanguage();
-    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, token, user, login, logout, syncStatus, syncData } = useStore();
+    const { activeProfile, profileDetails, updateProfileDetails, updateProfileName, logWeight, weightHistory, deleteWeightLog, exportData, importData, syncStatus, syncData } = useStore();
+    const { token, user, login, logout } = useAuth();
     const [activeTab, setActiveTab] = useState('details'); // 'details' or 'analytics'
     const [formData, setFormData] = useState({
         name: activeProfile.name,

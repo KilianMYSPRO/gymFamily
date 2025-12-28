@@ -3,6 +3,7 @@ import React from 'react';
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { StoreProvider, useStore } from '../StoreContext';
+import { AuthProvider } from '../AuthContext';
 
 // Mock generateUUID to have predictable but unique IDs
 let uuidCounter = 0;
@@ -21,13 +22,20 @@ describe('StoreContext Logic', () => {
         uuidCounter = 0;
         vi.clearAllMocks();
         localStorage.clear();
+        // Set up token so sync works
+        localStorage.setItem('duogym-token', 'test-token');
+        localStorage.setItem('duogym-user', JSON.stringify({ id: 'test', username: 'Test' }));
         window.fetch.mockResolvedValue({
             ok: true,
             json: async () => ({ data: {} })
         });
     });
 
-    const wrapper = ({ children }) => <StoreProvider>{children}</StoreProvider>;
+    const wrapper = ({ children }) => (
+        <AuthProvider>
+            <StoreProvider>{children}</StoreProvider>
+        </AuthProvider>
+    );
 
     it('initializes with default data', () => {
         const { result } = renderHook(() => useStore(), { wrapper });
