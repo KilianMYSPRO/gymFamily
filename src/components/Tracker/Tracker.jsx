@@ -606,20 +606,20 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                         set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
                                                     )}>
                                                         {/* Mobile: Stacked layout | Desktop: Inline */}
-                                                        <div className="flex items-start gap-3">
+                                                        <div className="flex items-start gap-2 overflow-hidden">
                                                             {/* Set number */}
                                                             <div className="w-8 h-12 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
                                                                 {setIndex + 1}
                                                             </div>
 
                                                             {/* Weight and Reps - stacks on mobile, inline on desktop */}
-                                                            <div className="flex-1 flex flex-col md:flex-row gap-2">
+                                                            <div className="flex-1 min-w-0 flex flex-col md:flex-row gap-2">
                                                                 {/* Weight row */}
-                                                                <div className="flex items-center gap-2 flex-1">
+                                                                <div className="flex items-center gap-1 min-w-0">
                                                                     <span className="text-xs text-slate-500 w-8 shrink-0 md:hidden">kg</span>
                                                                     <button
                                                                         onClick={() => adjustWeight(-2.5)}
-                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         −
                                                                     </button>
@@ -628,12 +628,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                         inputMode="decimal"
                                                                         value={set.weight}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                                        className="flex-1 min-w-[60px] bg-slate-950/50 rounded-lg py-2 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        className="flex-1 min-w-0 w-10 bg-slate-950/50 rounded-lg py-2 px-1 text-center font-bold text-white text-base focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder="0"
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustWeight(2.5)}
-                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         +
                                                                     </button>
@@ -643,7 +643,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                                 setCalculatorTargetWeight(set.weight);
                                                                                 setShowPlateCalculator(true);
                                                                             }}
-                                                                            className="w-10 h-10 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 flex items-center justify-center transition-all shrink-0"
+                                                                            className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 flex items-center justify-center transition-all shrink-0"
                                                                             title="Plate Calculator"
                                                                         >
                                                                             <Calculator size={18} />
@@ -652,13 +652,13 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                 </div>
 
                                                                 {/* Reps row */}
-                                                                <div className="flex items-center gap-2 flex-1">
+                                                                <div className="flex items-center gap-1 min-w-0">
                                                                     <span className="text-xs text-slate-500 w-8 shrink-0 md:hidden">
                                                                         {exercise.reps ? `×${exercise.reps}` : 'reps'}
                                                                     </span>
                                                                     <button
                                                                         onClick={() => adjustReps(-1)}
-                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         −
                                                                     </button>
@@ -667,12 +667,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                         inputMode="decimal"
                                                                         value={set.reps}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                                        className="flex-1 min-w-[60px] bg-slate-950/50 rounded-lg py-2 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        className="flex-1 min-w-0 w-10 bg-slate-950/50 rounded-lg py-2 px-1 text-center font-bold text-white text-base focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder={exercise.reps || "0"}
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustReps(1)}
-                                                                        className="w-10 h-10 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         +
                                                                     </button>
@@ -686,7 +686,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     toggleSetComplete(exerciseIndex, setIndex);
                                                                 }}
                                                                 className={clsx(
-                                                                    "w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
+                                                                    "w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
                                                                     set.completed
                                                                         ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
                                                                         : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-600 hover:border-sky-500"
