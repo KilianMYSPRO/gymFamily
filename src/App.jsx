@@ -1,5 +1,6 @@
 import React, { useState, Suspense, lazy } from 'react';
-import { StoreProvider, useStore } from './context/StoreContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { StoreProvider } from './context/StoreContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { DuoProvider } from './context/DuoContext';
 import Layout from './components/Layout/Layout';
@@ -14,7 +15,7 @@ const History = lazy(() => import('./components/History/History'));
 const Profile = lazy(() => import('./components/Profile/Profile'));
 
 function AppContent() {
-  const { token, login } = useStore();
+  const { token, login } = useAuth();
   const [currentView, setCurrentView] = useState(() => {
     return localStorage.getItem('duogym-current-view') || 'dashboard';
   });
@@ -72,13 +73,15 @@ function AppContent() {
 
 function App() {
   return (
-    <StoreProvider>
-      <LanguageProvider>
-        <DuoProvider>
-          <AppContent />
-        </DuoProvider>
-      </LanguageProvider>
-    </StoreProvider>
+    <AuthProvider>
+      <StoreProvider>
+        <LanguageProvider>
+          <DuoProvider>
+            <AppContent />
+          </DuoProvider>
+        </LanguageProvider>
+      </StoreProvider>
+    </AuthProvider>
   );
 }
 
