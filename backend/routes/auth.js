@@ -5,7 +5,13 @@ const { PrismaClient } = require('@prisma/client');
 
 const router = express.Router();
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || 'duogym-secret-key-change-me';
+
+// Use same logic as server.js - fallback only in test environment
+const isTest = process.env.NODE_ENV === 'test';
+const JWT_SECRET = process.env.JWT_SECRET || (isTest ? 'test-secret-for-jest' : null);
+if (!JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is required');
+}
 
 // Middleware to verify JWT (copied for local use if needed, but usually this is for protected routes. 
 // The auth routes (login/register) don't strictly need it unless for specific updates)
