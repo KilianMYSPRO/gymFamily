@@ -608,7 +608,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                         {/* Mobile: Stacked layout | Desktop: Inline */}
                                                         <div className="flex items-start gap-2 overflow-hidden">
                                                             {/* Set number */}
-                                                            <div className="w-8 h-12 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
+                                                            <div className="w-10 h-14 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
                                                                 {setIndex + 1}
                                                             </div>
 
@@ -619,7 +619,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     <span className="text-xs text-slate-500 w-8 shrink-0 md:hidden">kg</span>
                                                                     <button
                                                                         onClick={() => adjustWeight(-2.5)}
-                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         −
                                                                     </button>
@@ -633,7 +633,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustWeight(2.5)}
-                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         +
                                                                     </button>
@@ -658,7 +658,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     </span>
                                                                     <button
                                                                         onClick={() => adjustReps(-1)}
-                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         −
                                                                     </button>
@@ -672,7 +672,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustReps(1)}
-                                                                        className="w-8 h-8 rounded-lg bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-sm transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
                                                                     >
                                                                         +
                                                                     </button>
@@ -686,7 +686,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     toggleSetComplete(exerciseIndex, setIndex);
                                                                 }}
                                                                 className={clsx(
-                                                                    "w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
+                                                                    "w-14 h-14 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
                                                                     set.completed
                                                                         ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
                                                                         : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-600 hover:border-sky-500"
