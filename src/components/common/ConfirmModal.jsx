@@ -1,23 +1,70 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Portal from './Portal';
 import { AlertTriangle, X } from 'lucide-react';
+import clsx from 'clsx';
 
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Confirm", cancelText = "Cancel", isDestructive = false }) => {
-    if (!isOpen) return null;
+    const [isVisible, setIsVisible] = useState(false);
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useEffect(() => {
+        if (isOpen) {
+            setIsVisible(true);
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setIsAnimating(true);
+                });
+            });
+        } else {
+            setIsAnimating(false);
+            const timer = setTimeout(() => setIsVisible(false), 300);
+            return () => clearTimeout(timer);
+        }
+    }, [isOpen]);
+
+    // Prevent body scroll when open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
+    if (!isVisible) return null;
 
     return (
         <Portal>
-            <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[120] flex items-end md:items-center justify-center">
+                {/* Backdrop */}
                 <div
-                    className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
+                    className={clsx(
+                        "absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300",
+                        isAnimating ? "opacity-100" : "opacity-0"
+                    )}
                     onClick={onClose}
                 />
 
-                <div className="relative w-full max-w-sm bg-slate-900 border border-white/10 rounded-3xl p-6 shadow-2xl animate-scale-in overflow-hidden">
+                {/* Modal - Bottom sheet on mobile, centered on desktop */}
+                <div className={clsx(
+                    "relative w-full max-w-sm bg-slate-900 border border-white/10 shadow-2xl overflow-hidden transition-all duration-300 ease-out",
+                    // Mobile: bottom sheet style
+                    "rounded-t-3xl md:rounded-3xl",
+                    // Animation
+                    isAnimating
+                        ? "translate-y-0 opacity-100 scale-100"
+                        : "translate-y-full md:translate-y-4 opacity-0 md:opacity-0 md:scale-95"
+                )}>
+                    {/* Handle bar (mobile only) */}
+                    <div className="md:hidden flex justify-center pt-3 pb-1">
+                        <div className="w-10 h-1 bg-slate-600 rounded-full" />
+                    </div>
+
                     {/* Background Glow */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-32 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
 
-                    <div className="relative z-10 flex flex-col items-center text-center">
+                    <div className="relative z-10 flex flex-col items-center text-center p-6 pt-4 md:pt-6 pb-safe">
                         <div className="w-16 h-16 rounded-2xl bg-slate-800 border border-white/5 flex items-center justify-center mb-4 shadow-inner">
                             <AlertTriangle size={32} className={isDestructive ? "text-red-500" : "text-amber-500"} />
                         </div>
@@ -28,7 +75,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
                         <div className="flex gap-3 w-full">
                             <button
                                 onClick={onClose}
-                                className="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
+                                className="flex-1 py-3 px-4 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white transition-colors active:scale-95"
                             >
                                 {cancelText}
                             </button>
@@ -37,10 +84,12 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
                                     onConfirm();
                                     onClose();
                                 }}
-                                className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm text-white shadow-lg transition-all active:scale-95 ${isDestructive
+                                className={clsx(
+                                    "flex-1 py-3 px-4 rounded-xl font-bold text-sm text-white shadow-lg transition-all active:scale-95",
+                                    isDestructive
                                         ? "bg-red-500 hover:bg-red-600 shadow-red-500/20"
                                         : "bg-electric-500 hover:bg-electric-600 shadow-electric-500/20 text-black"
-                                    }`}
+                                )}
                             >
                                 {confirmText}
                             </button>
@@ -49,7 +98,7 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 text-slate-500 hover:text-white transition-colors rounded-full hover:bg-white/5"
+                        className="absolute top-4 right-4 p-2 text-slate-500 hover:text-white transition-colors rounded-full hover:bg-white/5 active:scale-95 hidden md:block"
                     >
                         <X size={18} />
                     </button>
@@ -60,3 +109,4 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 };
 
 export default ConfirmModal;
+
