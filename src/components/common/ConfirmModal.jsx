@@ -1,27 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Portal from './Portal';
 import { AlertTriangle, X } from 'lucide-react';
 import clsx from 'clsx';
 
 const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText = "Confirm", cancelText = "Cancel", isDestructive = false }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setIsVisible(true);
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    setIsAnimating(true);
-                });
-            });
-        } else {
-            setIsAnimating(false);
-            const timer = setTimeout(() => setIsVisible(false), 300);
-            return () => clearTimeout(timer);
-        }
-    }, [isOpen]);
-
     // Prevent body scroll when open
     useEffect(() => {
         if (isOpen) {
@@ -32,29 +14,23 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
         };
     }, [isOpen]);
 
-    if (!isVisible) return null;
+    if (!isOpen) return null;
 
     return (
         <Portal>
             <div className="fixed inset-0 z-[120] flex items-end md:items-center justify-center">
                 {/* Backdrop */}
                 <div
-                    className={clsx(
-                        "absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-300",
-                        isAnimating ? "opacity-100" : "opacity-0"
-                    )}
+                    className="absolute inset-0 bg-black/80 backdrop-blur-sm animate-fade-in"
                     onClick={onClose}
                 />
 
                 {/* Modal - Bottom sheet on mobile, centered on desktop */}
                 <div className={clsx(
-                    "relative w-full max-w-sm bg-slate-900 border border-white/10 shadow-2xl overflow-hidden transition-all duration-300 ease-out",
-                    // Mobile: bottom sheet style
+                    "relative w-full max-w-sm bg-slate-900 border border-white/10 shadow-2xl overflow-hidden",
+                    // Mobile: bottom sheet style with slide-up animation
                     "rounded-t-3xl md:rounded-3xl",
-                    // Animation
-                    isAnimating
-                        ? "translate-y-0 opacity-100 scale-100"
-                        : "translate-y-full md:translate-y-4 opacity-0 md:opacity-0 md:scale-95"
+                    "animate-slide-up md:animate-scale-in"
                 )}>
                     {/* Handle bar (mobile only) */}
                     <div className="md:hidden flex justify-center pt-3 pb-1">
@@ -109,4 +85,3 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, confirmText 
 };
 
 export default ConfirmModal;
-
