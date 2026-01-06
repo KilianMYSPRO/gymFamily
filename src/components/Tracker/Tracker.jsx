@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Calculator, Link, Check } from 'lucide-react';
+import { Play, Pause, RotateCcw, Save, Plus, Trash2, ChevronDown, ChevronUp, Clock, Dumbbell, X, Sun, Info, ExternalLink, ChevronLeft, Link, Check } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import useWakeLock from '../../hooks/useWakeLock';
 import clsx from 'clsx';
 import Tooltip from '../common/Tooltip';
 import ConfirmModal from '../common/ConfirmModal';
 import RestTimer from './RestTimer';
-import PlateCalculator from './PlateCalculator';
+
 import { useLanguage } from '../../context/LanguageContext';
 import exercisesData from '../../data/exercises.json';
 
@@ -25,8 +25,6 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [showRestTimer, setShowRestTimer] = useState(false);
     const [restTimerDuration, setRestTimerDuration] = useState(90);
-    const [showPlateCalculator, setShowPlateCalculator] = useState(false);
-    const [calculatorTargetWeight, setCalculatorTargetWeight] = useState('');
     const [nextExerciseName, setNextExerciseName] = useState(null);
     const [suggestions, setSuggestions] = useState({});
     const [hasInitialized, setHasInitialized] = useState(false);
@@ -370,11 +368,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                 nextExercise={nextExerciseName}
             />
 
-            <PlateCalculator
-                isOpen={showPlateCalculator}
-                onClose={() => setShowPlateCalculator(false)}
-                initialWeight={calculatorTargetWeight}
-            />
+
 
             <>
                 <div className="space-y-6 pb-24 animate-enter">
@@ -651,18 +645,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     >
                                                                         +
                                                                     </button>
-                                                                    {exercise.category !== 'cardio' && (
-                                                                        <button
-                                                                            onClick={() => {
-                                                                                setCalculatorTargetWeight(set.weight);
-                                                                                setShowPlateCalculator(true);
-                                                                            }}
-                                                                            className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 flex items-center justify-center transition-all shrink-0 ml-0.5"
-                                                                            title="Plate Calculator"
-                                                                        >
-                                                                            <Calculator size={16} />
-                                                                        </button>
-                                                                    )}
+                                                                    {/* Plate Calculator removed to save space on mobile */}
                                                                 </div>
 
                                                                 {/* Reps row */}
