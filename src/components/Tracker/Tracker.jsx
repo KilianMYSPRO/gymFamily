@@ -628,7 +628,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                         inputMode="decimal"
                                                                         value={set.weight}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                                        className="flex-1 min-w-0 w-10 bg-slate-950/50 rounded-lg py-2 px-1 text-center font-bold text-white text-base focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        className="flex-1 min-w-0 w-14 bg-slate-950/50 rounded-xl py-3 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder="0"
                                                                     />
                                                                     <button
@@ -667,7 +667,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                         inputMode="decimal"
                                                                         value={set.reps}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                                        className="flex-1 min-w-0 w-10 bg-slate-950/50 rounded-lg py-2 px-1 text-center font-bold text-white text-base focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
+                                                                        className="flex-1 min-w-0 w-14 bg-slate-950/50 rounded-xl py-3 px-2 text-center font-bold text-white text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder={exercise.reps || "0"}
                                                                     />
                                                                     <button
