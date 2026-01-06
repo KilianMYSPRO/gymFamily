@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import clsx from 'clsx';
 import Portal from './Portal';
@@ -13,25 +13,6 @@ import Portal from './Portal';
  * @param {string} className - Additional classes for the content container
  */
 const BottomSheet = ({ isOpen, onClose, title, children, className = '' }) => {
-    const [isVisible, setIsVisible] = useState(false);
-    const [isAnimating, setIsAnimating] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setIsVisible(true);
-            // Small delay for mount animation
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    setIsAnimating(true);
-                });
-            });
-        } else {
-            setIsAnimating(false);
-            const timer = setTimeout(() => setIsVisible(false), 300);
-            return () => clearTimeout(timer);
-        }
-    }, [isOpen]);
-
     // Close on escape key
     useEffect(() => {
         const handleEscape = (e) => {
@@ -53,31 +34,26 @@ const BottomSheet = ({ isOpen, onClose, title, children, className = '' }) => {
         };
     }, [isOpen]);
 
-    if (!isVisible) return null;
+    if (!isOpen) return null;
 
     return (
         <Portal>
             {/* Backdrop */}
             <div
-                className={clsx(
-                    "fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300",
-                    isAnimating ? "opacity-100" : "opacity-0"
-                )}
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 animate-fade-in"
                 onClick={onClose}
             />
 
             {/* Bottom Sheet (Mobile) / Centered Modal (Desktop) */}
             <div
                 className={clsx(
-                    "fixed z-50 transition-all duration-300 ease-out",
+                    "fixed z-50",
                     // Mobile: bottom sheet
                     "inset-x-0 bottom-0 md:inset-auto",
                     // Desktop: centered
                     "md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-lg md:w-full",
                     // Animation
-                    isAnimating
-                        ? "translate-y-0 md:translate-y-0 md:opacity-100 md:scale-100"
-                        : "translate-y-full md:translate-y-8 md:opacity-0 md:scale-95"
+                    "animate-slide-up md:animate-scale-in"
                 )}
             >
                 <div className={clsx(

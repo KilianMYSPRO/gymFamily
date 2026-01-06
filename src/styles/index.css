@@ -7,26 +7,28 @@
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --bg-glass: rgba(30, 41, 59, 0.7);
-  
+
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --text-accent: #38bdf8; /* Sky Blue */
-  
+  --text-accent: #38bdf8;
+  /* Sky Blue */
+
   --accent-primary: #0ea5e9;
-  --accent-secondary: #6366f1; /* Indigo */
+  --accent-secondary: #6366f1;
+  /* Indigo */
   --accent-glow: rgba(14, 165, 233, 0.5);
-  
+
   --success: #10b981;
   --danger: #ef4444;
-  
+
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
-  
+
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-glow: 0 0 15px var(--accent-glow);
-  
+
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
@@ -75,15 +77,29 @@ body {
 }
 
 /* Typography */
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-weight: 700;
   line-height: 1.2;
   color: var(--text-primary);
 }
 
-h1 { font-size: 2.5rem; margin-bottom: 1.5rem; }
-h2 { font-size: 2rem; margin-bottom: 1rem; }
-h3 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
 
 p {
   line-height: 1.6;
@@ -154,12 +170,51 @@ p {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Slide Up Animation for bottom sheets */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
+/* Scale In Animation for centered modals */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s ease-out forwards;
 }
 
 /* Safe Area Insets for modern mobile devices */
@@ -172,7 +227,11 @@ p {
 }
 
 /* Touch Optimization */
-button, a, input, select, textarea {
+button,
+a,
+input,
+select,
+textarea {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
