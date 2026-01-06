@@ -700,9 +700,9 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                         {!set.completed && (
                                                             <button
                                                                 onClick={() => removeSet(exerciseIndex, setIndex)}
-                                                                className="absolute -right-2 -top-2 w-7 h-7 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all"
+                                                                className="absolute -right-2 -top-2 w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all active:scale-95"
                                                             >
-                                                                <Trash2 size={14} />
+                                                                <Trash2 size={16} />
                                                             </button>
                                                         )}
                                                     </div>
