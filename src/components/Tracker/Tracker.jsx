@@ -608,8 +608,22 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                         {/* Mobile: Stacked layout | Desktop: Inline */}
                                                         <div className="flex items-start gap-3 overflow-hidden">
                                                             {/* Set number */}
-                                                            <div className="w-10 h-14 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
-                                                                {setIndex + 1}
+                                                            <div className="w-10 flex flex-col items-center justify-center shrink-0">
+                                                                <span className="font-mono text-slate-400 font-bold text-lg leading-none">{setIndex + 1}</span>
+                                                                {setIndex > 0 && (
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            const prevSet = exercise.sets[setIndex - 1];
+                                                                            updateSet(exerciseIndex, setIndex, 'weight', prevSet.weight);
+                                                                            updateSet(exerciseIndex, setIndex, 'reps', prevSet.reps);
+                                                                            if (navigator.vibrate) navigator.vibrate(10);
+                                                                        }}
+                                                                        className="text-[9px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-1 active:scale-95 transition-transform"
+                                                                        title="Copy from previous set"
+                                                                    >
+                                                                        COPY
+                                                                    </button>
+                                                                )}
                                                             </div>
 
                                                             {/* Weight and Reps - stacks on mobile, inline on desktop */}
