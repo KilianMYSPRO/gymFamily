@@ -602,11 +602,11 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                 };
                                                 return (
                                                     <div key={set.id} className={clsx(
-                                                        "p-3 rounded-xl transition-all group relative",
+                                                        "p-4 rounded-xl transition-all group relative",
                                                         set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
                                                     )}>
                                                         {/* Mobile: Stacked layout | Desktop: Inline */}
-                                                        <div className="flex items-start gap-2 overflow-hidden">
+                                                        <div className="flex items-start gap-3 overflow-hidden">
                                                             {/* Set number */}
                                                             <div className="w-10 h-14 flex items-center justify-center font-mono text-slate-400 font-bold text-lg shrink-0">
                                                                 {setIndex + 1}
