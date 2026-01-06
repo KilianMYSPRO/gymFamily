@@ -114,6 +114,7 @@ const History = () => {
                                         </div>
                                     </SwipeableRow>
                                 ))
+                            )}
                         </div>
                     </div>
                 </PullToRefresh>

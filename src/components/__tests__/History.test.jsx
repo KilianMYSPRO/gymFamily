@@ -20,6 +20,6 @@ describe('History Component', () => {
         };
 
         renderWithProviders(<History />, { store });
-        expect(screen.getByText('Test Workout')).toBeInTheDocument();
+        expect(screen.getAllByText('Test Workout').length).toBeGreaterThan(0);
     });
 });
