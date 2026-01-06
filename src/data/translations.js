@@ -208,7 +208,8 @@ export const translations = {
             subtitle: "Your past workouts and achievements.",
             noHistory: "No history yet",
             noHistorySubtitle: "Complete a workout to see it here.",
-            sets: "Sets"
+            sets: "Sets",
+            swipeHint: "Swipe left to delete"
         },
         analytics: {
             bodyWeight: "Body Weight",
@@ -465,7 +466,8 @@ export const translations = {
             subtitle: "Vos entraînements passés et vos réalisations.",
             noHistory: "Pas encore d'historique",
             noHistorySubtitle: "Terminez un entraînement pour le voir ici.",
-            sets: "Séries"
+            sets: "Séries",
+            swipeHint: "Glissez vers la gauche pour supprimer"
         },
         analytics: {
             bodyWeight: "Poids Corporel",
