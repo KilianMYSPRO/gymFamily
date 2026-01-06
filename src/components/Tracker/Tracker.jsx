@@ -222,6 +222,9 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     ...ex,
                     sets: ex.sets.map((s, j) => {
                         if (j === setIndex) {
+                            if (typeof field === 'object') {
+                                return { ...s, ...field };
+                            }
                             return { ...s, [field]: value };
                         }
                         return s;
