@@ -608,8 +608,10 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     <button
                                                                         onClick={() => {
                                                                             const prevSet = exercise.sets[setIndex - 1];
-                                                                            updateSet(exerciseIndex, setIndex, 'weight', prevSet.weight);
-                                                                            updateSet(exerciseIndex, setIndex, 'reps', prevSet.reps);
+                                                                            updateSet(exerciseIndex, setIndex, {
+                                                                                weight: prevSet.weight,
+                                                                                reps: prevSet.reps
+                                                                            });
                                                                             if (navigator.vibrate) navigator.vibrate(10);
                                                                         }}
                                                                         className="text-[9px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-1 active:scale-95 transition-transform"
