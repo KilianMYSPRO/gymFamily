@@ -378,23 +378,23 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
             <>
                 <div className="space-y-6 pb-24 animate-enter">
-                    <header className="sticky top-0 z-20 -mx-6 -mt-6 px-6 py-4 bg-slate-950/80 backdrop-blur-xl border-b border-white/5 shadow-2xl mb-2">
-                        <div className="flex flex-wrap justify-between items-center gap-4 mb-4">
-                            <div className="flex items-center gap-4">
+                    <header className="sticky top-0 z-20 -mx-4 md:-mx-6 -mt-4 md:-mt-6 px-4 md:px-6 py-3 md:py-4 bg-slate-950/90 backdrop-blur-xl border-b border-white/5 shadow-2xl mb-2">
+                        <div className="flex justify-between items-center gap-2 md:gap-4">
+                            <div className="flex items-center gap-2 md:gap-4 min-w-0">
                                 <button
                                     onClick={() => onViewChange && onViewChange('dashboard')}
-                                    className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors"
+                                    className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors shrink-0 active:scale-95"
                                 >
                                     <ChevronLeft size={24} />
                                 </button>
-                                <div>
-                                    <h2 className="text-xl font-black italic text-white tracking-tight">{workoutData.name}</h2>
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex items-center gap-1.5 text-electric-400 font-mono font-bold text-lg text-glow">
-                                            <Clock size={16} className="animate-pulse-fast" />
+                                <div className="min-w-0">
+                                    <h2 className="text-lg md:text-xl font-black italic text-white tracking-tight truncate">{workoutData.name}</h2>
+                                    <div className="flex items-center gap-2 md:gap-3">
+                                        <div className="flex items-center gap-1.5 text-electric-400 font-mono font-bold text-base md:text-lg">
+                                            <Clock size={14} className="animate-pulse-fast" />
                                             {formatTime(elapsedTime)}
                                         </div>
-                                        <div className="h-4 w-px bg-white/10"></div>
+                                        <div className="h-4 w-px bg-white/10 hidden sm:block"></div>
                                         <Tooltip
                                             position="bottom"
                                             content={
@@ -426,30 +426,30 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                     }
                                                 }}
                                                 className={clsx(
-                                                    "flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border transition-all",
+                                                    "flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-full border transition-all hidden sm:flex",
                                                     type === 'nosleep'
-                                                        ? "bg-electric-500/10 text-electric-400 border-electric-500/20 shadow-[0_0_10px_rgba(0,242,234,0.2)]"
+                                                        ? "bg-electric-500/10 text-electric-400 border-electric-500/20"
                                                         : type === 'native'
                                                             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                                                             : "bg-slate-800 text-slate-500 border-slate-700"
                                                 )}
                                             >
-                                                <Sun size={14} />
-                                                <span>{type === 'nosleep' ? `${t('tracker.awake')} ⚡` : isLocked ? t('tracker.awake') : t('tracker.sleep')}</span>
+                                                <Sun size={12} />
+                                                <span className="hidden md:inline">{type === 'nosleep' ? `${t('tracker.awake')} ⚡` : isLocked ? t('tracker.awake') : t('tracker.sleep')}</span>
                                             </button>
                                         </Tooltip>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 ml-auto sm:ml-0">
+                            <div className="flex items-center gap-2 shrink-0">
                                 <button
                                     onClick={() => setShowCancelModal(true)}
-                                    className="px-4 py-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all flex items-center gap-2 font-bold text-sm uppercase tracking-wider"
+                                    className="p-2 md:px-4 md:py-2 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 transition-all flex items-center gap-2 active:scale-95"
                                 >
-                                    <X size={18} />
-                                    <span>{t('tracker.cancel')}</span>
+                                    <X size={20} />
+                                    <span className="hidden md:inline font-bold text-sm uppercase tracking-wider">{t('tracker.cancel')}</span>
                                 </button>
-                                <button onClick={finishWorkout} className="btn btn-primary py-2 px-6 text-sm flex items-center gap-2">
+                                <button onClick={finishWorkout} className="btn btn-primary py-2 px-4 md:px-6 text-sm flex items-center gap-2 active:scale-95">
                                     <Save size={18} /> <span className="uppercase tracking-wider font-bold">{t('tracker.finish')}</span>
                                 </button>
                             </div>
