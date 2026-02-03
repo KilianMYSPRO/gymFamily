@@ -13,7 +13,7 @@ const Tooltip = ({ children, content, position = 'top' }) => {
             {children}
 
             <div className={clsx(
-                "absolute z-50 w-max max-w-xs p-3 text-xs text-slate-300 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl transition-all duration-200",
+                "absolute z-[100] w-max max-w-xs p-3 text-xs text-slate-300 bg-slate-900/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-xl transition-all duration-200",
                 isVisible ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none",
                 position === 'top' && "bottom-full left-1/2 -translate-x-1/2 mb-2",
                 position === 'bottom' && "top-full left-1/2 -translate-x-1/2 mt-2",
