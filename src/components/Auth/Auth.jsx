@@ -132,18 +132,18 @@ const Auth = ({ onLogin }) => {
     const renderForm = () => {
         if (view === 'forgot-password') {
             return (
-                <form onSubmit={handleForgotPasswordSubmit} className="space-y-4">
+                <form onSubmit={handleForgotPasswordSubmit} className="space-y-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">{t('auth.username')}</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.username')}</label>
                         <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
                                 type="text"
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 placeholder={t('auth.enterUsername')}
                             />
                         </div>
@@ -151,16 +151,16 @@ const Auth = ({ onLogin }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
+                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-black uppercase tracking-[0.2em] text-xs shadow-xl active:scale-95 transition-all"
                     >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.next')}
+                        {loading ? <Loader2 className="animate-spin mx-auto" size={20} /> : t('auth.next')}
                     </button>
                     <button
                         type="button"
                         onClick={() => setView('login')}
-                        className="w-full text-sm text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-2"
+                        className="w-full text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all flex items-center justify-center gap-2"
                     >
-                        <ArrowLeft size={16} /> {t('auth.backToLogin')}
+                        <ArrowLeft size={14} /> {t('auth.backToLogin')}
                     </button>
                 </form>
             );
@@ -168,10 +168,10 @@ const Auth = ({ onLogin }) => {
 
         if (view === 'reset-password') {
             return (
-                <form onSubmit={handleResetPasswordSubmit} className="space-y-4">
-                    <div className="p-4 bg-slate-800/50 rounded-xl border border-slate-700 mb-4">
-                        <p className="text-sm text-slate-400 mb-1">{t('auth.securityQuestion')}:</p>
-                        <p className="text-white font-medium">
+                <form onSubmit={handleResetPasswordSubmit} className="space-y-6">
+                    <div className="p-5 bg-white/5 rounded-2xl border border-white/5 mb-4">
+                        <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('auth.securityQuestion')}:</p>
+                        <p className="text-white font-bold italic">
                             {/* Try to translate if it's a key, otherwise show as is */}
                             {t(`auth.securityQuestions.${securityQuestion}`) !== `auth.securityQuestions.${securityQuestion}`
                                 ? t(`auth.securityQuestions.${securityQuestion}`)
@@ -180,32 +180,32 @@ const Auth = ({ onLogin }) => {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">{t('auth.securityAnswer')}</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.securityAnswer')}</label>
                         <div className="relative">
-                            <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <HelpCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
                                 type="text"
                                 name="securityAnswer"
                                 value={formData.securityAnswer}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 placeholder={t('auth.enterAnswer')}
                             />
                         </div>
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-400">{t('auth.newPassword')}</label>
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.newPassword')}</label>
                         <div className="relative">
-                            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                             <input
                                 type="password"
                                 name="newPassword"
                                 value={formData.newPassword}
                                 onChange={handleChange}
                                 required
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 placeholder={t('auth.enterNewPassword')}
                             />
                         </div>
@@ -214,14 +214,14 @@ const Auth = ({ onLogin }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
+                        className="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-black uppercase tracking-[0.2em] text-xs shadow-xl active:scale-95 transition-all"
                     >
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : t('auth.resetPassword')}
+                        {loading ? <Loader2 className="animate-spin mx-auto" size={20} /> : t('auth.resetPassword')}
                     </button>
                     <button
                         type="button"
                         onClick={() => setView('login')}
-                        className="w-full text-sm text-slate-400 hover:text-white transition-colors flex items-center justify-center gap-2"
+                        className="w-full text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all flex items-center justify-center gap-2"
                     >
                         {t('auth.cancel')}
                     </button>
@@ -230,34 +230,34 @@ const Auth = ({ onLogin }) => {
         }
 
         return (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-400">{t('auth.username')}</label>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.username')}</label>
                     <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="text"
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
                             required
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                            className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                             placeholder={t('auth.enterUsername')}
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-slate-400">{t('auth.password')}</label>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.password')}</label>
                     <div className="relative">
-                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                         <input
                             type="password"
                             name="password"
                             value={formData.password}
                             onChange={handleChange}
                             required
-                            className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                            className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                             placeholder={t('auth.enterPassword')}
                         />
                     </div>
@@ -266,14 +266,14 @@ const Auth = ({ onLogin }) => {
                 {view === 'register' && (
                     <>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">{t('auth.securityQuestion')}</label>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.securityQuestion')}</label>
                             <div className="relative">
-                                <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <HelpCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <select
                                     name="securityQuestion"
                                     value={formData.securityQuestion}
                                     onChange={handleChange}
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner appearance-none"
                                 >
                                     {SECURITY_QUESTIONS.map((qKey) => (
                                         <option key={qKey} value={qKey} className="bg-slate-800 text-white">
@@ -281,20 +281,21 @@ const Auth = ({ onLogin }) => {
                                         </option>
                                     ))}
                                 </select>
+                                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={18} />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-slate-400">{t('auth.securityAnswer')}</label>
+                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{t('auth.securityAnswer')}</label>
                             <div className="relative">
-                                <HelpCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                <HelpCircle className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                 <input
                                     type="text"
                                     name="securityAnswer"
                                     value={formData.securityAnswer}
                                     onChange={handleChange}
                                     required
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl pl-12 pr-4 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                     placeholder={t('auth.enterAnswer')}
                                 />
                             </div>
@@ -307,7 +308,7 @@ const Auth = ({ onLogin }) => {
                         <button
                             type="button"
                             onClick={() => setView('forgot-password')}
-                            className="text-sm text-sky-400 hover:text-sky-300 transition-colors"
+                            className="text-[10px] font-black uppercase tracking-widest text-sky-400 hover:text-sky-300 transition-all"
                         >
                             {t('auth.forgotPassword')}
                         </button>
@@ -317,14 +318,14 @@ const Auth = ({ onLogin }) => {
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full btn btn-primary py-3 flex items-center justify-center gap-2"
+                    className="w-full py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-black uppercase tracking-[0.2em] text-xs shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3"
                 >
                     {loading ? (
                         <Loader2 className="animate-spin" size={20} />
                     ) : (
                         <>
                             {view === 'login' ? t('auth.signIn') : t('auth.createAccount')}
-                            <ArrowRight size={18} />
+                            <ArrowRight size={18} strokeWidth={3} />
                         </>
                     )}
                 </button>
@@ -333,15 +334,15 @@ const Auth = ({ onLogin }) => {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto p-6 glass-card animate-fade-in">
-            <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-white mb-2">
+        <div className="w-full max-w-md mx-auto p-8 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-[2.5rem] shadow-2xl animate-fade-in">
+            <div className="text-center mb-10">
+                <h2 className="text-3xl font-black italic text-white uppercase tracking-tight mb-2">
                     {view === 'login' && t('auth.welcomeBack')}
                     {view === 'register' && t('auth.createAccount')}
                     {view === 'forgot-password' && t('auth.recoverAccount')}
                     {view === 'reset-password' && t('auth.resetPassword')}
                 </h2>
-                <p className="text-slate-400">
+                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">
                     {view === 'login' && t('auth.signInSubtitle')}
                     {view === 'register' && t('auth.signUpSubtitle')}
                     {view === 'forgot-password' && t('auth.recoverSubtitle')}
@@ -350,15 +351,15 @@ const Auth = ({ onLogin }) => {
             </div>
 
             {error && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-400 text-sm">
-                    <AlertCircle size={16} />
+                <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-xs font-bold uppercase tracking-wide animate-shake">
+                    <AlertCircle size={18} />
                     {error}
                 </div>
             )}
 
             {successMessage && (
-                <div className="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-2 text-green-400 text-sm">
-                    <AlertCircle size={16} />
+                <div className="mb-6 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-3 text-emerald-400 text-xs font-bold uppercase tracking-wide animate-fade-in">
+                    <CheckCircle2 size={18} />
                     {successMessage}
                 </div>
             )}
@@ -366,10 +367,10 @@ const Auth = ({ onLogin }) => {
             {renderForm()}
 
             {(view === 'login' || view === 'register') && (
-                <div className="mt-6 text-center">
+                <div className="mt-8 text-center">
                     <button
                         onClick={() => setView(view === 'login' ? 'register' : 'login')}
-                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                        className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all"
                     >
                         {view === 'login' ? t('auth.noAccount') : t('auth.hasAccount')}
                     </button>
