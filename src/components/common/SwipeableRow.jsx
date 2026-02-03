@@ -74,10 +74,10 @@ const SwipeableRow = ({ children, onDelete, className = '' }) => {
             >
                 <button
                     onClick={handleDelete}
-                    className="flex flex-col items-center gap-1 text-white active:scale-95 transition-transform"
+                    className="flex flex-col items-center gap-1 text-white active:scale-90 transition-all"
                 >
-                    <Trash2 size={24} />
-                    <span className="text-xs font-bold uppercase">Delete</span>
+                    <Trash2 size={24} strokeWidth={2.5} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Delete</span>
                 </button>
             </div>
 
