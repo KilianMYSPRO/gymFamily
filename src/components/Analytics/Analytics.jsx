@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { TrendingUp, Calendar, ArrowUpRight, Weight } from 'lucide-react';
+import { TrendingUp, Calendar, ArrowUpRight, Weight, ChevronDown } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
