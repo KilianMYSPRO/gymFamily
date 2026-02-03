@@ -33,14 +33,6 @@ const Dashboard = ({ onViewChange }) => {
 
     const recoveryData = React.useMemo(() => calculateRecovery(history), [history]);
     const gamificationStats = React.useMemo(() => calculateGamificationStats(history), [history]);
-
-    const formatDuration = (seconds) => {
-        if (!seconds) return '0m';
-        const hours = Math.floor(seconds / 3600);
-        const mins = Math.floor((seconds % 3600) / 60);
-        return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
-    };
-
     // Safe Weekly Activity Data
     const getWeeklyActivity = () => {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
