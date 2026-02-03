@@ -557,390 +557,141 @@ const Planner = () => {
             </header>
 
             {isCreating ? (
-                <div className="glass-card animate-fade-in">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-xl font-bold text-white">{editingId ? t('planner.editRoutine') : t('planner.createRoutine')}</h3>
-                        <button onClick={handleCancel} className="text-slate-400 hover:text-white">
+                <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 animate-fade-in">
+                    <div className="flex justify-between items-center mb-8">
+                        <h3 className="text-xl font-black italic text-white uppercase tracking-tight">{editingId ? t('planner.editRoutine') : t('planner.createRoutine')}</h3>
+                        <button onClick={handleCancel} className="p-2 hover:bg-white/10 rounded-xl text-slate-500 hover:text-white transition-all">
                             <X size={24} />
                         </button>
                     </div>
 
-                    <div className="space-y-4 mb-6">
+                    <div className="space-y-6 mb-8">
                         <div>
-                            <label className="block text-sm font-medium text-slate-400 mb-1">{t('planner.routineName')}</label>
+                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">{t('planner.routineName')}</label>
                             <input
                                 type="text"
                                 value={newWorkoutName}
                                 onChange={(e) => setNewWorkoutName(e.target.value)}
-                                placeholder="e.g. Push Day, Leg Day"
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                placeholder="e.g. PUSH DAY"
+                                className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                             />
                         </div>
 
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center">
-                                <label className="block text-sm font-medium text-slate-400">{t('planner.exercises')}</label>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center px-1">
+                                <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t('planner.exercises')}</label>
                                 <div className="flex gap-2">
-                                    {selectionMode ? (
-                                        <>
-                                            <button
-                                                onClick={handleGroup}
-                                                disabled={selectedExercises.length < 2}
-                                                className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <Link size={16} /> {t('planner.group')}
-                                            </button>
-                                            <button
-                                                onClick={handleUngroup}
-                                                disabled={selectedExercises.length === 0}
-                                                className="text-sm text-slate-400 hover:text-slate-300 font-medium flex items-center gap-1 px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                <Link size={16} className="rotate-45" /> {t('planner.ungroup')}
-                                            </button>
-                                            <button
-                                                onClick={() => {
-                                                    setSelectionMode(false);
-                                                    setSelectedExercises([]);
-                                                }}
-                                                className="text-sm text-slate-400 hover:text-white font-medium px-2 py-1"
-                                            >
-                                                {t('planner.cancel')}
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <button
-                                            onClick={() => setSelectionMode(true)}
-                                            className="text-sm text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1 px-2 py-1"
-                                        >
-                                            <CheckSquare size={16} /> {t('planner.selectMode')}
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={handleOpenImport}
-                                        className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
-                                        title={t('planner.import')}
-                                    >
-                                        <Download size={16} /> <span className="hidden sm:inline">{t('planner.import')}</span>
-                                    </button>
-                                    <button
-                                        onClick={() => setShowTemplateModal(true)}
-                                        className="text-sm text-slate-400 hover:text-white font-medium flex items-center gap-1 px-2 py-1 rounded hover:bg-slate-800 transition-colors"
-                                    >
-                                        <BookOpen size={16} /> <span className="hidden sm:inline">{t('planner.loadTemplate')}</span>
-                                    </button>
-                                    <button onClick={() => setShowSelector(true)} className="text-sm text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1 px-2 py-1">
-                                        <Plus size={16} /> {t('planner.addExercise')}
+                                    <button onClick={() => setShowSelector(true)} className="text-[10px] font-black text-sky-400 hover:text-sky-300 uppercase tracking-widest bg-sky-500/10 px-3 py-1.5 rounded-full border border-sky-500/20 transition-all active:scale-95">
+                                        + {t('planner.addExercise')}
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Desktop Headers */}
-                            <div className="hidden md:grid md:grid-cols-12 gap-2 px-3 mb-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
-                                <div className="md:col-span-5 pl-8">{t('planner.exercises')}</div>
-                                <div className="md:col-span-7 grid grid-cols-7 gap-2 text-center">
-                                    <div className="col-span-2">{t('planner.sets')}</div>
-                                    <div className="col-span-2">{t('planner.reps')}</div>
-                                    <div className="col-span-3">{t('planner.rest')}</div>
-                                </div>
-                            </div>
-
-                            {exercises.map((ex, idx) => {
-                                const isSelected = selectedExercises.includes(ex.id);
-                                const isSuperset = !!ex.supersetId;
-                                // Find if previous/next exercise is in same superset for visual grouping
-
-
-
-
-                                return (
-                                    <div key={ex.id} className={clsx(
-                                        "bg-slate-800/30 p-3 rounded-lg border relative transition-all",
-                                        isSelected ? "border-sky-500 bg-sky-500/10" : "border-slate-700/30",
-                                        isSuperset && "border-l-4 border-l-indigo-500"
-                                    )}>
-                                        {selectionMode && (
-                                            <button
-                                                onClick={() => toggleSelection(ex.id)}
-                                                className="absolute top-3 left-3 z-10 text-slate-400 hover:text-white"
-                                            >
-                                                {isSelected ? <CheckSquare size={20} className="text-sky-500" /> : <Square size={20} />}
-                                            </button>
-                                        )}
-                                        <div className={clsx("absolute top-3 left-3 text-slate-500 font-mono text-sm", selectionMode && "opacity-0")}>{idx + 1}</div>
-                                        {isSuperset && (
-                                            <div className="absolute top-1/2 -translate-y-1/2 -left-3 w-6 h-full flex items-center justify-center">
-                                                <div className="w-0.5 h-full bg-indigo-500/50"></div>
-                                            </div>
-                                        )}
-                                        <div className="absolute top-2 right-2 flex items-center gap-1">
-                                            <div className="flex flex-col">
-                                                <button
-                                                    onClick={() => moveExercise(idx, 'up')}
-                                                    disabled={idx === 0 || selectionMode}
-                                                    className="w-10 h-10 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
-                                                    title={t('planner.moveUp')}
-                                                >
-                                                    <ChevronUp size={20} />
-                                                </button>
-                                                <button
-                                                    onClick={() => moveExercise(idx, 'down')}
-                                                    disabled={idx === exercises.length - 1 || selectionMode}
-                                                    className="w-10 h-10 md:w-7 md:h-7 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
-                                                    title={t('planner.moveDown')}
-                                                >
-                                                    <ChevronDown size={20} />
-                                                </button>
-                                            </div>
-                                            <button
-                                                onClick={() => removeExercise(ex.id)}
-                                                className="w-10 h-10 md:w-8 md:h-8 flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all active:scale-95"
-                                            >
-                                                <Trash2 size={20} />
-                                            </button>
+                            {exercises.map((ex, idx) => (
+                                <div key={ex.id} className="bg-slate-950/30 p-4 rounded-3xl border border-white/5 relative group transition-all">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div className="flex items-center gap-3">
+                                            <span className="w-6 h-6 rounded-lg bg-slate-800 flex items-center justify-center text-[10px] font-black text-slate-500">{idx + 1}</span>
+                                            <input
+                                                type="text"
+                                                value={ex.name}
+                                                onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
+                                                className="bg-transparent border-b border-transparent focus:border-sky-500 text-white font-bold outline-none transition-all truncate max-w-[150px] sm:max-w-none"
+                                            />
                                         </div>
-
-                                        <div className="mt-6 md:mt-0 md:ml-8 md:mr-10 grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-2 items-center">
-                                            <div className="md:col-span-5">
-                                                <label className="block text-xs text-slate-500 md:hidden mb-1">{t('planner.exerciseName')}</label>
-                                                <div className="flex gap-2">
-                                                    <input
-                                                        type="text"
-                                                        placeholder={t('planner.exerciseName')}
-                                                        value={ex.name}
-                                                        onChange={(e) => updateExercise(ex.id, 'name', e.target.value)}
-                                                        className="w-full bg-transparent border-b border-slate-700 focus:border-sky-500 text-white px-2 py-1 outline-none text-base md:text-sm"
-                                                    />
-                                                    <button
-                                                        onClick={() => updateExercise(ex.id, 'isOptional', !ex.isOptional)}
-                                                        className={clsx(
-                                                            "px-2 py-1 rounded text-xs font-medium border transition-colors whitespace-nowrap",
-                                                            ex.isOptional
-                                                                ? "bg-amber-500/10 text-amber-500 border-amber-500/50 hover:bg-amber-500/20"
-                                                                : "bg-slate-800 text-slate-500 border-slate-700 hover:text-slate-300"
-                                                        )}
-                                                        title="Toggle Optional"
-                                                    >
-                                                        {ex.isOptional ? t('planner.optional') : t('planner.required')}
-                                                    </button>
-                                                </div>
-                                            </div>
-
-                                            <div className="grid grid-cols-2 gap-4 md:col-span-7 md:grid-cols-7 md:gap-2 items-start">
-                                                <div className="md:col-span-2">
-                                                    <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.sets')}</label>
-                                                    <div className="relative group/sets">
-                                                        <input
-                                                            type="number"
-                                                            placeholder={t('planner.setsPlaceholder')}
-                                                            value={ex.sets}
-                                                            onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
-                                                            className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
-                                                        />
-                                                        {/* Quick Select Chips - Sets */}
-                                                        <div className="absolute top-full text-center left-0 right-0 mt-2 p-2 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-20 opacity-0 invisible group-focus-within/sets:opacity-100 group-focus-within/sets:visible transition-all">
-                                                            <div className="text-[10px] text-slate-500 mb-1 uppercase tracking-wider font-bold">Quick Select</div>
-                                                            <div className="flex justify-center gap-1">
-                                                                {[3, 4, 5].map(num => (
-                                                                    <button
-                                                                        key={num}
-                                                                        onClick={() => updateExercise(ex.id, 'sets', num)}
-                                                                        className="w-8 h-8 rounded-lg bg-slate-800 hover:bg-sky-500 hover:text-white text-slate-300 font-bold text-xs transition-colors"
-                                                                    >
-                                                                        {num}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="md:col-span-2">
-                                                    <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.reps')}</label>
-                                                    <div className="relative group/reps">
-                                                        <input
-                                                            type="text"
-                                                            placeholder={t('planner.repsPlaceholder')}
-                                                            value={ex.reps}
-                                                            onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
-                                                            className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
-                                                        />
-                                                        {/* Quick Select Chips - Reps */}
-                                                        <div className="absolute top-full left-1/2 -translate-x-1/2 md:-translate-x-0 md:left-auto md:right-0 mt-2 p-2 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-20 opacity-0 invisible group-focus-within/reps:opacity-100 group-focus-within/reps:visible transition-all">
-                                                            <div className="text-[10px] text-slate-500 mb-2 uppercase tracking-wider font-bold text-center">Quick Select</div>
-                                                            <div className="grid grid-cols-4 gap-1">
-                                                                {['5', '8', '10', '12', '15', '8-12', '10-15', 'Failure'].map(val => (
-                                                                    <button
-                                                                        key={val}
-                                                                        onClick={() => updateExercise(ex.id, 'reps', val)}
-                                                                        className={clsx(
-                                                                            "h-8 rounded-lg bg-slate-800 hover:bg-sky-500 hover:text-white text-slate-300 font-bold text-[10px] transition-colors flex items-center justify-center px-1",
-                                                                            val.length > 2 ? "col-span-2" : "col-span-1"
-                                                                        )}
-                                                                    >
-                                                                        {val}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="col-span-2 md:col-span-3">
-                                                    <label className="block text-xs text-slate-500 md:hidden mb-1 text-center">{t('planner.rest')}</label>
-                                                    <div className="flex gap-2">
-                                                        <input
-                                                            type="number"
-                                                            placeholder={t('planner.restPlaceholder')}
-                                                            value={ex.restTime || '90'}
-                                                            onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
-                                                            className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-sky-500 text-center text-base font-bold transition-all"
-                                                        />
-                                                        <button
-                                                            onClick={() => {
-                                                                const isExpanded = expandedDetails[ex.id];
-                                                                setExpandedDetails(prev => ({ ...prev, [ex.id]: !isExpanded }));
-                                                            }}
-                                                            className={clsx(
-                                                                "w-10 rounded-lg flex items-center justify-center transition-colors border",
-                                                                expandedDetails[ex.id]
-                                                                    ? "bg-sky-500/10 text-sky-400 border-sky-500/30"
-                                                                    : "bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700 hover:text-white"
-                                                            )}
-                                                            title="Advanced Details (Link, Notes)"
-                                                        >
-                                                            {expandedDetails[ex.id] ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                                {/* Accordion for Advanced Fields */}
-                                                {expandedDetails[ex.id] && (
-                                                    <div className="col-span-2 md:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-4 mt-2 p-3 bg-slate-900/50 rounded-xl border border-slate-700/30 animate-fade-in">
-                                                        <div>
-                                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                                                {t('planner.linkPlaceholder') || 'Video Link'}
-                                                            </label>
-                                                            <div className="relative">
-                                                                <Link size={14} className="absolute top-1/2 -translate-y-1/2 left-3 text-slate-500" />
-                                                                <input
-                                                                    type="text"
-                                                                    placeholder="https://..."
-                                                                    value={ex.link || ''}
-                                                                    onChange={(e) => updateExercise(ex.id, 'link', e.target.value)}
-                                                                    className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg pl-9 pr-3 py-2 text-sky-400 focus:text-white focus:outline-none focus:border-sky-500 text-xs transition-all"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                                                                {t('planner.descPlaceholder') || 'Notes / Instructions'}
-                                                            </label>
-                                                            <div className="relative">
-                                                                <Pencil size={14} className="absolute top-3 left-3 text-slate-500" />
-                                                                <textarea
-                                                                    placeholder="Drop sets, superset info..."
-                                                                    value={ex.description || ''}
-                                                                    onChange={(e) => updateExercise(ex.id, 'description', e.target.value)}
-                                                                    rows={1}
-                                                                    className="w-full bg-slate-950/50 border border-slate-700/50 rounded-lg pl-9 pr-3 py-2 text-slate-300 focus:text-white focus:outline-none focus:border-sky-500 text-xs transition-all resize-none min-h-[38px]"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
+                                        <div className="flex items-center gap-1">
+                                            <button onClick={() => moveExercise(idx, 'up')} disabled={idx === 0} className="p-1.5 text-slate-600 hover:text-white disabled:opacity-0 transition-all"><ChevronUp size={18} /></button>
+                                            <button onClick={() => moveExercise(idx, 'down')} disabled={idx === exercises.length - 1} className="p-1.5 text-slate-600 hover:text-white disabled:opacity-0 transition-all"><ChevronDown size={18} /></button>
+                                            <button onClick={() => removeExercise(ex.id)} className="p-1.5 text-slate-600 hover:text-red-400 transition-all ml-1"><Trash2 size={18} /></button>
                                         </div>
                                     </div>
-                                );
-                            })}
+
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-tighter text-center">{t('planner.sets')}</span>
+                                            <input
+                                                type="number"
+                                                value={ex.sets}
+                                                onChange={(e) => updateExercise(ex.id, 'sets', e.target.value)}
+                                                className="w-full bg-slate-900/50 border border-white/5 rounded-xl py-2 text-center text-white font-black text-sm focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-tighter text-center">{t('planner.reps')}</span>
+                                            <input
+                                                type="text"
+                                                value={ex.reps}
+                                                onChange={(e) => updateExercise(ex.id, 'reps', e.target.value)}
+                                                className="w-full bg-slate-900/50 border border-white/5 rounded-xl py-2 text-center text-white font-black text-sm focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[8px] font-black text-slate-600 uppercase tracking-tighter text-center">{t('planner.rest')}</span>
+                                            <input
+                                                type="number"
+                                                value={ex.restTime}
+                                                onChange={(e) => updateExercise(ex.id, 'restTime', e.target.value)}
+                                                className="w-full bg-slate-900/50 border border-white/5 rounded-xl py-2 text-center text-white font-black text-sm focus:border-sky-500 outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
 
                             {exercises.length === 0 && (
-                                <div className="text-center py-8 text-slate-500 border-2 border-dashed border-slate-800 rounded-lg">
-                                    {t('planner.noExercises')}
+                                <div className="text-center py-12 text-slate-600 border-2 border-dashed border-white/5 rounded-3xl">
+                                    <p className="text-xs font-bold uppercase tracking-widest">{t('planner.noExercises')}</p>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3">
-                        <button onClick={handleCancel} className="btn btn-secondary">{t('planner.cancel')}</button>
-                        <button onClick={handleSave} className="btn btn-primary" disabled={!newWorkoutName}>
-                            <Save size={18} /> {t('planner.saveRoutine')}
-                        </button>
+                    <div className="flex gap-3 mt-8">
+                        <button onClick={handleCancel} className="flex-1 py-4 rounded-2xl bg-slate-800 text-slate-400 font-bold uppercase tracking-widest text-xs active:scale-95 transition-all">{t('planner.cancel')}</button>
+                        <button onClick={handleSave} disabled={!newWorkoutName} className="flex-[2] py-4 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-black uppercase tracking-widest text-xs shadow-lg shadow-sky-500/20 active:scale-95 transition-all disabled:opacity-50">{t('planner.saveRoutine')}</button>
                     </div>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {workouts.map(workout => (
-                        <div key={workout.id} className="glass-card group relative">
-                            <div className="absolute top-4 right-4 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
-                                <button
-                                    onClick={() => handleEditJson(workout)}
-                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
-                                    title={t('planner.editJson')}
-                                >
-                                    <FileJson size={18} />
-                                </button>
-                                <button
-                                    onClick={() => handleExport(workout)}
-                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
-                                    title="Share / Export"
-                                >
-                                    {copiedId === workout.id ? <Check size={18} className="text-emerald-400" /> : <Share2 size={18} />}
-                                </button>
-                                <button
-                                    onClick={() => handleEdit(workout)}
-                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
-                                    title="Edit"
-                                >
-                                    <Pencil size={18} />
-                                </button>
-                                <button
-                                    onClick={() => deleteWorkout(workout.id)}
-                                    className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                                    title="Delete"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
+                        <div key={workout.id} className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 relative group hover:border-sky-500/30 transition-all duration-500 shadow-xl overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all">
+                                <button onClick={() => handleEdit(workout)} className="p-2 bg-slate-800 hover:bg-sky-500 text-slate-400 hover:text-white rounded-xl transition-all"><Pencil size={16} /></button>
+                                <button onClick={() => deleteWorkout(workout.id)} className="p-2 bg-slate-800 hover:bg-red-500 text-slate-400 hover:text-white rounded-xl transition-all"><Trash2 size={16} /></button>
                             </div>
 
-                            <div className="flex items-center gap-4 mb-4 pr-36">
-                                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center border border-slate-600">
-                                    <Dumbbell size={24} className="text-sky-400" />
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-sky-400 shadow-inner group-hover:bg-sky-500 group-hover:text-white transition-all duration-500">
+                                    <Dumbbell size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-white">{workout.name}</h3>
-                                    <p className="text-sm text-slate-400">{workout.exercises.length} {t('planner.exercises')}</p>
+                                    <h3 className="text-lg font-black italic text-white uppercase tracking-tight leading-tight">{workout.name}</h3>
+                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{workout.exercises.length} {t('planner.exercises')}</p>
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="space-y-2 mb-4">
                                 {workout.exercises.slice(0, 3).map((ex, i) => (
-                                    <div key={i} className="flex justify-between text-sm text-slate-300 border-b border-slate-800/50 pb-1 last:border-0">
-                                        <span>{ex.name}</span>
-                                        <span className="text-slate-500 text-xs">{ex.sets} {t('planner.sets')} • {ex.reps} {t('planner.reps')} • {ex.restTime || 90}s</span>
+                                    <div key={i} className="flex justify-between items-center text-[11px] font-bold text-slate-400 bg-white/5 px-3 py-2 rounded-xl">
+                                        <span className="truncate pr-2">{ex.name}</span>
+                                        <span className="text-slate-600 shrink-0 font-mono">{ex.sets}×{ex.reps}</span>
                                     </div>
                                 ))}
                                 {workout.exercises.length > 3 && (
-                                    <p className="text-xs text-slate-500 pt-1">+{workout.exercises.length - 3} {t('planner.more')}</p>
+                                    <p className="text-[9px] text-slate-600 font-black uppercase text-center tracking-[0.2em] pt-1">+{workout.exercises.length - 3} {t('planner.more')}</p>
                                 )}
                             </div>
                         </div>
                     ))}
 
                     {workouts.length === 0 && (
-                        <div className="col-span-full text-center py-12">
-                            <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
-                                <Dumbbell size={32} />
-                            </div>
-                            <h3 className="text-lg font-medium text-white mb-2">{t('planner.noRoutines')}</h3>
-                            <p className="text-slate-400 mb-6">{t('planner.noRoutinesSubtitle')}</p>
-                            <div className="flex justify-center gap-4">
-                                <button onClick={() => setShowImportModal(true)} className="btn btn-secondary">
-                                    <Download size={18} /> {t('planner.import')}
-                                </button>
-                                <button onClick={() => setIsCreating(true)} className="btn btn-primary">
-                                    <Plus size={18} /> {t('planner.create')}
-                                </button>
-                            </div>
+                        <div className="col-span-full text-center py-20 bg-slate-900/20 border-2 border-dashed border-white/5 rounded-[3rem]">
+                            <Dumbbell size={48} className="mx-auto text-slate-800 mb-4" />
+                            <h3 className="text-xl font-black italic text-slate-700 uppercase tracking-tight mb-2">{t('planner.noRoutines')}</h3>
+                            <p className="text-slate-600 text-xs font-bold uppercase tracking-widest mb-8">{t('planner.noRoutinesSubtitle')}</p>
+                            <button onClick={() => setIsCreating(true)} className="btn bg-white/5 text-sky-400 hover:bg-sky-500 hover:text-white px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all border border-sky-500/20 shadow-xl active:scale-95">
+                                {t('planner.createRoutine')}
+                            </button>
                         </div>
                     )}
                 </div>

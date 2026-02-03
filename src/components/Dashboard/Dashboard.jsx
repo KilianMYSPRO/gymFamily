@@ -84,7 +84,7 @@ const Dashboard = ({ onViewChange }) => {
     if (!activeProfile) return <div className="text-white p-8">{t('common.loading')}</div>;
 
     return (
-        <div className="text-white p-6 space-y-8 pb-24 animate-enter">
+        <div className="text-white p-4 md:p-6 space-y-6 pb-24 animate-enter">
             {selectedSummary && (
                 <WorkoutSummaryCard
                     workout={selectedSummary}
@@ -92,87 +92,77 @@ const Dashboard = ({ onViewChange }) => {
                 />
             )}
 
-            <header className="relative overflow-hidden pt-safe pb-6 px-6 -mx-6 -mt-6 mb-2 bg-gradient-to-b from-electric-500/10 to-transparent">
-                <div className="absolute top-0 right-0 p-8 opacity-20 animate-pulse-fast">
-                    <TrendingUp size={120} className="text-electric-500" />
+            <header className="relative overflow-hidden pt-safe pb-4 px-2 -mx-4 -mt-4 mb-2 bg-gradient-to-b from-sky-500/10 to-transparent">
+                <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                    <TrendingUp size={100} className="text-sky-500" />
                 </div>
                 <div className="relative z-10">
-                    <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-1 bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        {t('dashboard.letsCrushIt')} <br />
-                        <span className="text-electric-400">{activeProfile.name}</span>
+                    <h1 className="text-2xl md:text-4xl font-black italic uppercase tracking-tight mb-1">
+                        {t('dashboard.letsCrushIt')} <span className="text-sky-400">{activeProfile.name}</span>
                     </h1>
-                    <p className="text-slate-400 font-medium flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-acid-500 animate-pulse"></span>
+                    <p className="text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         {t('dashboard.readyForGains')}
                     </p>
                 </div>
             </header>
 
-            <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group hover:border-electric-500/30 transition-colors">
-                    <div className="absolute inset-0 bg-gradient-to-br from-electric-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Dumbbell className="text-electric-400 group-hover:scale-110 transition-transform duration-300" size={28} />
+            <div className="grid grid-cols-2 gap-3">
+                <div className="p-5 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-3xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-sky-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Dumbbell className="text-sky-400 mb-1" size={24} />
                     <div className="text-center relative z-10">
-                        <p className="text-3xl font-black italic text-white">{history.length}</p>
-                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t('dashboard.workouts')}</h3>
+                        <p className="text-2xl font-black italic text-white">{history.length}</p>
+                        <h3 className="text-slate-600 text-[9px] uppercase tracking-[0.2em] font-black">{t('dashboard.workouts')}</h3>
                     </div>
                 </div>
-                <div className="p-4 bg-slate-900/50 backdrop-blur-md border border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group hover:border-neon-500/30 transition-colors">
-                    <div className="absolute inset-0 bg-gradient-to-br from-neon-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Calendar className="text-neon-400 group-hover:scale-110 transition-transform duration-300" size={28} />
+                <div className="p-5 bg-slate-900/40 backdrop-blur-md border border-white/5 rounded-3xl flex flex-col items-center justify-center gap-2 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Calendar className="text-indigo-400 mb-1" size={24} />
                     <div className="text-center relative z-10">
-                        <p className="text-3xl font-black italic text-white">{workouts.length}</p>
-                        <h3 className="text-slate-500 text-[10px] uppercase tracking-widest font-bold">{t('dashboard.plans')}</h3>
+                        <p className="text-2xl font-black italic text-white">{workouts.length}</p>
+                        <h3 className="text-slate-600 text-[9px] uppercase tracking-[0.2em] font-black">{t('dashboard.plans')}</h3>
                     </div>
                 </div>
 
-                {/* Gamification Streak Card */}
                 <div className="col-span-2">
                     <StreakCard stats={gamificationStats} />
                 </div>
             </div>
 
-            {/* Quick Actions & Recent */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Weekly Activity Chart */}
-                {/* Left Column: Activity & Recovery */}
-                <div className="lg:col-span-2 space-y-8">
-                    {/* Weekly Activity Chart */}
-                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
-                            <Clock size={14} /> {t('dashboard.weeklySchedule')}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <Clock size={12} /> {t('dashboard.weeklySchedule')}
                         </h3>
-                        <div className="flex justify-between items-center px-2">
+                        <div className="flex justify-between items-center">
                             {weeklyActivity.map((day, i) => (
                                 <div key={i} className="flex flex-col items-center gap-3">
                                     <div className={clsx(
-                                        "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-300",
+                                        "w-9 h-9 rounded-2xl flex items-center justify-center border transition-all duration-500",
                                         day.count > 0
-                                            ? "bg-electric-500/20 border-electric-400 text-electric-400 shadow-[0_0_15px_rgba(45,212,191,0.3)]"
-                                            : "bg-slate-800/50 border-slate-700 text-slate-600"
+                                            ? "bg-sky-500/20 border-sky-500/50 text-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.2)]"
+                                            : "bg-slate-800/30 border-white/5 text-slate-700"
                                     )}>
                                         {day.count > 0 ? (
-                                            <CheckCircle2 size={20} className="animate-enter" />
+                                            <CheckCircle2 size={18} className="animate-enter" />
                                         ) : (
-                                            <div className="w-2 h-2 rounded-full bg-slate-700" />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-800" />
                                         )}
                                     </div>
                                     <span className={clsx(
-                                        "text-[10px] font-bold uppercase tracking-wider",
-                                        day.count > 0 ? "text-white" : "text-slate-600"
+                                        "text-[9px] font-black uppercase tracking-tighter",
+                                        day.count > 0 ? "text-white" : "text-slate-700"
                                     )}>{day.day}</span>
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* Muscle Recovery Heatmap */}
-                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                            <Zap size={100} className="text-emerald-500" />
-                        </div>
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2 relative z-10">
-                            <Zap size={14} className="text-emerald-400" /> {t('dashboard.recovery') || 'Muscle Recovery'}
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 relative overflow-hidden">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2 relative z-10">
+                            <Zap size={12} className="text-emerald-400" /> {t('dashboard.recovery')}
                         </h3>
                         <div className="relative z-10">
                             <MuscleHeatmap recoveryData={recoveryData} />
@@ -181,94 +171,80 @@ const Dashboard = ({ onViewChange }) => {
                 </div>
 
                 <div className="space-y-6">
-                    {/* Quick Start Section */}
-                    <div className="bg-gradient-to-br from-slate-900 to-slate-950 p-1 rounded-3xl relative group">
-                        <div className="absolute inset-0 bg-gradient-to-br from-electric-500 to-neon-500 rounded-3xl opacity-20 blur-xl group-hover:opacity-30 transition-opacity duration-500" />
-                        <div className="bg-slate-950/90 backdrop-blur-xl p-6 rounded-[22px] border border-white/5 relative z-10 h-full">
-                            <h3 className="text-lg font-black italic text-white mb-6 flex items-center gap-2">
-                                <span className="text-electric-400">⚡</span> {t('dashboard.quickStart')}
-                            </h3>
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <Play size={12} className="text-sky-400" /> {t('dashboard.quickStart')}
+                        </h3>
 
-                            <div className="space-y-3">
-                                {/* Resume Option */}
-                                {activeWorkout && (
-                                    <button
-                                        onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: activeWorkout.id })}
-                                        className="w-full relative overflow-hidden group/btn rounded-2xl p-4 text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
-                                    >
-                                        <div className="absolute inset-0 bg-gradient-to-r from-electric-600 to-neon-600 animate-gradient-x" />
-                                        <div className="absolute inset-0 bg-black/20" />
-                                        <div className="relative z-10 flex items-center justify-between">
-                                            <div>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 mb-1 block">{t('dashboard.resumeSession')}</span>
-                                                <span className="text-lg font-black italic text-white">{activeWorkout.name}</span>
-                                            </div>
-                                            <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white">
-                                                <Play size={20} className="fill-current ml-1" />
-                                            </div>
+                        <div className="space-y-3">
+                            {activeWorkout && (
+                                <button
+                                    onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: activeWorkout.id })}
+                                    className="w-full relative overflow-hidden group rounded-2xl p-4 text-left transition-all active:scale-[0.98] border border-sky-500/30 shadow-lg shadow-sky-500/10"
+                                >
+                                    <div className="absolute inset-0 bg-sky-500/10" />
+                                    <div className="relative z-10 flex items-center justify-between">
+                                        <div>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-sky-400 mb-1 block">{t('dashboard.resumeSession')}</span>
+                                            <span className="text-lg font-black italic text-white uppercase truncate block max-w-[180px]">{activeWorkout.name}</span>
                                         </div>
-                                    </button>
-                                )}
-
-                                {/* Most Used Plans */}
-                                {mostUsedWorkouts.length > 0 ? (
-                                    <>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-2 mt-4">{t('dashboard.mostUsed')}</p>
-                                        <div className="grid grid-cols-1 gap-2">
-                                            {mostUsedWorkouts.map(w => (
-                                                <button
-                                                    key={w.id}
-                                                    onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: w.id })}
-                                                    className="w-full p-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-electric-500/50 rounded-xl flex items-center justify-between group/item transition-all duration-300"
-                                                >
-                                                    <span className="font-bold text-slate-300 group-hover/item:text-white transition-colors">{w.name}</span>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-[10px] font-mono text-slate-600 group-hover/item:text-electric-400 transition-colors">{w.count} {t('dashboard.plays')}</span>
-                                                        <ArrowRight size={16} className="text-slate-600 group-hover/item:text-electric-400 -translate-x-2 opacity-0 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all duration-300" />
-                                                    </div>
-                                                </button>
-                                            ))}
+                                        <div className="w-10 h-10 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-lg shadow-sky-500/40">
+                                            <Play size={20} className="fill-current ml-0.5" />
                                         </div>
-                                    </>
-                                ) : (
-                                    <div className="text-center py-8">
-                                        <p className="text-slate-500 text-xs mb-4">{t('dashboard.noPlans')}</p>
-                                        <button
-                                            onClick={() => onViewChange && onViewChange('planner')}
-                                            className="w-full btn btn-secondary py-3 text-sm"
-                                        >
-                                            {t('dashboard.createRoutine')}
-                                        </button>
                                     </div>
-                                )}
-                            </div>
+                                </button>
+                            )}
+
+                            {mostUsedWorkouts.length > 0 ? (
+                                <div className="space-y-2">
+                                    {mostUsedWorkouts.map(w => (
+                                        <button
+                                            key={w.id}
+                                            onClick={() => onViewChange && onViewChange('workout', { initialWorkoutId: w.id })}
+                                            className="w-full p-4 bg-slate-800/30 hover:bg-slate-800/50 border border-white/5 rounded-2xl flex items-center justify-between group transition-all"
+                                        >
+                                            <span className="font-bold text-slate-200 group-hover:text-white transition-colors truncate pr-2">{w.name}</span>
+                                            <div className="flex items-center gap-3 shrink-0">
+                                                <span className="text-[10px] font-mono text-slate-600 font-bold">{w.count} {t('dashboard.plays')}</span>
+                                                <ChevronRight size={16} className="text-slate-600 group-hover:text-sky-400 transition-all" />
+                                            </div>
+                                        </button>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="text-center py-8">
+                                    <button
+                                        onClick={() => onViewChange && onViewChange('planner')}
+                                        className="w-full btn bg-slate-800 text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs border border-white/5"
+                                    >
+                                        {t('dashboard.createRoutine')}
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
-                    {/* Recent History Section */}
-                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-3xl border border-slate-800/50">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">{t('dashboard.recentHistory')}</h3>
-                        <div className="space-y-1">
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                            <Clock size={12} /> {t('dashboard.recentHistory')}
+                        </h3>
+                        <div className="space-y-2">
                             {recentHistory.map((h, i) => (
-                                <div key={h.id || i} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-xl transition-colors group">
-                                    <div>
-                                        <p className="font-bold text-slate-200 group-hover:text-white transition-colors">{h.workoutName || h.name || 'Unknown Workout'}</p>
-                                        <p className="text-[10px] text-slate-500 font-mono uppercase">{new Date(h.date).toLocaleDateString()}</p>
+                                <div key={h.id || i} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-2xl transition-colors group border border-transparent hover:border-white/5">
+                                    <div className="min-w-0">
+                                        <p className="font-bold text-slate-200 group-hover:text-white transition-colors truncate">{h.workoutName || h.name}</p>
+                                        <p className="text-[9px] text-slate-600 font-black uppercase tracking-tighter">{new Date(h.date).toLocaleDateString()}</p>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="text-right mr-2">
-                                            <p className="text-sm text-electric-400 font-mono font-bold">{formatDuration(h.duration)}</p>
-                                            <p className="text-[10px] text-slate-600">{h.completedSets || 0} {t('dashboard.sets')}</p>
-                                        </div>
+                                    <div className="flex items-center gap-1 ml-2">
                                         <button
                                             onClick={() => setSelectedSummary(h)}
-                                            className="p-2 text-slate-500 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+                                            className="p-2 text-slate-600 hover:text-sky-400 transition-colors"
                                         >
                                             <Share2 size={16} />
                                         </button>
                                         <button
                                             onClick={() => deleteLog(h.id)}
-                                            className="p-2 text-slate-600 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                            className="p-2 text-slate-600 hover:text-red-400 transition-colors"
                                         >
                                             <Trash2 size={16} />
                                         </button>
@@ -276,7 +252,7 @@ const Dashboard = ({ onViewChange }) => {
                                 </div>
                             ))}
                             {recentHistory.length === 0 && (
-                                <p className="text-slate-500 text-xs text-center py-4 italic">{t('dashboard.noHistory')}</p>
+                                <p className="text-slate-600 text-[10px] font-bold uppercase text-center py-4 tracking-widest">{t('dashboard.noHistory')}</p>
                             )}
                         </div>
                     </div>

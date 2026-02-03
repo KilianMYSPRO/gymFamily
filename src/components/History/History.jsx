@@ -81,33 +81,35 @@ const History = () => {
                                         onDelete={() => deleteLog(session.id)}
                                         className="md:hidden"
                                     >
-                                        <div className="glass-card group relative">
+                                        <div className="bg-slate-900/40 backdrop-blur-md p-5 rounded-[2rem] border border-white/5 relative group transition-all">
                                             <div className="absolute top-4 right-4 flex gap-2">
                                                 <button
                                                     onClick={() => setSelectedSummary(session)}
-                                                    className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                                    className="p-2 text-slate-500 hover:text-sky-400 transition-colors"
                                                     title="View Summary"
                                                 >
                                                     <Share2 size={18} />
                                                 </button>
                                             </div>
 
-                                            <div className="flex items-start gap-4 pr-16">
-                                                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 shrink-0">
+                                            <div className="flex items-start gap-4 pr-12">
+                                                <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-sky-400 shrink-0 shadow-inner">
                                                     <Dumbbell size={24} />
                                                 </div>
-                                                <div>
-                                                    <h3 className="text-lg font-bold text-white mb-1">{session.name}</h3>
-                                                    <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-                                                        <span className="flex items-center gap-1">
-                                                            <Calendar size={14} /> {formatDate(session.date)}
+                                                <div className="min-w-0">
+                                                    <h3 className="text-lg font-black italic text-white uppercase tracking-tight truncate leading-tight mb-1">{session.name}</h3>
+                                                    <div className="flex flex-col gap-1 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                                        <span className="flex items-center gap-1.5">
+                                                            <Calendar size={12} /> {formatDate(session.date)}
                                                         </span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Clock size={14} /> {formatTime(session.duration)}
-                                                        </span>
-                                                        <span className="flex items-center gap-1">
-                                                            <Dumbbell size={14} /> {session.exercises ? session.exercises.reduce((acc, ex) => acc + (ex.sets ? ex.sets.length : 0), 0) : 0} {t('history.sets')}
-                                                        </span>
+                                                        <div className="flex gap-3">
+                                                            <span className="flex items-center gap-1.5">
+                                                                <Clock size={12} /> {formatTime(session.duration)}
+                                                            </span>
+                                                            <span className="flex items-center gap-1.5">
+                                                                <Dumbbell size={12} /> {session.exercises ? session.exercises.reduce((acc, ex) => acc + (ex.sets ? ex.sets.length : 0), 0) : 0} {t('history.sets')}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -138,38 +140,38 @@ const History = () => {
                         </div>
                     ) : (
                         sortedHistory.map((session) => (
-                            <div key={session.id} className="glass-card group relative hover:border-slate-600 transition-colors">
-                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div key={session.id} className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 relative group hover:border-sky-500/30 transition-all duration-500 shadow-xl overflow-hidden">
+                                <div className="absolute top-0 right-0 p-4 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all">
                                     <button
                                         onClick={() => setSelectedSummary(session)}
-                                        className="p-2 text-slate-400 hover:text-sky-400 hover:bg-sky-400/10 rounded-lg transition-colors"
+                                        className="p-2 bg-slate-800 hover:bg-sky-500 text-slate-400 hover:text-white rounded-xl transition-all"
                                         title="View Summary"
                                     >
                                         <Share2 size={18} />
                                     </button>
                                     <button
                                         onClick={() => deleteLog(session.id)}
-                                        className="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                                        className="p-2 bg-slate-800 hover:bg-red-500 text-slate-400 hover:text-white rounded-xl transition-all"
                                         title="Delete Log"
                                     >
                                         <Trash2 size={18} />
                                     </button>
                                 </div>
 
-                                <div className="flex items-start gap-4 pr-24">
-                                    <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 shrink-0">
-                                        <Dumbbell size={24} />
+                                <div className="flex items-center gap-6">
+                                    <div className="w-16 h-16 rounded-[1.25rem] bg-slate-800 flex items-center justify-center text-sky-400 shrink-0 shadow-inner group-hover:bg-sky-500 group-hover:text-white transition-all duration-500">
+                                        <Dumbbell size={32} />
                                     </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-white mb-1">{session.name}</h3>
-                                        <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-                                            <span className="flex items-center gap-1">
+                                    <div className="min-w-0">
+                                        <h3 className="text-2xl font-black italic text-white uppercase tracking-tight truncate leading-tight mb-2">{session.name}</h3>
+                                        <div className="flex flex-wrap gap-6 text-xs font-bold text-slate-500 uppercase tracking-[0.15em]">
+                                            <span className="flex items-center gap-2">
                                                 <Calendar size={14} /> {formatDate(session.date)}
                                             </span>
-                                            <span className="flex items-center gap-1">
+                                            <span className="flex items-center gap-2">
                                                 <Clock size={14} /> {formatTime(session.duration)}
                                             </span>
-                                            <span className="flex items-center gap-1">
+                                            <span className="flex items-center gap-2 text-sky-400/80">
                                                 <Dumbbell size={14} /> {session.exercises ? session.exercises.reduce((acc, ex) => acc + (ex.sets ? ex.sets.length : 0), 0) : 0} {t('history.sets')}
                                             </span>
                                         </div>
