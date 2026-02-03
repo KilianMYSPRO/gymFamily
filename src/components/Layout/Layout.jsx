@@ -9,14 +9,14 @@ const NavItem = ({ icon: Icon, label, active, onClick }) => (
     <button
         onClick={onClick}
         className={clsx(
-            "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 w-full text-left",
+            "flex items-center gap-3 px-5 py-4 rounded-2xl transition-all duration-300 w-full text-left group",
             active
-                ? "bg-accent-primary/10 text-accent-primary shadow-[0_0_15px_rgba(14,165,233,0.3)]"
-                : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20 active:scale-95"
+                : "text-slate-500 hover:bg-white/5 hover:text-slate-200"
         )}
     >
-        <Icon size={20} />
-        <span className="font-medium">{label}</span>
+        <Icon size={20} className={clsx("transition-transform duration-300 group-hover:scale-110", active ? "scale-110" : "")} />
+        <span className="text-xs font-black uppercase tracking-[0.2em]">{label}</span>
     </button>
 );
 
@@ -28,18 +28,18 @@ const Layout = ({ children, currentView, onViewChange }) => {
     return (
         <div className="min-h-screen flex flex-col md:flex-row bg-slate-950 text-slate-50">
             {/* Sidebar / Mobile Header */}
-            <aside className="hidden md:flex md:w-64 bg-slate-900/50 backdrop-blur-xl border-b md:border-b-0 md:border-r border-slate-800 p-4 flex-col justify-between sticky top-0 z-50 md:h-screen">
+            <aside className="hidden md:flex md:w-72 bg-slate-900/40 backdrop-blur-2xl border-b md:border-b-0 md:border-r border-white/5 p-6 flex-col justify-between sticky top-0 z-50 md:h-screen shadow-2xl">
                 <div>
-                    <div className="flex items-center gap-3 px-2 mb-8">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-500 flex items-center justify-center shadow-lg shadow-sky-500/20">
-                            <Dumbbell size={18} className="text-white" />
+                    <div className="flex items-center gap-4 px-2 mb-12">
+                        <div className="w-10 h-10 rounded-[1.25rem] bg-gradient-to-br from-sky-500 to-indigo-600 flex items-center justify-center shadow-2xl shadow-sky-500/20 transform rotate-3">
+                            <Dumbbell size={22} className="text-white" />
                         </div>
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                            DuoGym
+                        <h1 className="text-2xl font-black italic uppercase tracking-tighter text-white">
+                            Duo<span className="text-sky-400">Gym</span>
                         </h1>
                     </div>
 
-                    <nav className="space-y-2 hidden md:block">
+                    <nav className="space-y-3 hidden md:block">
                         <NavItem
                             icon={LayoutDashboard}
                             label={t('nav.dashboard')}
@@ -76,10 +76,10 @@ const Layout = ({ children, currentView, onViewChange }) => {
                 <div className="hidden md:block px-2">
                     <button
                         onClick={toggleLanguage}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-slate-800/50 hover:text-white transition-all w-full text-left"
+                        className="flex items-center gap-3 px-5 py-4 rounded-2xl text-slate-500 hover:bg-white/5 hover:text-white transition-all w-full text-left group"
                     >
-                        <Languages size={20} />
-                        <span className="font-medium text-sm">{language === 'en' ? 'Français' : 'English'}</span>
+                        <Languages size={20} className="group-hover:rotate-12 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">{language === 'en' ? 'Français' : 'English'}</span>
                     </button>
                 </div>
 
@@ -87,44 +87,44 @@ const Layout = ({ children, currentView, onViewChange }) => {
             </aside>
 
             {/* Mobile Nav */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-xl border-t border-slate-800 p-2 z-50 pb-safe">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950/90 backdrop-blur-2xl border-t border-white/5 p-2 z-50 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
                 <div className="grid grid-cols-5 items-center">
                     <button
                         onClick={() => { if (navigator.vibrate) navigator.vibrate(10); onViewChange('dashboard'); }}
-                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95 transition-transform", currentView === 'dashboard' ? "text-sky-400" : "text-slate-400")}
+                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1.5 active:scale-95 transition-all", currentView === 'dashboard' ? "text-sky-400" : "text-slate-600")}
                     >
-                        <LayoutDashboard size={22} />
-                        <span className="text-[11px] font-medium">{t('nav.dashboard')}</span>
+                        <LayoutDashboard size={20} strokeWidth={currentView === 'dashboard' ? 3 : 2} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter">{t('nav.dashboard')}</span>
                     </button>
                     <button
                         onClick={() => { if (navigator.vibrate) navigator.vibrate(10); onViewChange('planner'); }}
-                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95 transition-transform", currentView === 'planner' ? "text-sky-400" : "text-slate-400")}
+                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1.5 active:scale-95 transition-all", currentView === 'planner' ? "text-sky-400" : "text-slate-600")}
                     >
-                        <Calendar size={22} />
-                        <span className="text-[11px] font-medium">{t('nav.planner')}</span>
+                        <Calendar size={20} strokeWidth={currentView === 'planner' ? 3 : 2} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter">{t('nav.planner')}</span>
                     </button>
                     <button
                         onClick={() => { if (navigator.vibrate) navigator.vibrate([10, 30, 10]); onViewChange('workout'); }}
-                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1 -mt-4 active:scale-95 transition-transform", currentView === 'workout' ? "text-sky-400" : "text-slate-400")}
+                        className={clsx("p-2 rounded-xl flex flex-col items-center gap-1.5 -mt-6 active:scale-95 transition-all", currentView === 'workout' ? "text-sky-400" : "text-slate-600")}
                     >
-                        <div className={clsx("p-3 rounded-2xl flex items-center justify-center shadow-lg", currentView === 'workout' ? "bg-gradient-to-br from-sky-500 to-indigo-500 text-white shadow-sky-500/40" : "bg-slate-800 text-slate-400")}>
-                            <Dumbbell size={28} />
+                        <div className={clsx("w-14 h-14 rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all duration-500", currentView === 'workout' ? "bg-gradient-to-br from-sky-500 to-indigo-600 text-white shadow-sky-500/40 rotate-3 scale-110" : "bg-slate-800 text-slate-500")}>
+                            <Dumbbell size={28} strokeWidth={2.5} />
                         </div>
-                        <span className="text-[11px] font-medium">{t('nav.workout')}</span>
+                        <span className="text-[8px] font-black uppercase tracking-tighter">{t('nav.workout')}</span>
                     </button>
                     <button
                         onClick={() => { if (navigator.vibrate) navigator.vibrate(10); onViewChange('history'); }}
-                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95 transition-transform", currentView === 'history' ? "text-sky-400" : "text-slate-400")}
+                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1.5 active:scale-95 transition-all", currentView === 'history' ? "text-sky-400" : "text-slate-600")}
                     >
-                        <Clock size={22} />
-                        <span className="text-[11px] font-medium">{t('nav.history')}</span>
+                        <Clock size={20} strokeWidth={currentView === 'history' ? 3 : 2} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter">{t('nav.history')}</span>
                     </button>
                     <button
                         onClick={() => { if (navigator.vibrate) navigator.vibrate(10); onViewChange('profile'); }}
-                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1 active:scale-95 transition-transform", currentView === 'profile' ? "text-sky-400" : "text-slate-400")}
+                        className={clsx("p-3 rounded-xl flex flex-col items-center gap-1.5 active:scale-95 transition-all", currentView === 'profile' ? "text-sky-400" : "text-slate-600")}
                     >
-                        <UserCircle2 size={22} />
-                        <span className="text-[11px] font-medium">{t('nav.profile')}</span>
+                        <UserCircle2 size={20} strokeWidth={currentView === 'profile' ? 3 : 2} />
+                        <span className="text-[8px] font-black uppercase tracking-tighter">{t('nav.profile')}</span>
                     </button>
                 </div>
             </div>

@@ -117,182 +117,194 @@ const Analytics = () => {
 
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            {/* Weight Section */}
-            <div className="mb-12">
-                <h3 className="text-xl font-bold text-white flex items-center gap-2 mb-4">
-                    <Weight className="text-sky-400" /> {t('analytics.bodyWeight')}
-                </h3>
+        <div className="space-y-10 animate-fade-in pb-12">
+            {/* Body Weight Section */}
+            <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 shadow-inner">
+                        <Weight size={20} />
+                    </div>
+                    <h3 className="text-xl font-black italic text-white uppercase tracking-tight">
+                        {t('analytics.bodyWeight')}
+                    </h3>
+                </div>
 
                 {weightChartData.length > 1 ? (
-                    <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
-                        <div className="flex justify-between items-end mb-8">
+                    <div className="space-y-8">
+                        <div className="flex justify-between items-end px-2">
                             <div>
-                                <p className="text-slate-400 text-sm mb-1">{t('analytics.currentWeight')}</p>
-                                <p className="text-3xl font-bold text-white font-mono">{latestBodyWeight} <span className="text-sm text-slate-500 font-sans">kg</span></p>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('analytics.currentWeight')}</p>
+                                <p className="text-4xl font-black italic text-white leading-none">
+                                    {latestBodyWeight} <span className="text-sm not-italic text-slate-600 uppercase font-bold ml-1">kg</span>
+                                </p>
                             </div>
-                            <div className={clsx("text-right", weightChange <= 0 ? "text-emerald-400" : "text-red-400")}>
-                                <p className="text-sm font-medium flex items-center justify-end gap-1">
-                                    {weightChange > 0 ? '+' : ''}{weightChange.toFixed(1)} kg
+                            <div className={clsx("text-right px-3 py-2 rounded-2xl border", 
+                                weightChange <= 0 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20")}>
+                                <p className="text-sm font-black flex items-center justify-end gap-1">
+                                    {weightChange > 0 ? '+' : ''}{weightChange.toFixed(1)}
                                     <ArrowUpRight size={16} className={weightChange < 0 ? "rotate-180" : ""} />
                                 </p>
-                                <p className="text-xs text-slate-500">{t('analytics.totalChange')}</p>
+                                <p className="text-[8px] font-black uppercase tracking-tighter opacity-60">{t('analytics.totalChange')}</p>
                             </div>
                         </div>
 
                         <div className="h-64 w-full" style={{ height: 256 }}>
                             <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                                 <LineChart data={weightChartData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
+                                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                                     <XAxis
                                         dataKey="date"
                                         tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                        stroke="#64748b"
-                                        tick={{ fontSize: 10 }}
+                                        stroke="#475569"
+                                        tick={{ fontSize: 9, fontWeight: 900 }}
                                         tickLine={false}
                                         axisLine={false}
                                         minTickGap={30}
                                     />
                                     <YAxis
                                         domain={['auto', 'auto']}
-                                        stroke="#64748b"
-                                        tick={{ fontSize: 10 }}
+                                        stroke="#475569"
+                                        tick={{ fontSize: 9, fontWeight: 900 }}
                                         tickLine={false}
                                         axisLine={false}
                                         width={30}
                                     />
-                                    <Tooltip content={<CustomTooltip metric="weight" />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                    <Tooltip content={<CustomTooltip metric="weight" />} cursor={{ stroke: '#0ea5e9', strokeWidth: 1, strokeDasharray: '4 4' }} />
                                     <Line
                                         type="monotone"
                                         dataKey="weight"
                                         stroke="#0ea5e9"
-                                        strokeWidth={3}
+                                        strokeWidth={4}
                                         dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}
-                                        activeDot={{ r: 6, fill: '#0ea5e9' }}
+                                        activeDot={{ r: 6, fill: '#0ea5e9', stroke: '#fff', strokeWidth: 2 }}
                                     />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
-
-                        <div className="flex justify-between mt-4 text-xs text-slate-500 font-medium uppercase tracking-wider">
-                            <span>{weightChartData[0].date.toLocaleDateString()}</span>
-                            <span>{weightChartData[weightChartData.length - 1].date.toLocaleDateString()}</span>
-                        </div>
                     </div>
                 ) : (
-                    <div className="text-center py-8 border-2 border-dashed border-slate-800 rounded-2xl">
-                        <p className="text-slate-400">{t('analytics.notEnoughWeightData')}</p>
-                        <p className="text-sm text-slate-500">{t('analytics.logWeightHint')}</p>
+                    <div className="text-center py-12 border-2 border-dashed border-white/5 rounded-3xl">
+                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mb-2">{t('analytics.notEnoughWeightData')}</p>
+                        <p className="text-[10px] text-slate-600 font-medium">{t('analytics.logWeightHint')}</p>
                     </div>
                 )}
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                        <TrendingUp className="text-sky-400" /> {t('analytics.progressTracker')}
-                    </h3>
-                    <p className="text-slate-400 text-sm">{t('analytics.visualizeGains')}</p>
-                </div>
-
-                <div className="flex gap-2 w-full md:w-auto">
-                    <select
-                        value={metric}
-                        onChange={(e) => setMetric(e.target.value)}
-                        className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-1/3 md:w-32 p-2.5"
-                    >
-                        <option value="weight">{t('analytics.maxWeight')}</option>
-                        <option value="volume">{t('analytics.maxVolume')}</option>
-                    </select>
-
-                    <select
-                        value={selectedExercise}
-                        onChange={(e) => setSelectedExercise(e.target.value)}
-                        className="bg-slate-800 border border-slate-700 text-white text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 block w-2/3 md:w-64 p-2.5"
-                    >
-                        <option value="">{t('analytics.selectExercise')}</option>
-                        {uniqueExercises.map(name => (
-                            <option key={name} value={name}>{name}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-
-            {selectedExercise ? (
-                chartData.length > 1 ? (
-                    <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
-                        <div className="flex justify-between items-end mb-8">
-                            <div>
-                                <p className="text-slate-400 text-sm mb-1">{t('analytics.currentMax')}</p>
-                                <p className="text-3xl font-bold text-white font-mono">{latestWeight} <span className="text-sm text-slate-500 font-sans">{metric === 'weight' ? 'kg' : 'kg·reps'}</span></p>
-                            </div>
-                            <div className={clsx("text-right", progress >= 0 ? "text-emerald-400" : "text-red-400")}>
-                                <p className="text-sm font-medium flex items-center justify-end gap-1">
-                                    {progress >= 0 ? '+' : ''}{progress} {metric === 'weight' ? 'kg' : 'vol'}
-                                    <ArrowUpRight size={16} className={progress < 0 ? "rotate-180" : ""} />
-                                </p>
-                                <p className="text-xs text-slate-500">{t('analytics.sinceFirstLog')}</p>
-                            </div>
+            {/* Performance Progress Section */}
+            <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-xl">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-sky-400 shadow-inner">
+                            <TrendingUp size={20} />
                         </div>
-
-                        {/* Chart Area */}
-                        {/* Chart Area */}
-                        <div className="h-64 w-full" style={{ height: 256 }}>
-                            <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                                <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                                    <XAxis
-                                        dataKey="date"
-                                        tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                        stroke="#64748b"
-                                        tick={{ fontSize: 10 }}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        minTickGap={30}
-                                    />
-                                    <YAxis
-                                        domain={['auto', 'auto']}
-                                        stroke="#64748b"
-                                        tick={{ fontSize: 10 }}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        width={30}
-                                    />
-                                    <Tooltip content={<CustomTooltip metric={metric} />} cursor={{ stroke: '#38bdf8', strokeWidth: 1, strokeDasharray: '4 4' }} />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="weight"
-                                        stroke="#0ea5e9"
-                                        strokeWidth={3}
-                                        dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}
-                                        activeDot={{ r: 6, fill: '#0ea5e9' }}
-                                        unit={metric === 'weight' ? 'kg' : ' vol'}
-                                    />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-
-                        <div className="flex justify-between mt-4 text-xs text-slate-500 font-medium uppercase tracking-wider">
-                            <span>{chartData[0].date.toLocaleDateString()}</span>
-                            <span>{chartData[chartData.length - 1].date.toLocaleDateString()}</span>
+                        <div>
+                            <h3 className="text-xl font-black italic text-white uppercase tracking-tight">
+                                {t('analytics.progressTracker')}
+                            </h3>
+                            <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">{t('analytics.visualizeGains')}</p>
                         </div>
                     </div>
+
+                    <div className="flex gap-2 w-full md:w-auto">
+                        <div className="relative flex-1 md:w-32">
+                            <select
+                                value={metric}
+                                onChange={(e) => setMetric(e.target.value)}
+                                className="w-full bg-slate-950/50 border border-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl p-3 focus:border-sky-500 transition-all appearance-none"
+                            >
+                                <option value="weight">{t('analytics.maxWeight')}</option>
+                                <option value="volume">{t('analytics.maxVolume')}</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={14} />
+                        </div>
+
+                        <div className="relative flex-[2] md:w-64">
+                            <select
+                                value={selectedExercise}
+                                onChange={(e) => setSelectedExercise(e.target.value)}
+                                className="w-full bg-slate-950/50 border border-slate-800 text-white text-[10px] font-black uppercase tracking-widest rounded-xl p-3 focus:border-sky-500 transition-all appearance-none"
+                            >
+                                <option value="">{t('analytics.selectExercise')}</option>
+                                {uniqueExercises.map(name => (
+                                    <option key={name} value={name}>{name}</option>
+                                ))}
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={14} />
+                        </div>
+                    </div>
+                </div>
+
+                {selectedExercise ? (
+                    chartData.length > 1 ? (
+                        <div className="space-y-8">
+                            <div className="flex justify-between items-end px-2">
+                                <div>
+                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('analytics.currentMax')}</p>
+                                    <p className="text-4xl font-black italic text-white leading-none">
+                                        {latestWeight} <span className="text-sm not-italic text-slate-600 uppercase font-bold ml-1">{metric === 'weight' ? 'kg' : 'vol'}</span>
+                                    </p>
+                                </div>
+                                <div className={clsx("text-right px-3 py-2 rounded-2xl border", 
+                                    progress >= 0 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20")}>
+                                    <p className="text-sm font-black flex items-center justify-end gap-1">
+                                        {progress >= 0 ? '+' : ''}{progress}
+                                        <ArrowUpRight size={16} className={progress < 0 ? "rotate-180" : ""} />
+                                    </p>
+                                    <p className="text-[8px] font-black uppercase tracking-tighter opacity-60">{t('analytics.sinceFirstLog')}</p>
+                                </div>
+                            </div>
+
+                            <div className="h-64 w-full" style={{ height: 256 }}>
+                                <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+                                    <LineChart data={chartData}>
+                                        <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
+                                        <XAxis
+                                            dataKey="date"
+                                            tickFormatter={(date) => new Date(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                            stroke="#475569"
+                                            tick={{ fontSize: 9, fontWeight: 900 }}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            minTickGap={30}
+                                        />
+                                        <YAxis
+                                            domain={['auto', 'auto']}
+                                            stroke="#475569"
+                                            tick={{ fontSize: 9, fontWeight: 900 }}
+                                            tickLine={false}
+                                            axisLine={false}
+                                            width={30}
+                                        />
+                                        <Tooltip content={<CustomTooltip metric={metric} />} cursor={{ stroke: '#0ea5e9', strokeWidth: 1, strokeDasharray: '4 4' }} />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="weight"
+                                            stroke="#0ea5e9"
+                                            strokeWidth={4}
+                                            dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}
+                                            activeDot={{ r: 6, fill: '#0ea5e9', stroke: '#fff', strokeWidth: 2 }}
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                            <TrendingUp className="mx-auto text-slate-800 mb-4" size={40} />
+                            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mb-2">{t('analytics.notEnoughData')}</p>
+                            <p className="text-[10px] text-slate-600 font-medium">{t('analytics.completeWorkoutsHint')}</p>
+                        </div>
+                    )
                 ) : (
-                    <div className="text-center py-12 border-2 border-dashed border-slate-800 rounded-2xl">
-                        <TrendingUp className="mx-auto text-slate-600 mb-4" size={32} />
-                        <p className="text-slate-400">{t('analytics.notEnoughData')}</p>
-                        <p className="text-sm text-slate-500">{t('analytics.completeWorkoutsHint')}</p>
+                    <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                        <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-6 text-slate-600 shadow-inner">
+                            <TrendingUp size={32} />
+                        </div>
+                        <h3 className="text-lg font-black italic text-white uppercase tracking-tight mb-2">{t('analytics.selectExerciseTitle')}</h3>
+                        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-[0.2em]">{t('analytics.selectExerciseSubtitle')}</p>
                     </div>
-                )
-            ) : (
-                <div className="text-center py-12 border-2 border-dashed border-slate-800 rounded-2xl">
-                    <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-500">
-                        <TrendingUp size={32} />
-                    </div>
-                    <h3 className="text-lg font-medium text-white mb-2">{t('analytics.selectExerciseTitle')}</h3>
-                    <p className="text-slate-400">{t('analytics.selectExerciseSubtitle')}</p>
-                </div>
-            )}
+                )}
+            </div>
         </div >
     );
 };
