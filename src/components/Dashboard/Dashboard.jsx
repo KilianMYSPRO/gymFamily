@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap } from 'lucide-react';
+import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 import StreakCard from '../Gamification/StreakCard';
 import WorkoutSummaryCard from '../History/WorkoutSummaryCard';

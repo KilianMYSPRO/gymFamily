@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Lock, ArrowRight, Loader2, AlertCircle, HelpCircle, ArrowLeft } from 'lucide-react';
+import { User, Lock, ArrowRight, Loader2, AlertCircle, HelpCircle, ArrowLeft, ChevronDown } from 'lucide-react';
 
 import { useLanguage } from '../../context/LanguageContext';
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../context/StoreContext';
 import { useAuth } from '../../context/AuthContext';
-import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock, Download } from 'lucide-react';
+import { Save, User, Ruler, Weight, Calendar, Target, TrendingUp, Settings, Trash2, CheckCircle2, FileDown, Upload, AlertTriangle, X, Cloud, LogOut, RefreshCw, Database, Shield, HelpCircle, Lock, Download, ChevronDown } from 'lucide-react';
 import Portal from '../common/Portal';
 import Auth from '../Auth/Auth';
 import Analytics from '../Analytics/Analytics';
