@@ -581,141 +581,421 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                             </div>
 
 
-                                            {exercise.sets.map((set, setIndex) => {
-                                                const triggerHaptic = () => {
-                                                    if (navigator.vibrate) navigator.vibrate(10);
-                                                };
-                                                const adjustWeight = (delta) => {
-                                                    triggerHaptic();
-                                                    const current = parseFloat(set.weight) || 0;
-                                                    const newVal = Math.max(0, current + delta);
-                                                    updateSet(exerciseIndex, setIndex, 'weight', newVal.toString());
-                                                };
-                                                const adjustReps = (delta) => {
-                                                    triggerHaptic();
-                                                    const current = parseInt(set.reps) || 0;
-                                                    const newVal = Math.max(0, current + delta);
-                                                    updateSet(exerciseIndex, setIndex, 'reps', newVal.toString());
-                                                };
-                                                return (
-                                                    <div key={set.id} className={clsx(
-                                                        "p-4 rounded-xl transition-all group relative scroll-mt-24",
-                                                        set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
-                                                    )}>
-                                                        {/* Mobile: Stacked layout | Desktop: Inline */}
-                                                        <div className="flex items-start gap-3 overflow-hidden">
-                                                            {/* Set number */}
-                                                            <div className="w-10 flex flex-col items-center justify-center shrink-0">
-                                                                <span className="font-mono text-slate-400 font-bold text-lg leading-none">{setIndex + 1}</span>
-                                                                {setIndex > 0 && (
-                                                                    <button
-                                                                        onClick={() => {
-                                                                            const prevSet = exercise.sets[setIndex - 1];
-                                                                            updateSet(exerciseIndex, setIndex, {
-                                                                                weight: prevSet.weight,
-                                                                                reps: prevSet.reps
-                                                                            });
-                                                                            if (navigator.vibrate) navigator.vibrate(10);
-                                                                        }}
-                                                                        className="text-[10px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-2 py-1 px-2 bg-sky-500/5 rounded-md active:scale-95 transition-all select-none"
-                                                                        title="Copy from previous set"
-                                                                    >
-                                                                        COPY
-                                                                    </button>
-                                                                )}
-                                                            </div>
+                                                                                        {exercise.sets.map((set, setIndex) => {
 
-                                                            {/* Weight and Reps - stacks on mobile, inline on desktop */}
-                                                            <div className="flex-1 min-w-0 flex flex-col md:flex-row gap-1.5 md:gap-2">
-                                                                {/* Weight row */}
-                                                                <div className="flex items-center gap-0.5 md:gap-1 min-w-0">
-                                                                    <span className="text-xs text-slate-500 w-6 shrink-0 md:hidden">kg</span>
-                                                                    <button
-                                                                        onClick={() => adjustWeight(-2.5)}
-                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
-                                                                    >
-                                                                        −
-                                                                    </button>
-                                                                    <input
-                                                                        type="text"
-                                                                        inputMode="decimal"
-                                                                        autoComplete="off"
-                                                                        autoCorrect="off"
-                                                                        value={set.weight}
-                                                                        onFocus={(e) => e.target.select()}
-                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
-                                                                        className="flex-1 min-w-0 bg-slate-950/50 rounded-lg md:rounded-xl py-2 md:py-3 px-1 text-center font-bold text-white text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                                        placeholder="0"
-                                                                    />
-                                                                    <button
-                                                                        onClick={() => adjustWeight(2.5)}
-                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
-                                                                    >
-                                                                        +
-                                                                    </button>
-                                                                    {/* Plate Calculator removed to save space on mobile */}
-                                                                </div>
 
-                                                                {/* Reps row */}
-                                                                <div className="flex items-center gap-0.5 md:gap-1 min-w-0">
-                                                                    <span className="text-xs text-slate-500 w-6 shrink-0 md:hidden">
-                                                                        {exercise.reps ? `/${exercise.reps}` : 'reps'}
-                                                                    </span>
-                                                                    <button
-                                                                        onClick={() => adjustReps(-1)}
-                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
-                                                                    >
-                                                                        −
-                                                                    </button>
-                                                                    <input
-                                                                        type="text"
-                                                                        inputMode="decimal"
-                                                                        autoComplete="off"
-                                                                        autoCorrect="off"
-                                                                        value={set.reps}
-                                                                        onFocus={(e) => e.target.select()}
-                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
-                                                                        className="flex-1 min-w-0 bg-slate-950/50 rounded-lg md:rounded-xl py-2 md:py-3 px-1 text-center font-bold text-white text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
-                                                                        placeholder={exercise.reps || "0"}
-                                                                    />
-                                                                    <button
-                                                                        onClick={() => adjustReps(1)}
-                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
-                                                                    >
-                                                                        +
-                                                                    </button>
-                                                                </div>
-                                                            </div>
+                                                                                            const triggerHaptic = () => {
 
-                                                            {/* Done button */}
-                                                            <button
-                                                                onClick={() => {
-                                                                    if (navigator.vibrate) navigator.vibrate(set.completed ? 10 : [10, 50, 20]);
-                                                                    toggleSetComplete(exerciseIndex, setIndex);
-                                                                }}
-                                                                className={clsx(
-                                                                    "w-14 h-14 rounded-xl flex items-center justify-center transition-all active:scale-95 shrink-0 self-center",
-                                                                    set.completed
-                                                                        ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
-                                                                        : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-600 hover:border-sky-500"
-                                                                )}
-                                                            >
-                                                                <Check size={24} />
-                                                            </button>
-                                                        </div>
 
-                                                        {/* Delete button */}
-                                                        {!set.completed && (
-                                                            <button
-                                                                onClick={() => removeSet(exerciseIndex, setIndex)}
-                                                                className="absolute -right-2 -top-2 w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all active:scale-95"
-                                                            >
-                                                                <Trash2 size={16} />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                );
-                                            })}
+                                                                                                if (navigator.vibrate) navigator.vibrate(10);
+
+
+                                                                                            };
+
+
+                                                                                            const adjustWeight = (delta) => {
+
+
+                                                                                                triggerHaptic();
+
+
+                                                                                                const current = parseFloat(set.weight) || 0;
+
+
+                                                                                                const newVal = Math.max(0, current + delta);
+
+
+                                                                                                updateSet(exerciseIndex, setIndex, 'weight', newVal.toString());
+
+
+                                                                                            };
+
+
+                                                                                            const adjustReps = (delta) => {
+
+
+                                                                                                triggerHaptic();
+
+
+                                                                                                const current = parseInt(set.reps) || 0;
+
+
+                                                                                                const newVal = Math.max(0, current + delta);
+
+
+                                                                                                updateSet(exerciseIndex, setIndex, 'reps', newVal.toString());
+
+
+                                                                                            };
+
+
+                                                                                            return (
+
+
+                                                                                                <div key={set.id} className={clsx(
+
+
+                                                                                                    "p-3 rounded-2xl transition-all group relative scroll-mt-24",
+
+
+                                                                                                    set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
+
+
+                                                                                                )}>
+
+
+                                                                                                    <div className="flex items-stretch gap-3">
+
+
+                                                                                                        {/* Column 1: Set Info & Copy */}
+
+
+                                                                                                        <div className="w-12 flex flex-col items-center justify-center shrink-0 border-r border-slate-800/50 pr-1">
+
+
+                                                                                                            <span className="font-mono text-slate-400 font-black text-xl leading-none">{setIndex + 1}</span>
+
+
+                                                                                                            {setIndex > 0 && (
+
+
+                                                                                                                <button
+
+
+                                                                                                                    onClick={() => {
+
+
+                                                                                                                        const prevSet = exercise.sets[setIndex - 1];
+
+
+                                                                                                                        updateSet(exerciseIndex, setIndex, {
+
+
+                                                                                                                            weight: prevSet.weight,
+
+
+                                                                                                                            reps: prevSet.reps
+
+
+                                                                                                                        });
+
+
+                                                                                                                        if (navigator.vibrate) navigator.vibrate(10);
+
+
+                                                                                                                    }}
+
+
+                                                                                                                    className="text-[10px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-2 py-1 px-1 bg-sky-500/5 rounded-md active:scale-95 transition-all select-none"
+
+
+                                                                                                                    title="Copy from previous set"
+
+
+                                                                                                                >
+
+
+                                                                                                                    COPY
+
+
+                                                                                                                </button>
+
+
+                                                                                                            )}
+
+
+                                                                                                        </div>
+
+
+                                            
+
+
+                                                                                                        {/* Column 2: Inputs */}
+
+
+                                                                                                        <div className="flex-1 min-w-0 flex flex-col gap-3">
+
+
+                                                                                                            {/* Weight Row */}
+
+
+                                                                                                            <div className="flex items-center bg-slate-950/50 rounded-xl border border-slate-800 focus-within:border-sky-500/50 transition-all p-1">
+
+
+                                                                                                                <button
+
+
+                                                                                                                    onClick={() => adjustWeight(-2.5)}
+
+
+                                                                                                                    className="w-12 h-12 rounded-lg bg-slate-800 text-slate-400 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-xl transition-all active:scale-95 shrink-0 select-none"
+
+
+                                                                                                                >
+
+
+                                                                                                                    −
+
+
+                                                                                                                </button>
+
+
+                                                                                                                <div className="flex-1 relative min-w-0">
+
+
+                                                                                                                    <input
+
+
+                                                                                                                        type="text"
+
+
+                                                                                                                        inputMode="decimal"
+
+
+                                                                                                                        autoComplete="off"
+
+
+                                                                                                                        autoCorrect="off"
+
+
+                                                                                                                        value={set.weight}
+
+
+                                                                                                                        onFocus={(e) => e.target.select()}
+
+
+                                                                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
+
+
+                                                                                                                        className="w-full bg-transparent py-2 px-1 text-center font-black text-white text-2xl md:text-xl focus:outline-none transition-all"
+
+
+                                                                                                                        placeholder="0"
+
+
+                                                                                                                    />
+
+
+                                                                                                                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-600 uppercase tracking-widest pointer-events-none hidden xs:block">
+
+
+                                                                                                                        kg
+
+
+                                                                                                                    </span>
+
+
+                                                                                                                </div>
+
+
+                                                                                                                <button
+
+
+                                                                                                                    onClick={() => adjustWeight(2.5)}
+
+
+                                                                                                                    className="w-12 h-12 rounded-lg bg-slate-800 text-slate-400 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-xl transition-all active:scale-95 shrink-0 select-none"
+
+
+                                                                                                                >
+
+
+                                                                                                                    +
+
+
+                                                                                                                </button>
+
+
+                                                                                                            </div>
+
+
+                                            
+
+
+                                                                                                            {/* Reps Row */}
+
+
+                                                                                                            <div className="flex items-center bg-slate-950/50 rounded-xl border border-slate-800 focus-within:border-sky-500/50 transition-all p-1">
+
+
+                                                                                                                <button
+
+
+                                                                                                                    onClick={() => adjustReps(-1)}
+
+
+                                                                                                                    className="w-12 h-12 rounded-lg bg-slate-800 text-slate-400 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-xl transition-all active:scale-95 shrink-0 select-none"
+
+
+                                                                                                                >
+
+
+                                                                                                                    −
+
+
+                                                                                                                </button>
+
+
+                                                                                                                <div className="flex-1 relative min-w-0">
+
+
+                                                                                                                    <input
+
+
+                                                                                                                        type="text"
+
+
+                                                                                                                        inputMode="decimal"
+
+
+                                                                                                                        autoComplete="off"
+
+
+                                                                                                                        autoCorrect="off"
+
+
+                                                                                                                        value={set.reps}
+
+
+                                                                                                                        onFocus={(e) => e.target.select()}
+
+
+                                                                                                                        onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
+
+
+                                                                                                                        className="w-full bg-transparent py-2 px-1 text-center font-black text-white text-2xl md:text-xl focus:outline-none transition-all"
+
+
+                                                                                                                        placeholder={exercise.reps || "0"}
+
+
+                                                                                                                    />
+
+
+                                                                                                                    <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-600 uppercase tracking-widest pointer-events-none hidden xs:block">
+
+
+                                                                                                                        reps
+
+
+                                                                                                                    </span>
+
+
+                                                                                                                </div>
+
+
+                                                                                                                <button
+
+
+                                                                                                                    onClick={() => adjustReps(1)}
+
+
+                                                                                                                    className="w-12 h-12 rounded-lg bg-slate-800 text-slate-400 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-xl transition-all active:scale-95 shrink-0 select-none"
+
+
+                                                                                                                >
+
+
+                                                                                                                    +
+
+
+                                                                                                                </button>
+
+
+                                                                                                            </div>
+
+
+                                                                                                        </div>
+
+
+                                            
+
+
+                                                                                                        {/* Column 3: Done Button */}
+
+
+                                                                                                        <button
+
+
+                                                                                                            onClick={() => {
+
+
+                                                                                                                if (navigator.vibrate) navigator.vibrate(set.completed ? 10 : [10, 50, 20]);
+
+
+                                                                                                                toggleSetComplete(exerciseIndex, setIndex);
+
+
+                                                                                                            }}
+
+
+                                                                                                            className={clsx(
+
+
+                                                                                                                "w-16 rounded-2xl flex items-center justify-center transition-all active:scale-95 shrink-0",
+
+
+                                                                                                                set.completed
+
+
+                                                                                                                    ? "bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.5)]"
+
+
+                                                                                                                    : "bg-slate-800 text-slate-400 hover:bg-sky-500 hover:text-white border-2 border-dashed border-slate-700 hover:border-sky-500"
+
+
+                                                                                                            )}
+
+
+                                                                                                        >
+
+
+                                                                                                            <Check size={32} strokeWidth={3} />
+
+
+                                                                                                        </button>
+
+
+                                                                                                    </div>
+
+
+                                            
+
+
+                                                                                                    {/* Delete button - adjusted for new layout */}
+
+
+                                                                                                    {!set.completed && (
+
+
+                                                                                                        <button
+
+
+                                                                                                            onClick={() => removeSet(exerciseIndex, setIndex)}
+
+
+                                                                                                            className="absolute -right-2 -top-2 w-8 h-8 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center opacity-100 md:opacity-0 md:group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all active:scale-95 z-10"
+
+
+                                                                                                        >
+
+
+                                                                                                            <Trash2 size={16} />
+
+
+                                                                                                        </button>
+
+
+                                                                                                    )}
+
+
+                                                                                                </div>
+
+
+                                                                                            );
+
+
+                                                                                        })}
                                         </div>
                                     )}
                                 </div>
