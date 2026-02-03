@@ -83,14 +83,15 @@ const PullToRefresh = ({ children, onRefresh, className = '' }) => {
             >
                 <div
                     className={clsx(
-                        "w-10 h-10 rounded-full flex items-center justify-center transition-all",
+                        "w-10 h-10 rounded-xl flex items-center justify-center transition-all shadow-xl",
                         shouldTrigger || isRefreshing
-                            ? "bg-sky-500 text-white"
-                            : "bg-slate-700 text-slate-400"
+                            ? "bg-sky-500 text-white shadow-sky-500/20"
+                            : "bg-slate-800 text-slate-500 border border-white/5"
                     )}
                 >
                     <RefreshCw
-                        size={20}
+                        size={18}
+                        strokeWidth={3}
                         className={clsx(isRefreshing && "animate-spin")}
                         style={{
                             transform: isRefreshing ? 'none' : `rotate(${refreshProgress * 180}deg)`,
@@ -98,8 +99,8 @@ const PullToRefresh = ({ children, onRefresh, className = '' }) => {
                         }}
                     />
                 </div>
-                <span className="text-xs text-slate-400 mt-1">
-                    {isRefreshing ? 'Refreshing...' : shouldTrigger ? 'Release to refresh' : 'Pull to refresh'}
+                <span className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em] mt-2">
+                    {isRefreshing ? 'Refreshing' : shouldTrigger ? 'Release' : 'Pull'}
                 </span>
             </div>
 
