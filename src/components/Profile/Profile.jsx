@@ -150,18 +150,18 @@ const Profile = () => {
     const SECURITY_QUESTIONS = ['q1', 'q2', 'q3', 'q4', 'q5'];
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+        <div className="max-w-4xl mx-auto space-y-6 pb-24 animate-enter">
+            <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
                 <div>
-                    <h2 className="text-xl font-bold text-white">{t('profile.title')}</h2>
+                    <h2 className="text-2xl md:text-3xl font-black italic text-white uppercase tracking-tight">{t('profile.title')}</h2>
                 </div>
 
-                <div className="flex bg-slate-800/50 p-1 rounded-xl border border-slate-700/50 overflow-x-auto">
+                <div className="flex bg-slate-900/60 backdrop-blur-md p-1 rounded-2xl border border-white/5 overflow-x-auto scrollbar-hide">
                     <button
                         onClick={() => setActiveTab('details')}
                         className={clsx(
-                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
-                            activeTab === 'details' ? "bg-slate-700 text-white shadow-sm" : "text-slate-400 hover:text-white"
+                            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap",
+                            activeTab === 'details' ? "bg-slate-800 text-white shadow-lg" : "text-slate-500 hover:text-white"
                         )}
                     >
                         <Settings size={14} /> {t('profile.details')}
@@ -169,8 +169,8 @@ const Profile = () => {
                     <button
                         onClick={() => setActiveTab('analytics')}
                         className={clsx(
-                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
-                            activeTab === 'analytics' ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-slate-400 hover:text-white"
+                            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap",
+                            activeTab === 'analytics' ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20" : "text-slate-500 hover:text-white"
                         )}
                     >
                         <TrendingUp size={14} /> {t('profile.analytics')}
@@ -178,8 +178,8 @@ const Profile = () => {
                     <button
                         onClick={() => setActiveTab('data')}
                         className={clsx(
-                            "px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all whitespace-nowrap",
-                            activeTab === 'data' ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "text-slate-400 hover:text-white"
+                            "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 transition-all whitespace-nowrap",
+                            activeTab === 'data' ? "bg-indigo-500 text-white shadow-lg shadow-indigo-500/20" : "text-slate-500 hover:text-white"
                         )}
                     >
                         <Database size={14} /> {t('profile.data')}
@@ -189,22 +189,22 @@ const Profile = () => {
 
             {activeTab === 'details' ? (
                 <>
-                    <form onSubmit={handleSubmit} className="glass-card space-y-6 animate-fade-in">
-                        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-slate-800">
-                            <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl font-bold text-white shadow-lg ${activeProfile.theme === 'blue' ? 'bg-sky-500 shadow-sky-500/20' : 'bg-indigo-500 shadow-indigo-500/20'
+                    <form onSubmit={handleSubmit} className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 space-y-8 animate-fade-in shadow-xl">
+                        <div className="flex items-center gap-6 pb-6 border-b border-white/5">
+                            <div className={`w-20 h-20 rounded-[2rem] flex items-center justify-center text-3xl font-black italic text-white shadow-2xl transform rotate-3 ${activeProfile.theme === 'blue' ? 'bg-sky-500 shadow-sky-500/20' : 'bg-indigo-500 shadow-indigo-500/20'
                                 }`}>
                                 {activeProfile.name[0]}
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white">{activeProfile.name}</h3>
-                                <p className="text-slate-400">{t('profile.memberSince')} 2025</p>
+                                <h3 className="text-2xl font-black italic text-white uppercase tracking-tight leading-tight">{activeProfile.name}</h3>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em] mt-1">{t('profile.memberSince')} 2025</p>
                             </div>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="col-span-1 md:col-span-2 space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <User size={16} /> {t('profile.name')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <User size={12} /> {t('profile.name')}
                                 </label>
                                 <input
                                     type="text"
@@ -212,13 +212,13 @@ const Profile = () => {
                                     value={formData.name}
                                     onChange={handleChange}
                                     placeholder="Your Name"
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Calendar size={16} /> {t('profile.age')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Calendar size={12} /> {t('profile.age')}
                                 </label>
                                 <input
                                     type="number"
@@ -226,30 +226,33 @@ const Profile = () => {
                                     value={formData.age}
                                     onChange={handleChange}
                                     placeholder="Years"
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 />
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <User size={16} /> {t('profile.gender')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <User size={12} /> {t('profile.gender')}
                                 </label>
-                                <select
-                                    name="gender"
-                                    value={formData.gender}
-                                    onChange={handleChange}
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
-                                >
-                                    <option value="prefer-not-to-say">Prefer not to say</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        name="gender"
+                                        value={formData.gender}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner appearance-none"
+                                    >
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={18} />
+                                </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Weight size={16} /> {t('profile.weight')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Weight size={12} /> {t('profile.weight')}
                                 </label>
                                 <div className="flex gap-2">
                                     <input
@@ -258,7 +261,7 @@ const Profile = () => {
                                         value={formData.weight}
                                         onChange={handleChange}
                                         placeholder="kg"
-                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                        className="flex-1 bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                     />
                                     <button
                                         type="button"
@@ -269,28 +272,28 @@ const Profile = () => {
                                                 setTimeout(() => setIsSaved(false), 3000);
                                             }
                                         }}
-                                        className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl border border-slate-700 transition-colors whitespace-nowrap"
+                                        className="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl border border-white/5 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95"
                                     >
                                         {t('profile.logEntry')}
                                     </button>
                                 </div>
 
-                                {/* Recent History */}
                                 {weightHistory && weightHistory.length > 0 && (
-                                    <div className="mt-3 space-y-2">
-                                        <p className="text-xs text-slate-500 font-medium uppercase tracking-wider">{t('profile.recentEntries')}</p>
-                                        <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
+                                    <div className="mt-4 space-y-2 px-1">
+                                        <div className="flex justify-between items-center">
+                                            <p className="text-[8px] font-black text-slate-600 uppercase tracking-[0.2em]">{t('profile.recentEntries')}</p>
+                                        </div>
+                                        <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                                             {[...weightHistory].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5).map(entry => (
-                                                <div key={entry.id} className="flex justify-between items-center bg-slate-800/30 px-3 py-2 rounded-lg border border-slate-700/30 group">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm text-white font-mono">{entry.weight} kg</span>
-                                                        <span className="text-xs text-slate-500">{new Date(entry.date).toLocaleDateString()}</span>
+                                                <div key={entry.id} className="flex justify-between items-center bg-white/5 px-4 py-2.5 rounded-xl border border-white/5 group">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-sm text-white font-black italic">{entry.weight} <span className="text-[10px] not-italic text-slate-600 uppercase">kg</span></span>
+                                                        <span className="text-[9px] font-bold text-slate-600 uppercase">{new Date(entry.date).toLocaleDateString()}</span>
                                                     </div>
                                                     <button
                                                         type="button"
                                                         onClick={() => deleteWeightLog(entry.id)}
-                                                        className="text-slate-500 hover:text-red-400 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all p-1"
-                                                        title="Delete Entry"
+                                                        className="text-slate-600 hover:text-red-400 transition-all p-1 active:scale-90"
                                                     >
                                                         <Trash2 size={14} />
                                                     </button>
@@ -302,8 +305,8 @@ const Profile = () => {
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Ruler size={16} /> {t('profile.height')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Ruler size={12} /> {t('profile.height')}
                                 </label>
                                 <input
                                     type="number"
@@ -311,31 +314,34 @@ const Profile = () => {
                                     value={formData.height}
                                     onChange={handleChange}
                                     placeholder="cm"
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 />
                             </div>
 
                             <div className="col-span-1 md:col-span-2 space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Target size={16} /> {t('profile.goal')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Target size={12} /> {t('profile.goal')}
                                 </label>
-                                <select
-                                    name="goal"
-                                    value={formData.goal}
-                                    onChange={handleChange}
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
-                                >
-                                    <option value="general-fitness">General Fitness</option>
-                                    <option value="muscle-gain">Muscle Gain</option>
-                                    <option value="weight-loss">Weight Loss</option>
-                                    <option value="strength">Strength Training</option>
-                                    <option value="endurance">Endurance</option>
-                                </select>
+                                <div className="relative">
+                                    <select
+                                        name="goal"
+                                        value={formData.goal}
+                                        onChange={handleChange}
+                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner appearance-none"
+                                    >
+                                        <option value="general-fitness">General Fitness</option>
+                                        <option value="muscle-gain">Muscle Gain</option>
+                                        <option value="weight-loss">Weight Loss</option>
+                                        <option value="strength">Strength Training</option>
+                                        <option value="endurance">Endurance</option>
+                                    </select>
+                                    <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={18} />
+                                </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                    <Target size={16} /> {t('profile.weeklyGoal')}
+                                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                    <Target size={12} /> {t('profile.weeklyGoal')}
                                 </label>
                                 <input
                                     type="number"
@@ -344,83 +350,80 @@ const Profile = () => {
                                     onChange={handleChange}
                                     min="1"
                                     max="21"
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                    className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                 />
                             </div>
                         </div>
 
-                        <div className="pt-4 flex items-center justify-between relative">
+                        <div className="pt-6 flex items-center justify-between relative border-t border-white/5">
                             {isSaved && (
-                                <div className="absolute left-0 -top-12 md:static md:top-auto flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-lg border border-emerald-500/20 animate-fade-in shadow-lg shadow-emerald-500/10">
-                                    <CheckCircle2 size={18} />
-                                    <span className="text-sm font-medium">{t('profile.savedSuccess')}</span>
+                                <div className="flex items-center gap-2 bg-emerald-500/10 text-emerald-400 px-4 py-2 rounded-xl border border-emerald-500/20 animate-fade-in shadow-lg shadow-emerald-500/10">
+                                    <CheckCircle2 size={16} />
+                                    <span className="text-xs font-black uppercase tracking-widest">{t('profile.savedSuccess')}</span>
                                 </div>
                             )}
-                            <button type="submit" className="btn btn-primary ml-auto">
+                            <button type="submit" className="btn bg-gradient-to-r from-sky-500 to-indigo-600 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl active:scale-95 ml-auto transition-all">
                                 <Save size={18} /> {t('profile.saveChanges')}
                             </button>
                         </div>
                     </form>
 
-                    {/* Security Section - Only visible when logged in */}
                     {token && (
-                        <div className="glass-card space-y-6 animate-fade-in mt-6">
-                            <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
-                                <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                        <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 space-y-6 animate-fade-in shadow-xl mt-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <div className="w-12 h-12 rounded-[1.25rem] bg-slate-800 flex items-center justify-center text-slate-400 shadow-inner">
                                     <Shield size={24} />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white">{t('profile.security')}</h3>
-                                    <p className="text-slate-400">{t('profile.securitySubtitle')}</p>
+                                    <h3 className="text-xl font-black italic text-white uppercase tracking-tight leading-tight">{t('profile.security')}</h3>
+                                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{t('profile.securitySubtitle')}</p>
                                 </div>
                             </div>
 
-                            <form onSubmit={handleSecurityUpdate} className="space-y-4">
+                            <form onSubmit={handleSecurityUpdate} className="space-y-6">
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                        <HelpCircle size={16} /> {t('auth.securityQuestion')}
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                        <HelpCircle size={12} /> {t('auth.securityQuestion')}
                                     </label>
-                                    <select
-                                        value={securityData.question}
-                                        onChange={(e) => setSecurityData({ ...securityData, question: e.target.value })}
-                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors appearance-none"
-                                    >
-                                        {SECURITY_QUESTIONS.map((qKey) => (
-                                            <option key={qKey} value={qKey} className="bg-slate-800 text-white">
-                                                {t(`auth.securityQuestions.${qKey}`)}
-                                            </option>
-                                        ))}
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            value={securityData.question}
+                                            onChange={(e) => setSecurityData({ ...securityData, question: e.target.value })}
+                                            className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner appearance-none"
+                                        >
+                                            {SECURITY_QUESTIONS.map((qKey) => (
+                                                <option key={qKey} value={qKey} className="bg-slate-800 text-white">
+                                                    {t(`auth.securityQuestions.${qKey}`)}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={18} />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-400 flex items-center gap-2">
-                                        <Lock size={16} /> {t('auth.securityAnswer')}
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 flex items-center gap-2">
+                                        <Lock size={12} /> {t('auth.securityAnswer')}
                                     </label>
                                     <input
                                         type="text"
                                         value={securityData.answer}
                                         onChange={(e) => setSecurityData({ ...securityData, answer: e.target.value })}
                                         placeholder={t('auth.enterAnswer')}
-                                        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-sky-500 transition-colors"
+                                        className="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold focus:outline-none focus:border-sky-500 transition-all shadow-inner"
                                     />
                                 </div>
 
-                                <div className="flex items-center justify-end gap-3">
+                                <div className="flex items-center justify-end gap-4">
                                     {securityStatus === 'success' && (
-                                        <span className="text-emerald-400 text-sm flex items-center gap-1 animate-fade-in">
-                                            <CheckCircle2 size={16} /> {t('profile.securityUpdated')}
-                                        </span>
-                                    )}
-                                    {securityStatus === 'error' && (
-                                        <span className="text-red-400 text-sm flex items-center gap-1 animate-fade-in">
-                                            <AlertTriangle size={16} /> {t('common.error')}
+                                        <span className="text-emerald-400 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 animate-fade-in">
+                                            <CheckCircle2 size={14} /> {t('profile.securityUpdated')}
                                         </span>
                                     )}
                                     <button
                                         type="submit"
                                         disabled={!securityData.answer || securityStatus === 'loading'}
-                                        className="btn btn-secondary"
+                                        className="px-6 py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl border border-white/5 font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 disabled:opacity-50"
                                     >
                                         {t('profile.updateSecurity')}
                                     </button>
@@ -431,44 +434,44 @@ const Profile = () => {
                 </>
             ) : activeTab === 'data' ? (
                 <>
-                    <div className="glass-card space-y-6 animate-fade-in">
-                        <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
-                            <div className="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-500">
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 space-y-8 animate-fade-in shadow-xl">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="w-12 h-12 rounded-[1.25rem] bg-sky-500/10 flex items-center justify-center text-sky-500 shadow-inner">
                                 <Cloud size={24} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white">{t('profile.cloudSync')}</h3>
-                                <p className="text-slate-400">{t('profile.syncSubtitle')}</p>
+                                <h3 className="text-xl font-black italic text-white uppercase tracking-tight leading-tight">{t('profile.cloudSync')}</h3>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{t('profile.syncSubtitle')}</p>
                             </div>
                         </div>
 
                         {!token ? (
                             <Auth onLogin={login} />
                         ) : (
-                            <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/30 flex flex-col md:flex-row items-center justify-between gap-6">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-xl">
+                            <div className="bg-slate-950/40 rounded-3xl p-6 border border-white/5 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-16 h-16 rounded-2xl bg-indigo-500 flex items-center justify-center text-white font-black italic text-2xl shadow-xl transform rotate-3">
                                         {user?.username?.[0]?.toUpperCase()}
                                     </div>
                                     <div>
-                                        <h4 className="text-white font-bold text-lg">{t('profile.loggedInAs')} {user?.username}</h4>
-                                        <div className="flex items-center gap-2 text-sm">
+                                        <h4 className="text-white font-black italic uppercase text-lg">{user?.username}</h4>
+                                        <div className="flex items-center gap-2 mt-1">
                                             <span className={clsx(
                                                 "w-2 h-2 rounded-full",
-                                                (syncStatus === 'success' || syncStatus === 'idle') ? "bg-emerald-500" :
+                                                (syncStatus === 'success' || syncStatus === 'idle') ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" :
                                                     syncStatus === 'syncing' ? "bg-amber-500 animate-pulse" :
-                                                        "bg-red-500"
+                                                        "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"
                                             )} />
-                                            <span className="text-slate-400">
+                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
                                                 {(syncStatus === 'success' || syncStatus === 'idle') ? t('profile.synced') :
                                                     syncStatus === 'syncing' ? t('profile.syncing') :
-                                                        <span className="text-red-400 flex items-center gap-2">
+                                                        <span className="text-red-400 flex items-center gap-3">
                                                             {t('profile.syncError')}
                                                             <button
                                                                 onClick={() => syncData()}
-                                                                className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2 py-1 rounded border border-red-500/20 transition-colors flex items-center gap-1"
+                                                                className="bg-red-500/10 hover:bg-red-500/20 text-red-400 px-3 py-1 rounded-full border border-red-500/20 transition-all flex items-center gap-1.5"
                                                             >
-                                                                <RefreshCw size={12} /> {t('profile.retry')}
+                                                                <RefreshCw size={10} /> {t('profile.retry')}
                                                             </button>
                                                         </span>
                                                 }
@@ -479,34 +482,37 @@ const Profile = () => {
 
                                 <button
                                     onClick={logout}
-                                    className="px-4 py-2 bg-slate-800 hover:bg-red-500/10 hover:text-red-400 text-slate-400 rounded-lg border border-slate-700 hover:border-red-500/30 transition-all flex items-center gap-2"
+                                    className="px-6 py-3 bg-slate-800 hover:bg-red-500/10 hover:text-red-400 text-slate-400 rounded-2xl border border-white/5 transition-all flex items-center gap-2 font-black uppercase tracking-widest text-[10px] active:scale-95"
                                 >
-                                    <LogOut size={18} /> {t('profile.signOut')}
+                                    <LogOut size={16} /> {t('profile.signOut')}
                                 </button>
                             </div>
                         )}
                     </div>
 
-                    <div className="glass-card space-y-6 animate-fade-in">
-                        <div className="flex items-center gap-4 mb-4 pb-4 border-b border-slate-800">
-                            <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 space-y-8 animate-fade-in shadow-xl mt-6">
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="w-12 h-12 rounded-[1.25rem] bg-slate-800 flex items-center justify-center text-slate-400 shadow-inner">
                                 <Save size={24} />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold text-white">{t('profile.dataManagement')}</h3>
-                                <p className="text-slate-400">{t('profile.backupSubtitle')}</p>
+                                <h3 className="text-xl font-black italic text-white uppercase tracking-tight leading-tight">{t('profile.dataManagement')}</h3>
+                                <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest">{t('profile.backupSubtitle')}</p>
                             </div>
                         </div>
 
-                        <div className="glass-card mb-6 animate-fade-in border-sky-500/30 bg-sky-500/5">
-                            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-sky-500 flex items-center justify-center text-white shadow-lg shadow-sky-500/20">
-                                        <Download size={24} />
+                        <div className="bg-sky-500/10 p-6 rounded-3xl border border-sky-500/20 relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                                <Download size={80} className="text-sky-400" />
+                            </div>
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-14 h-14 rounded-2xl bg-sky-500 flex items-center justify-center text-white shadow-xl shadow-sky-500/20">
+                                        <Download size={28} />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold text-white">{t('profile.installApp')}</h3>
-                                        <p className="text-slate-400">
+                                        <h3 className="text-lg font-black italic text-white uppercase tracking-tight">{t('profile.installApp')}</h3>
+                                        <p className="text-[9px] font-bold text-sky-200/60 uppercase tracking-wider leading-relaxed max-w-[200px]">
                                             {deferredPrompt
                                                 ? t('profile.appInstallSubtitle')
                                                 : "To install: Tap browser menu (⋮) → 'Install App' or 'Add to Home Screen'."}
@@ -516,7 +522,7 @@ const Profile = () => {
                                 {deferredPrompt && (
                                     <button
                                         onClick={handleInstallClick}
-                                        className="w-full md:w-auto px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-bold shadow-lg shadow-sky-500/20 transition-all transform hover:scale-105"
+                                        className="w-full md:w-auto px-8 py-4 bg-white text-sky-600 hover:bg-sky-50 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-2xl transition-all transform hover:scale-105 active:scale-95"
                                     >
                                         {t('profile.installApp')}
                                     </button>
@@ -524,32 +530,32 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="p-6 rounded-[2rem] bg-slate-950/40 border border-white/5 space-y-4 group hover:border-sky-500/30 transition-all">
                                 <div className="flex items-center gap-3 text-sky-400 mb-2">
                                     <FileDown size={20} />
-                                    <h4 className="font-bold text-white">{t('profile.exportBackup')}</h4>
+                                    <h4 className="font-black italic uppercase tracking-tight text-white">{t('profile.exportBackup')}</h4>
                                 </div>
-                                <p className="text-sm text-slate-400">
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide leading-relaxed">
                                     {t('profile.exportSubtitle')}
                                 </p>
                                 <button
                                     onClick={handleExport}
-                                    className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2"
+                                    className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl border border-white/5 transition-all flex items-center justify-center gap-2 font-black uppercase tracking-widest text-[10px] active:scale-95 shadow-lg"
                                 >
                                     <FileDown size={16} /> {t('profile.downloadJson')}
                                 </button>
                             </div>
 
-                            <div className="p-4 rounded-xl bg-slate-800/30 border border-slate-700/30 space-y-3">
+                            <div className="p-6 rounded-[2rem] bg-slate-950/40 border border-white/5 space-y-4 group hover:border-emerald-500/30 transition-all">
                                 <div className="flex items-center gap-3 text-emerald-400 mb-2">
                                     <Upload size={20} />
-                                    <h4 className="font-bold text-white">{t('profile.importBackup')}</h4>
+                                    <h4 className="font-black italic uppercase tracking-tight text-white">{t('profile.importBackup')}</h4>
                                 </div>
-                                <p className="text-sm text-slate-400">
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wide leading-relaxed">
                                     {t('profile.importSubtitle')}
                                 </p>
-                                <label className="w-full py-2 px-4 bg-slate-800 hover:bg-slate-700 text-white rounded-lg border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                                <label className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-2xl border border-white/5 transition-all flex items-center justify-center gap-2 font-black uppercase tracking-widest text-[10px] cursor-pointer active:scale-95 shadow-lg">
                                     <Upload size={16} /> {t('profile.selectFile')}
                                     <input
                                         type="file"
