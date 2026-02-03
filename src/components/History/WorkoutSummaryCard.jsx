@@ -89,71 +89,69 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[120] flex items-center justify-center p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-[200] flex items-center justify-center p-4 animate-fade-in">
             <div className="relative w-full max-w-md">
                 {/* The Card */}
-                <div className="bg-gradient-to-br from-slate-900 to-slate-950 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl shadow-sky-900/20 relative">
+                <div className="bg-slate-900 border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl relative">
 
-                    {/* Close Button (Inside Card) */}
+                    {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 z-20 p-2 bg-black/20 hover:bg-black/40 text-white/70 hover:text-white rounded-full transition-colors backdrop-blur-sm"
+                        className="absolute top-6 right-6 z-20 p-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl transition-all active:scale-90 border border-white/5"
                     >
                         <X size={20} />
                     </button>
 
                     {/* Header */}
-                    <div className="bg-sky-500/10 p-6 border-b border-sky-500/10 relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4 opacity-10">
-                            <Dumbbell size={120} />
+                    <div className="bg-sky-500/5 p-8 border-b border-white/5 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transform translate-x-4 -translate-y-4">
+                            <Trophy size={160} />
                         </div>
                         <div className="relative z-10 pr-8">
-                            <div className="inline-flex items-center gap-2 bg-sky-500/20 text-sky-400 text-xs font-bold px-2 py-1 rounded-full mb-3 uppercase tracking-wider">
+                            <div className="inline-flex items-center gap-2 bg-sky-500/20 text-sky-400 text-[10px] font-black px-2.5 py-1 rounded-full mb-4 uppercase tracking-[0.2em] border border-sky-500/20">
                                 <Trophy size={12} /> {t('summary.workoutComplete')}
                             </div>
-                            <h2 className="text-3xl font-bold text-white mb-1">{workout.name}</h2>
-                            <p className="text-sky-200/60 font-medium flex items-center gap-2">
-                                <Calendar size={14} /> {formatDate(workout.date)}
+                            <h2 className="text-3xl font-black italic text-white uppercase tracking-tight mb-1">{workout.name}</h2>
+                            <p className="text-slate-500 font-bold uppercase text-[10px] tracking-widest flex items-center gap-2">
+                                <Calendar size={14} className="text-sky-500" /> {formatDate(workout.date)}
                             </p>
                         </div>
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-3 divide-x divide-slate-800 border-b border-slate-800">
-                        <div className="p-4 text-center">
-                            <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">Duration</p>
-                            <p className="text-white font-mono font-bold">{formatTime(workout.duration)}</p>
+                    <div className="grid grid-cols-3 divide-x divide-white/5 border-b border-white/5 bg-slate-950/20">
+                        <div className="p-5 text-center">
+                            <p className="text-slate-600 text-[8px] font-black uppercase tracking-widest mb-1">Duration</p>
+                            <p className="text-white font-black italic">{formatTime(workout.duration)}</p>
                         </div>
-                        <div className="p-4 text-center">
-                            <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">Sets</p>
-                            <p className="text-white font-mono font-bold">{workout.completedSets}</p>
+                        <div className="p-5 text-center">
+                            <p className="text-slate-600 text-[8px] font-black uppercase tracking-widest mb-1">Sets</p>
+                            <p className="text-white font-black italic text-xl leading-none">{workout.completedSets}</p>
                         </div>
-                        <div className="p-4 text-center">
-                            <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">Volume</p>
-                            <p className="text-white font-mono font-bold">
-                                {totalVolume.toLocaleString()} <span className="text-xs text-slate-600">kg</span>
+                        <div className="p-5 text-center">
+                            <p className="text-slate-600 text-[8px] font-black uppercase tracking-widest mb-1">Volume</p>
+                            <p className="text-white font-black italic">
+                                {totalVolume.toLocaleString()} <span className="text-[10px] not-italic text-slate-600 uppercase">kg</span>
                             </p>
                         </div>
                     </div>
 
                     {/* Exercise List Summary */}
-                    <div className="p-6 space-y-4 max-h-[40vh] overflow-y-auto">
-                        <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">{t('summary.workoutSummary')}</h3>
+                    <div className="p-8 space-y-4 max-h-[35vh] overflow-y-auto custom-scrollbar">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4">{t('summary.workoutSummary')}</h3>
                         {workout.exercises && workout.exercises.map((ex, i) => {
-                            // Count completed sets for this exercise
                             const completedCount = (ex.sets || []).filter(s => s.completed || s.completed === undefined).length;
-
                             if (completedCount === 0) return null;
 
                             return (
-                                <div key={i} className="flex justify-between items-center group">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 text-xs font-bold">
+                                <div key={i} className="flex justify-between items-center bg-white/5 px-4 py-3 rounded-2xl border border-white/5 group">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 text-[10px] font-black shadow-inner group-hover:bg-sky-500/20 group-hover:text-sky-400 transition-colors">
                                             {i + 1}
                                         </div>
-                                        <span className="text-slate-200 font-medium">{ex.name}</span>
+                                        <span className="text-slate-200 font-bold truncate pr-2">{ex.name}</span>
                                     </div>
-                                    <div className="text-slate-500 text-sm">
+                                    <div className="text-[10px] font-black text-slate-600 uppercase tracking-widest bg-slate-950/50 px-2 py-1 rounded-lg shrink-0">
                                         {completedCount} {t('summary.setsCount')}
                                     </div>
                                 </div>
@@ -162,27 +160,26 @@ const WorkoutSummaryCard = ({ workout, onClose }) => {
                     </div>
 
                     {/* Footer */}
-                    <div className="p-6 bg-slate-900/50 border-t border-slate-800 flex flex-col gap-3">
+                    <div className="p-8 bg-slate-950/40 border-t border-white/5">
                         {!showCopyFallback ? (
                             <button
                                 onClick={handleShare}
-                                className="btn btn-primary w-full justify-center group relative overflow-hidden"
+                                className="w-full py-5 rounded-2xl bg-white text-slate-900 hover:bg-slate-100 transition-all font-black uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 shadow-2xl active:scale-95"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-r from-sky-400 to-indigo-500 opacity-0 group-hover:opacity-10 transition-opacity" />
-                                <Share2 size={18} /> {t('summary.shareSummary')}
+                                <Share2 size={18} strokeWidth={3} /> {t('summary.shareSummary')}
                             </button>
                         ) : (
-                            <div className="space-y-2 animate-fade-in">
-                                <p className="text-xs text-slate-400 text-center">{t('summary.copyManually')}</p>
+                            <div className="space-y-3 animate-fade-in">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest text-center">{t('summary.copyManually')}</p>
                                 <textarea
                                     readOnly
                                     value={getSummaryText()}
-                                    className="w-full h-24 bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500/50 resize-none"
+                                    className="w-full h-24 bg-slate-950/50 border border-slate-800 rounded-2xl p-4 text-[10px] font-bold text-slate-400 focus:outline-none focus:border-sky-500/50 resize-none shadow-inner"
                                     onClick={(e) => e.target.select()}
                                 />
                             </div>
                         )}
-                        <p className="text-center text-[10px] text-slate-600">
+                        <p className="text-center text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] mt-6">
                             {t('summary.footer')}
                         </p>
                     </div>
