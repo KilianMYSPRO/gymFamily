@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces, FileJson, Link, CheckSquare, Square, ChevronUp, ChevronDown } from 'lucide-react';
-import clsx from 'clsx';
+import { Plus, Trash2, Dumbbell, Save, X, Pencil, Share2, Download, Copy, Check, BookOpen, Braces, FileJson, Link, ChevronUp, ChevronDown } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
 import { generateUUID } from '../../utils/uuid';
@@ -25,6 +24,15 @@ const Planner = () => {
         }
     });
 
+    // Persist state
+    React.useEffect(() => {
+        localStorage.setItem('duogym-planner-creating', isCreating);
+        if (editingId) localStorage.setItem('duogym-planner-editing-id', editingId);
+        else localStorage.removeItem('duogym-planner-editing-id');
+        localStorage.setItem('duogym-planner-name', newWorkoutName);
+        localStorage.setItem('duogym-planner-exercises', JSON.stringify(exercises));
+    }, [isCreating, editingId, newWorkoutName, exercises]);
+
     // JSON Editor State
     const [editingJsonId, setEditingJsonId] = useState(null);
     const [jsonContent, setJsonContent] = useState('');
@@ -43,48 +51,9 @@ const Planner = () => {
     const [showImportModal, setShowImportModal] = useState(false);
     const [importJson, setImportJson] = useState('');
     const [importError, setImportError] = useState(null);
-    const [copiedId, setCopiedId] = useState(null);
 
     // Template State
     const [showTemplateModal, setShowTemplateModal] = useState(false);
-
-    // Superset State
-    const [selectionMode, setSelectionMode] = useState(false);
-    const [selectedExercises, setSelectedExercises] = useState([]);
-
-    // UI State for Accordions
-    const [expandedDetails, setExpandedDetails] = useState({});
-
-    const toggleSelection = (id) => {
-        if (selectedExercises.includes(id)) {
-            setSelectedExercises(selectedExercises.filter(exId => exId !== id));
-        } else {
-            setSelectedExercises([...selectedExercises, id]);
-        }
-    };
-
-    const handleGroup = () => {
-        if (selectedExercises.length < 2) return;
-
-        const supersetId = generateUUID();
-        setExercises(exercises.map(ex =>
-            selectedExercises.includes(ex.id) ? { ...ex, supersetId } : ex
-        ));
-
-        setSelectedExercises([]);
-        setSelectionMode(false);
-    };
-
-    const handleUngroup = () => {
-        if (selectedExercises.length === 0) return;
-
-        setExercises(exercises.map(ex =>
-            selectedExercises.includes(ex.id) ? { ...ex, supersetId: undefined } : ex
-        ));
-
-        setSelectedExercises([]);
-        setSelectionMode(false);
-    };
 
     const moveExercise = (index, direction) => {
         const newExercises = [...exercises];
@@ -166,27 +135,6 @@ const Planner = () => {
         localStorage.removeItem('duogym-planner-editing-id');
         localStorage.removeItem('duogym-planner-name');
         localStorage.removeItem('duogym-planner-exercises');
-    };
-
-    // Export Logic
-    const handleExport = (workout) => {
-        const data = {
-            name: workout.name,
-            exercises: workout.exercises.map(ex => ({
-                name: ex.name,
-                sets: ex.sets,
-                reps: ex.reps,
-                restTime: ex.restTime,
-                weight: ex.weight,
-                link: ex.link,
-                description: ex.description,
-                isOptional: ex.isOptional || false
-            }))
-        };
-
-        navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-        setCopiedId(workout.id);
-        setTimeout(() => setCopiedId(null), 2000);
     };
 
     // Import Logic
@@ -656,6 +604,13 @@ const Planner = () => {
                     {workouts.map(workout => (
                         <div key={workout.id} className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 relative group hover:border-sky-500/30 transition-all duration-500 shadow-xl overflow-hidden">
                             <div className="absolute top-0 right-0 p-4 flex gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all">
+                                <button
+                                    onClick={() => handleEditJson(workout)}
+                                    className="p-2 bg-slate-800 hover:bg-sky-500 text-slate-400 hover:text-white rounded-xl transition-all"
+                                    title={t('planner.editJson')}
+                                >
+                                    <FileJson size={16} />
+                                </button>
                                 <button onClick={() => handleEdit(workout)} className="p-2 bg-slate-800 hover:bg-sky-500 text-slate-400 hover:text-white rounded-xl transition-all"><Pencil size={16} /></button>
                                 <button onClick={() => deleteWorkout(workout.id)} className="p-2 bg-slate-800 hover:bg-red-500 text-slate-400 hover:text-white rounded-xl transition-all"><Trash2 size={16} /></button>
                             </div>

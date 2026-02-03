@@ -9,8 +9,6 @@ import clsx from 'clsx';
  * @param {string} className - Additional classes
  */
 const Skeleton = ({ variant = 'rectangular', width, height, className = '' }) => {
-    const baseClasses = "bg-slate-800 animate-pulse";
-
     const variants = {
         text: "h-4 rounded-lg",
         circular: "rounded-full",

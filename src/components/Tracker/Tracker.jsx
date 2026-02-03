@@ -9,7 +9,6 @@ import RestTimer from './RestTimer';
 import ExerciseSelector from '../Planner/ExerciseSelector';
 
 import { useLanguage } from '../../context/LanguageContext';
-import exercisesData from '../../data/exercises.json';
 
 import { getSuggestedWeight } from '../../utils/progression';
 import DuoPanel from '../Duo/DuoPanel';
@@ -34,7 +33,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const [showDuo, setShowDuo] = useState(false);
 
     // Wake Lock
-    const { isLocked, request: requestWakeLock, release: releaseWakeLock, type } = useWakeLock();
+    const { request: requestWakeLock, release: releaseWakeLock, type } = useWakeLock();
 
     const startWorkout = useCallback((template) => {
         const newWorkout = {
@@ -60,15 +59,39 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         requestWakeLock();
     }, [t, requestWakeLock]);
 
+    // sync state from context ONLY on mount
     useEffect(() => {
-        if (workoutData) {
-            setActiveWorkout(prev => ({
-                ...prev,
-                ...workoutData,
-                elapsedTime
-            }));
+        if (activeWorkout && !hasInitialized) {
+            queueMicrotask(() => {
+                setWorkoutData(activeWorkout);
+                setElapsedTime(activeWorkout.elapsedTime || 0);
+                setIsRunning(true);
+                requestWakeLock();
+                setHasInitialized(true);
+            });
+        } else if (initialWorkoutId && !hasInitialized) {
+            const template = workouts.find(w => w.id === initialWorkoutId);
+            if (template) {
+                queueMicrotask(() => {
+                    startWorkout(template);
+                    setHasInitialized(true);
+                });
+            }
         }
-    }, [workoutData, elapsedTime, setActiveWorkout]);
+    }, [initialWorkoutId, activeWorkout, workouts, requestWakeLock, startWorkout, hasInitialized]);
+
+    // Update context state periodically, not on every render
+    useEffect(() => {
+        if (workoutData && isRunning) {
+            const syncInterval = setInterval(() => {
+                setActiveWorkout({
+                    ...workoutData,
+                    elapsedTime
+                });
+            }, 5000); // sync every 5s
+            return () => clearInterval(syncInterval);
+        }
+    }, [workoutData, isRunning, elapsedTime, setActiveWorkout]);
 
     useEffect(() => {
         let interval;
@@ -79,24 +102,6 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
         }
         return () => clearInterval(interval);
     }, [isRunning]);
-
-    useEffect(() => {
-        if (activeWorkout) {
-            if (!workoutData) {
-                setWorkoutData(activeWorkout);
-                setElapsedTime(activeWorkout.elapsedTime || 0);
-            }
-            setIsRunning(true);
-            requestWakeLock();
-            setHasInitialized(true);
-        } else if (initialWorkoutId && !hasInitialized) {
-            const template = workouts.find(w => w.id === initialWorkoutId);
-            if (template) {
-                startWorkout(template);
-                setHasInitialized(true);
-            }
-        }
-    }, [initialWorkoutId, activeWorkout, workouts, requestWakeLock, startWorkout, workoutData, hasInitialized]);
 
     useEffect(() => {
         return () => releaseWakeLock();
@@ -113,9 +118,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     newSuggestions[ex.id] = suggestion;
                 }
             });
-            hasCalculatedSuggestions.current = true;
+            
             if (Object.keys(newSuggestions).length > 0) {
-                setSuggestions(newSuggestions);
+                queueMicrotask(() => {
+                    setSuggestions(newSuggestions);
+                    hasCalculatedSuggestions.current = true;
+                });
             }
         }
     }, [workoutData, history]);

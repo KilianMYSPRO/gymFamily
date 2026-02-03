@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, X, Filter, Dumbbell } from 'lucide-react';
+import clsx from 'clsx';
 import { translateSearchTerm } from '../../utils/translations';
 import exercisesData from '../../data/exercises.json';
 import { useLanguage } from '../../context/LanguageContext';
