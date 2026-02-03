@@ -188,6 +188,45 @@ p {
   justify-content: space-between;
 }
 
+.glass-pill {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 9999px;
+}
+
+.neon-glow-sky {
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+}
+
+.neon-glow-indigo {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+}
+
+/* Custom Scrollbar for sleek dark look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Typography refinements */
+.font-black {
+  font-weight: 900;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {
