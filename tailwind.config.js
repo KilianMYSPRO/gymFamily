@@ -6,6 +6,9 @@ export default {
     ],
     theme: {
         extend: {
+            screens: {
+                'xs': '375px',
+            },
             colors: {
                 background: '#020617', // Slate 950 base
                 surface: '#0f172a', // Slate 900
