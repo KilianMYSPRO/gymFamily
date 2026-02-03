@@ -289,8 +289,10 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
             {showSelector && <ExerciseSelector onSelect={handleAddExerciseFromSelector} onClose={() => setShowSelector(false)} />}
 
             <div className="space-y-6 pb-32 animate-enter">
-                <header className="sticky top-0 z-30 -mx-4 md:-mx-6 -mt-4 md:-mt-6 bg-slate-950/95 backdrop-blur-xl border-b border-white/5 shadow-2xl overflow-hidden">
-                    <div className="h-1 w-full bg-white/5"><div className="h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-500" style={{ width: `${progressPercentage}%` }} /></div>
+                <header className="sticky top-0 z-30 -mx-4 md:-mx-6 -mt-4 md:-mt-6 bg-slate-950/95 backdrop-blur-xl border-b border-white/5 shadow-2xl">
+                    <div className="h-1 w-full bg-white/5">
+                        <div className="h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
+                    </div>
                     <div className="px-4 md:px-6 py-3 md:py-4 flex justify-between items-center gap-4">
                         <div className="flex items-center gap-3 min-w-0">
                             <button onClick={() => onViewChange?.('dashboard')} className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors shrink-0 active:scale-95"><ChevronLeft size={24} /></button>
@@ -310,7 +312,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                             </Tooltip>
                             <div className="relative">
                                 <button onClick={() => setShowActions(!showActions)} className="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-colors border border-white/5"><MoreVertical size={24} /></button>
-                                {showActions && <><div className="fixed inset-0 z-40" onClick={() => setShowActions(false)} /><div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-50 p-2 animate-scale-in origin-top-right">
+                                {showActions && <><div className="fixed inset-0 z-[90]" onClick={() => setShowActions(false)} /><div className="absolute right-0 mt-2 w-48 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl z-[100] p-2 animate-scale-in origin-top-right">
                                     <button onClick={() => { setShowActions(false); setShowCancelModal(true); }} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl transition-colors text-sm font-bold uppercase tracking-wider"><X size={18} />{t('tracker.cancel')}</button>
                                 </div></>}
                             </div>
