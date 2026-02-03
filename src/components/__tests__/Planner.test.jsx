@@ -34,7 +34,7 @@ describe('Planner Component', () => {
         expect(saveBtn).toBeDisabled();
 
         // Find input by exact placeholder found in code
-        const input = screen.getByPlaceholderText('e.g. Push Day, Leg Day');
+        const input = screen.getByPlaceholderText('e.g. PUSH DAY');
         fireEvent.change(input, { target: { value: 'My New Routine' } });
 
         // Should be enabled now
