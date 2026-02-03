@@ -44,12 +44,32 @@ body {
   font-family: var(--font-sans);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+::selection {
+  background-color: rgba(14, 165, 233, 0.3);
+  color: white;
+}
+
+input,
+textarea,
+select {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  font-size: 16px;
 }
 
 #root {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: none;
+}
+
+main {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Glassmorphism Utilities */
