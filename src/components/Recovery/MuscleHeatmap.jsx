@@ -119,14 +119,14 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                 </div>
             )}
 
-            <div className="flex gap-2 mb-6 bg-slate-900/50 p-1 rounded-full border border-white/5 backdrop-blur-sm">
+            <div className="flex gap-2 mb-10 bg-slate-950/50 p-1 rounded-2xl border border-white/5 backdrop-blur-sm shadow-inner">
                 <button
                     onClick={() => setView('front')}
                     className={clsx(
-                        "px-6 py-1.5 rounded-full text-xs font-bold transition-all duration-300",
+                        "px-8 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300",
                         view === 'front'
-                            ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                            : "text-slate-400 hover:text-white hover:bg-white/5"
+                            ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20 active:scale-95"
+                            : "text-slate-500 hover:text-white hover:bg-white/5"
                     )}
                 >
                     {t('heatmap.front')}
@@ -134,10 +134,10 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                 <button
                     onClick={() => setView('back')}
                     className={clsx(
-                        "px-6 py-1.5 rounded-full text-xs font-bold transition-all duration-300",
+                        "px-8 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all duration-300",
                         view === 'back'
-                            ? "bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.5)]"
-                            : "text-slate-400 hover:text-white hover:bg-white/5"
+                            ? "bg-sky-500 text-white shadow-lg shadow-sky-500/20 active:scale-95"
+                            : "text-slate-500 hover:text-white hover:bg-white/5"
                     )}
                 >
                     {t('heatmap.back')}
@@ -146,18 +146,18 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
 
             <div className="relative w-full max-w-[280px] aspect-[3/4] flex items-center justify-center">
                 {/* Background Glow */}
-                <div className="absolute inset-0 bg-indigo-500/5 blur-[100px] rounded-full pointer-events-none" />
+                <div className="absolute inset-0 bg-sky-500/5 blur-[100px] rounded-full pointer-events-none" />
 
-                <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl z-10">
+                <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] z-10">
                     <defs>
                         {/* Gradients */}
                         <linearGradient id="grad-green" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#34d399" />
+                            <stop offset="0%" stopColor="#10b981" />
                             <stop offset="100%" stopColor="#059669" />
                         </linearGradient>
                         <linearGradient id="grad-yellow" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stopColor="#facc15" />
-                            <stop offset="100%" stopColor="#ca8a04" />
+                            <stop offset="0%" stopColor="#fbbf24" />
+                            <stop offset="100%" stopColor="#d97706" />
                         </linearGradient>
                         <linearGradient id="grad-red" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stopColor="#ef4444" />
@@ -166,7 +166,7 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
 
                         {/* Glow Filters */}
                         <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                             <feMerge>
                                 <feMergeNode in="coloredBlur" />
                                 <feMergeNode in="SourceGraphic" />
@@ -175,22 +175,22 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                     </defs>
 
                     {/* Tech/Grid Background Elements */}
-                    <g opacity="0.05" stroke="currentColor" strokeWidth="0.5" className="text-indigo-200">
-                        <circle cx="100" cy="100" r="80" fill="none" strokeDasharray="4 4" />
-                        <circle cx="100" cy="100" r="60" fill="none" />
-                        <path d="M100,20 L100,180" />
-                        <path d="M20,100 L180,100" />
+                    <g opacity="0.03" stroke="currentColor" strokeWidth="0.5" className="text-white">
+                        <circle cx="100" cy="100" r="90" fill="none" strokeDasharray="4 4" />
+                        <circle cx="100" cy="100" r="70" fill="none" />
+                        <path d="M100,10 L100,190" />
+                        <path d="M10,100 L190,100" />
                     </g>
 
                     {/* Silhouette / Body Outline - Refined */}
-                    <g opacity="0.1" fill="currentColor" className="text-slate-300">
+                    <g opacity="0.05" fill="currentColor" className="text-white">
                         <path d="M100,35 C105,35 108,38 108,42 L115,45 L135,50 C145,52 145,65 140,75 L135,100 L140,120 L130,120 L125,100 L125,150 L115,190 L105,190 L102,150 L100,140 L98,150 L95,190 L85,190 L75,150 L75,100 L70,120 L60,120 L65,100 L60,75 C55,65 55,52 65,50 L85,45 L92,42 C92,38 95,35 100,35 Z" />
                     </g>
 
                     {/* Muscle Groups */}
                     {PATHS[view].map((muscle, idx) => (
                         <MusclePath
-                            key={`${muscle.id}-${idx}`} // Use index to allow duplicate IDs (e.g. split abs)
+                            key={`${muscle.id}-${idx}`} 
                             {...muscle}
                             recovery={recoveryData[muscle.id] !== undefined ? recoveryData[muscle.id] : 100}
                             onHover={handleHover}
@@ -200,15 +200,15 @@ const MuscleHeatmap = ({ recoveryData = {} }) => {
                 </svg>
 
                 {/* Legend */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-center gap-4 text-[10px] text-slate-400 font-mono uppercase tracking-wider">
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_5px_rgba(52,211,153,0.5)]"></div> {t('heatmap.fresh')}
+                <div className="absolute bottom-[-20px] left-0 right-0 flex justify-center gap-6 text-[8px] text-slate-600 font-black uppercase tracking-[0.2em]">
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div> {t('heatmap.fresh')}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]"></div> {t('heatmap.recovering')}
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div> {t('heatmap.recovering')}
                     </div>
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)] animate-pulse"></div> {t('heatmap.fatigued')}
+                    <div className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)] animate-pulse"></div> {t('heatmap.fatigued')}
                     </div>
                 </div>
             </div>
