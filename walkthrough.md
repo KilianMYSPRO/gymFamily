@@ -96,3 +96,4 @@ I have improved the JSON import feature in the Workout Planner to provide better
 - **Modal Redesign**: Verified that helper buttons are now in a toolbar and the footer is simplified.
 - **Sync Status**: Verified that the status indicator shows "Synced" (Green) when the app is idle/up-to-date.
 - **Profile Tabs**: Verified that the new "Data" tab exists and correctly houses the sync and backup features, while "Details" remains focused on user info.
+\n- Applied additional mobile UI smoothness fixes.
