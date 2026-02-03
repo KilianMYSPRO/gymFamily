@@ -57,3 +57,4 @@ To deploy using Docker:
 ## License
 
 MIT
+\n<!-- workflow-trigger-test: Tue  3 Feb 17:07:01 CET 2026 -->
