@@ -253,7 +253,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
     if (!activeWorkout && (!initialWorkoutId || hasInitialized)) {
         return (
-            <div className="flex flex-col items-center justify-center h-[60vh] pt-12 text-center space-y-6 animate-fade-in px-4">
+            <div className="flex flex-col items-center justify-center pt-8 pb-24 text-center space-y-6 animate-fade-in px-4">
                 <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(14,165,233,0.1)]">
                     <Dumbbell size={48} className="text-slate-600" />
                 </div>
@@ -261,7 +261,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     <h2 className="text-3xl font-bold text-white mb-2">{t('tracker.startWorkout')}</h2>
                     <p className="text-slate-400 text-lg max-w-md mx-auto">{t('tracker.selectRoutine')}</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl mt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-2xl mt-8">
                     {workouts.map(w => (
                         <button key={w.id} onClick={() => startWorkout(w)} className="group relative overflow-hidden p-6 rounded-3xl bg-slate-900/40 border border-white/5 hover:border-sky-500/50 transition-all duration-500 hover:shadow-[0_0_30px_rgba(14,165,233,0.1)] text-left flex flex-col justify-between">
                             <div>
