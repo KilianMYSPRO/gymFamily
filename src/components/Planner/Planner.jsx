@@ -529,6 +529,13 @@ const Planner = () => {
                             <div className="flex justify-between items-center px-1">
                                 <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t('planner.exercises')}</label>
                                 <div className="flex gap-2">
+                                    <button 
+                                        onClick={handleOpenImport}
+                                        title="Import"
+                                        className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest bg-white/5 px-3 py-1.5 rounded-full border border-white/5 transition-all active:scale-95"
+                                    >
+                                        <Download size={14} className="inline mr-1" /> {t('planner.import')}
+                                    </button>
                                     <button onClick={() => setShowSelector(true)} className="text-[10px] font-black text-sky-400 hover:text-sky-300 uppercase tracking-widest bg-sky-500/10 px-3 py-1.5 rounded-full border border-sky-500/20 transition-all active:scale-95">
                                         + {t('planner.addExercise')}
                                     </button>

@@ -55,9 +55,10 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
             })
         };
         setWorkoutData(newWorkout);
+        setActiveWorkout(newWorkout); // Start immediately in context
         setIsRunning(true);
         requestWakeLock();
-    }, [t, requestWakeLock]);
+    }, [t, requestWakeLock, setActiveWorkout]);
 
     // sync state from context ONLY on mount
     useEffect(() => {

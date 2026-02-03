@@ -15,7 +15,7 @@ test('verify import modal shows current json', async ({ page }) => {
     // 2. Create Routine
     await page.getByRole('button', { name: /Planner|Planificateur/i }).click();
     await page.getByRole('button', { name: /New Plan|Create|Nouveau Plan|Créer/i }).first().click();
-    await page.getByPlaceholder(/e.g. Push Day/i).fill('View Source Test');
+    await page.getByPlaceholder(/e.g. PUSH DAY/i).fill('View Source Test');
 
     // Add Exercise
     await page.getByRole('button', { name: /Add Exercise|Ajouter un Exercice/i }).click();
@@ -23,9 +23,10 @@ test('verify import modal shows current json', async ({ page }) => {
     await page.getByText('Barbell Deadlift').first().click();
 
     // 3. Click Import Button (Download Icon) inside the editor
-    // Note: Use title to find it reliably.
-    await expect(page.getByTitle('Import', { exact: true })).toBeVisible();
-    await page.getByTitle('Import', { exact: true }).click();
+    // The button is now visible inside the creation form
+    const importBtn = page.getByRole('button', { name: /Import|Importer/i });
+    await expect(importBtn).toBeVisible();
+    await importBtn.click();
 
     // Wait for modal
     // We can assert the textarea is visible
