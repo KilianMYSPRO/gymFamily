@@ -5,7 +5,7 @@ import Tracker from '../Tracker/Tracker';
 import { renderWithProviders } from '../../utils/test-utils';
 
 describe('Tracker Component', () => {
-    it('renders timer when workout is active', () => {
+    it('renders timer when workout is active', async () => {
         const store = {
             activeWorkout: {
                 id: 'test-workout',
@@ -16,10 +16,9 @@ describe('Tracker Component', () => {
         };
 
         renderWithProviders(<Tracker onViewChange={vi.fn()} />, { store });
-        // Expect timer to be present (e.g. 00:00 or active time)
-        // Usually timer displays HH:MM:SS or MM:SS. Let's look for a clock icon or time format.
-        // Or checking for "Finish Workout" button which appears when active
-        expect(screen.getAllByText(/tracker.finish/i).length).toBeGreaterThan(0);
+        // Use findBy to wait for queueMicrotask and state updates
+        const finishBtns = await screen.findAllByText(/tracker.finish/i);
+        expect(finishBtns.length).toBeGreaterThan(0);
     });
 
     it('renders start options when no workout active', () => {
