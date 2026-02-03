@@ -375,7 +375,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
             <>
                 <div className="space-y-6 pb-24 animate-enter">
-                    <header className="sticky top-0 z-20 -mx-4 md:-mx-6 -mt-4 md:-mt-6 px-4 md:px-6 py-3 md:py-4 bg-slate-950/90 backdrop-blur-xl border-b border-white/5 shadow-2xl mb-2">
+                    <header className="sticky top-0 z-20 -mx-4 md:-mx-6 -mt-4 md:-mt-6 px-4 md:px-6 pt-safe pb-3 md:py-4 bg-slate-950/90 backdrop-blur-xl border-b border-white/5 shadow-2xl mb-2">
                         <div className="flex justify-between items-center gap-2 md:gap-4">
                             <div className="flex items-center gap-2 md:gap-4 min-w-0">
                                 <button
@@ -599,7 +599,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                 };
                                                 return (
                                                     <div key={set.id} className={clsx(
-                                                        "p-4 rounded-xl transition-all group relative",
+                                                        "p-4 rounded-xl transition-all group relative scroll-mt-24",
                                                         set.completed ? "bg-emerald-500/10 border border-emerald-500/20" : "bg-slate-900/50 border border-slate-800"
                                                     )}>
                                                         {/* Mobile: Stacked layout | Desktop: Inline */}
@@ -617,7 +617,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                             });
                                                                             if (navigator.vibrate) navigator.vibrate(10);
                                                                         }}
-                                                                        className="text-[9px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-1 active:scale-95 transition-transform"
+                                                                        className="text-[10px] font-black text-sky-500 hover:text-white uppercase tracking-wider mt-2 py-1 px-2 bg-sky-500/5 rounded-md active:scale-95 transition-all select-none"
                                                                         title="Copy from previous set"
                                                                     >
                                                                         COPY
@@ -632,21 +632,24 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     <span className="text-xs text-slate-500 w-6 shrink-0 md:hidden">kg</span>
                                                                     <button
                                                                         onClick={() => adjustWeight(-2.5)}
-                                                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
                                                                     >
                                                                         −
                                                                     </button>
                                                                     <input
                                                                         type="text"
                                                                         inputMode="decimal"
+                                                                        autoComplete="off"
+                                                                        autoCorrect="off"
                                                                         value={set.weight}
+                                                                        onFocus={(e) => e.target.select()}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'weight', e.target.value)}
                                                                         className="flex-1 min-w-0 bg-slate-950/50 rounded-lg md:rounded-xl py-2 md:py-3 px-1 text-center font-bold text-white text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder="0"
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustWeight(2.5)}
-                                                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
                                                                     >
                                                                         +
                                                                     </button>
@@ -660,21 +663,24 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                                                                     </span>
                                                                     <button
                                                                         onClick={() => adjustReps(-1)}
-                                                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
                                                                     >
                                                                         −
                                                                     </button>
                                                                     <input
                                                                         type="text"
                                                                         inputMode="decimal"
+                                                                        autoComplete="off"
+                                                                        autoCorrect="off"
                                                                         value={set.reps}
+                                                                        onFocus={(e) => e.target.select()}
                                                                         onChange={(e) => updateSet(exerciseIndex, setIndex, 'reps', e.target.value)}
                                                                         className="flex-1 min-w-0 bg-slate-950/50 rounded-lg md:rounded-xl py-2 md:py-3 px-1 text-center font-bold text-white text-base md:text-lg focus:outline-none focus:ring-2 focus:ring-sky-500/50 border border-transparent focus:border-sky-500 transition-all"
                                                                         placeholder={exercise.reps || "0"}
                                                                     />
                                                                     <button
                                                                         onClick={() => adjustReps(1)}
-                                                                        className="w-10 h-10 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0"
+                                                                        className="w-12 h-12 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white active:bg-sky-500 active:text-white flex items-center justify-center font-bold text-lg transition-all active:scale-95 shrink-0 select-none"
                                                                     >
                                                                         +
                                                                     </button>

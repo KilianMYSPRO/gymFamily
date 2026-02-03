@@ -92,7 +92,7 @@ const Dashboard = ({ onViewChange }) => {
                 />
             )}
 
-            <header className="relative overflow-hidden p-6 -mx-6 -mt-6 mb-2 bg-gradient-to-b from-electric-500/10 to-transparent">
+            <header className="relative overflow-hidden pt-safe pb-6 px-6 -mx-6 -mt-6 mb-2 bg-gradient-to-b from-electric-500/10 to-transparent">
                 <div className="absolute top-0 right-0 p-8 opacity-20 animate-pulse-fast">
                     <TrendingUp size={120} className="text-electric-500" />
                 </div>

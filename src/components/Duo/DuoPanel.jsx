@@ -27,7 +27,7 @@ const DuoPanel = () => {
                         value={inputRoom}
                         onChange={(e) => setInputRoom(e.target.value)}
                         placeholder="Room Code (e.g. GYM1)"
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-sky-500"
+                        className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-base text-white focus:outline-none focus:border-sky-500"
                     />
                     <button
                         onClick={handleJoin}
