@@ -85,6 +85,20 @@ export interface Level {
     icon: string;
 }
 
+export interface Achievement {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    category: 'milestone' | 'strength' | 'consistency' | 'duo';
+    requirement: (history: WorkoutSession[], stats: GamificationStats) => boolean;
+}
+
+export interface UserAchievement {
+    id: string;
+    unlockedAt: string;
+}
+
 export interface GamificationStats {
     level: Level;
     nextLevel: Level;
@@ -92,6 +106,7 @@ export interface GamificationStats {
     streak: number;
     momentum: number;
     totalWorkouts: number;
+    achievements?: UserAchievement[];
 }
 
 // ============ Auth Types ============

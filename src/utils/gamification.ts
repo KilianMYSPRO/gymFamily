@@ -1,4 +1,5 @@
-import type { Level, GamificationStats, WorkoutSession } from '../types';
+import type { Level, GamificationStats, WorkoutSession, UserAchievement } from '../types';
+import { ACHIEVEMENTS } from '../data/achievements';
 
 export const LEVELS: Level[] = [
     { name: "Rookie", minWorkouts: 0, color: "text-slate-400", icon: "🌱" },
@@ -17,6 +18,7 @@ const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 interface HistoryEntry {
     endTime?: string | null;
+    startTime?: string | null;
     [key: string]: unknown;
 }
 
@@ -48,7 +50,8 @@ export const calculateGamificationStats = (history: HistoryEntry[] | null | unde
             progress: 0,
             streak: 0,
             momentum: 0,
-            totalWorkouts: 0
+            totalWorkouts: 0,
+            achievements: []
         };
     }
 
@@ -103,12 +106,38 @@ export const calculateGamificationStats = (history: HistoryEntry[] | null | unde
 
     const momentum = Math.min(100, (recentWorkouts / MOMENTUM_TARGET_WORKOUTS) * 100);
 
+    // 4. Calculate Achievements
+    const unlockedAchievements: UserAchievement[] = [];
+
+    if (totalWorkouts >= 1) {
+        unlockedAchievements.push({ id: 'first_workout', unlockedAt: sortedHistory[sortedHistory.length - 1].endTime! });
+    }
+    if (totalWorkouts >= 10) {
+        unlockedAchievements.push({ id: 'workouts_10', unlockedAt: sortedHistory[sortedHistory.length - 10].endTime! });
+    }
+    if (totalWorkouts >= 50) {
+        unlockedAchievements.push({ id: 'workouts_50', unlockedAt: sortedHistory[sortedHistory.length - 50].endTime! });
+    }
+    if (currentStreak >= 3) {
+        unlockedAchievements.push({ id: 'streak_3', unlockedAt: sortedHistory[0].endTime! });
+    }
+
+    // Early bird check (before 8 AM)
+    const earlyBirdWorkout = validHistory.find(h => {
+        const date = new Date(h.startTime || h.endTime!);
+        return date.getHours() < 8;
+    });
+    if (earlyBirdWorkout) {
+        unlockedAchievements.push({ id: 'early_bird', unlockedAt: earlyBirdWorkout.endTime! });
+    }
+
     return {
         level,
         nextLevel,
         progress,
         streak: currentStreak,
         momentum,
-        totalWorkouts
+        totalWorkouts,
+        achievements: unlockedAchievements
     };
 };

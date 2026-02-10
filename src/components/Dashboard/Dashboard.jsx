@@ -3,6 +3,7 @@ import { useStore } from '../../context/StoreContext';
 import { Dumbbell, Clock, TrendingUp, Calendar, ArrowRight, Trash2, CheckCircle2, Share2, Play, Zap, ChevronRight } from 'lucide-react';
 import clsx from 'clsx';
 import StreakCard from '../Gamification/StreakCard';
+import AchievementsList from '../Gamification/AchievementsList';
 import WorkoutSummaryCard from '../History/WorkoutSummaryCard';
 import MuscleHeatmap from '../Recovery/MuscleHeatmap';
 import { calculateGamificationStats } from '../../utils/gamification';
@@ -159,6 +160,10 @@ const Dashboard = ({ onViewChange }) => {
                         <div className="relative z-10">
                             <MuscleHeatmap recoveryData={recoveryData} />
                         </div>
+                    </div>
+
+                    <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5">
+                        <AchievementsList userAchievements={gamificationStats.achievements} />
                     </div>
                 </div>
 

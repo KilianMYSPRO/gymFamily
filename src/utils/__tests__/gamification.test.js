@@ -37,7 +37,8 @@ describe('Gamification Utils', () => {
                     progress: 0,
                     streak: 0,
                     momentum: 0,
-                    totalWorkouts: 0
+                    totalWorkouts: 0,
+                    achievements: []
                 });
             });
 
@@ -227,6 +228,43 @@ describe('Gamification Utils', () => {
                 const result = calculateGamificationStats(history);
                 // Only 1 workout in last 14 days = 16.67%
                 expect(result.momentum).toBeCloseTo(16.67, 1);
+            });
+        });
+
+        describe('Achievements', () => {
+            it('unlocks First Blood for 1+ workouts', () => {
+                const history = [{ id: '1', endTime: '2025-01-14T10:00:00Z' }];
+                const result = calculateGamificationStats(history);
+                expect(result.achievements).toContainEqual(expect.objectContaining({ id: 'first_workout' }));
+            });
+
+            it('unlocks Dedicated for 10+ workouts', () => {
+                const history = Array(10).fill(null).map((_, i) => ({
+                    id: String(i),
+                    endTime: new Date(mockDate.getTime() - i * 86400000).toISOString()
+                }));
+                const result = calculateGamificationStats(history);
+                expect(result.achievements).toContainEqual(expect.objectContaining({ id: 'workouts_10' }));
+            });
+
+            it('unlocks Consistency Kickstart for 3+ streak', () => {
+                const history = [
+                    { id: '1', endTime: new Date(mockDate.getTime() - 1 * 86400000).toISOString() },
+                    { id: '2', endTime: new Date(mockDate.getTime() - 2 * 86400000).toISOString() },
+                    { id: '3', endTime: new Date(mockDate.getTime() - 3 * 86400000).toISOString() }
+                ];
+                const result = calculateGamificationStats(history);
+                expect(result.achievements).toContainEqual(expect.objectContaining({ id: 'streak_3' }));
+            });
+
+            it('unlocks Early Bird for workout before 8am', () => {
+                const history = [{ 
+                    id: '1', 
+                    startTime: '2025-01-14T06:00:00Z',
+                    endTime: '2025-01-14T07:00:00Z' 
+                }];
+                const result = calculateGamificationStats(history);
+                expect(result.achievements).toContainEqual(expect.objectContaining({ id: 'early_bird' }));
             });
         });
     });
