@@ -217,7 +217,20 @@ const Analytics = () => {
                         </div>
                     </div>
 
-                    <div className="flex gap-2 w-full md:w-auto">
+                    <div className="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                        {/* Toggle for showing all exercises */}
+                        <button
+                            onClick={() => setShowAllExercises(!showAllExercises)}
+                            className={clsx(
+                                "px-4 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                                showAllExercises
+                                    ? "bg-sky-500/20 border-sky-500/50 text-sky-400"
+                                    : "bg-slate-950/50 border-slate-800 text-slate-400 hover:text-white"
+                            )}
+                        >
+                            {showAllExercises ? '✓ All Exercises' : 'With Data Only'}
+                        </button>
+
                         <div className="relative flex-1 md:w-32">
                             <select
                                 value={metric}
