@@ -38,16 +38,26 @@ const Analytics = () => {
     // 1. Extract all unique exercise names from history
     const uniqueExercises = useMemo(() => {
         const names = new Set();
-        history.forEach(session => {
-            if (session.exercises) {
-                session.exercises.forEach(ex => {
-                    const normalizedName = normalizeExercise(ex.name, ex.originalId);
-                    names.add(normalizedName);
-                });
-            }
-        });
+        
+        if (showAllExercises) {
+            // Show all exercises from the database
+            exercisesData.forEach(ex => {
+                names.add(ex.name);
+            });
+        } else {
+            // Show only exercises with recorded data
+            history.forEach(session => {
+                if (session.exercises) {
+                    session.exercises.forEach(ex => {
+                        const normalizedName = normalizeExercise(ex.name, ex.originalId);
+                        names.add(normalizedName);
+                    });
+                }
+            });
+        }
+        
         return Array.from(names).sort();
-    }, [history]);
+    }, [history, showAllExercises]);
 
     // 2. Process data for the selected exercise
     const chartData = useMemo(() => {
@@ -294,7 +304,12 @@ const Analytics = () => {
                         <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-[2.5rem]">
                             <TrendingUp className="mx-auto text-slate-800 mb-4" size={40} />
                             <p className="text-slate-500 font-bold uppercase tracking-widest text-xs mb-2">{t('analytics.notEnoughData')}</p>
-                            <p className="text-[10px] text-slate-600 font-medium">{t('analytics.completeWorkoutsHint')}</p>
+                            <p className="text-[10px] text-slate-600 font-medium">
+                                {showAllExercises 
+                                    ? 'No recorded sessions for this exercise yet. Complete a workout to see progress.'
+                                    : t('analytics.completeWorkoutsHint')
+                                }
+                            </p>
                         </div>
                     )
                 ) : (
