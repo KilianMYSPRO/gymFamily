@@ -1,6 +1,5 @@
 import React from 'react';
 import { useDuo } from '../../context/DuoContext';
-import clsx from 'clsx';
 
 export const NudgeOverlay = () => {
     const { lastNudge } = useDuo();
