@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { useStore } from '../../context/StoreContext';
-import { TrendingUp, Calendar, ArrowUpRight, Weight, ChevronDown } from 'lucide-react';
+import { TrendingUp, Calendar, ArrowUpRight, Weight, ChevronDown, Trophy } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
 import { normalizeExercise } from '../../utils/exerciseNormalization';
 import exercisesData from '../../data/exercises.json';
+import { calculate1RM } from '../../utils/progression';
 
 const CustomTooltip = ({ active, payload, label, metric }) => {
     if (active && payload && payload.length) {
@@ -16,9 +17,9 @@ const CustomTooltip = ({ active, payload, label, metric }) => {
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-sky-500"></div>
                     <p className="text-white font-mono font-bold">
-                        {payload[0].value}
+                        {payload[0].value.toFixed(1)}
                         <span className="text-slate-500 text-xs ml-1 font-sans">
-                            {metric === 'weight' ? 'kg' : 'vol'}
+                            {metric === 'weight' ? 'kg' : metric === '1rm' ? 'kg (est.)' : 'vol'}
                         </span>
                     </p>
                 </div>
@@ -33,7 +34,7 @@ const Analytics = () => {
     const { history, weightHistory } = useStore();
     const [selectedExercise, setSelectedExercise] = useState('');
     const [showAllExercises, setShowAllExercises] = useState(false);
-    const [metric, setMetric] = useState('weight'); // 'weight' or 'volume'
+    const [metric, setMetric] = useState('weight'); // 'weight', 'volume', or '1rm'
 
     // 1. Extract all unique exercise names from history
     const uniqueExercises = useMemo(() => {
@@ -72,7 +73,7 @@ const Analytics = () => {
 
                 if (exerciseDefs.length === 0) return null;
 
-                // Find max weight/volume across all matching exercises in this session
+                // Find max weight/volume/1rm across all matching exercises in this session
                 let maxVal = 0;
 
                 exerciseDefs.forEach(exerciseDef => {
@@ -84,6 +85,9 @@ const Analytics = () => {
                             if (!isNaN(weight)) {
                                 if (metric === 'weight') {
                                     if (weight > maxVal) maxVal = weight;
+                                } else if (metric === '1rm') {
+                                    const est1rm = calculate1RM(weight, reps);
+                                    if (est1rm > maxVal) maxVal = est1rm;
                                 } else {
                                     // Volume = Weight * Reps
                                     const volume = weight * reps;
@@ -96,20 +100,49 @@ const Analytics = () => {
 
                 return {
                     date: new Date(session.date),
-                    weight: maxVal,
-                    // We don't strictly need originalId for the chart points
+                    value: maxVal,
                 };
             })
-            .filter(item => item && item.weight > 0) // Filter out sessions with no weight logged
+            .filter(item => item && item.value > 0)
             .sort((a, b) => a.date - b.date);
 
         return data;
     }, [history, selectedExercise, metric]);
 
 
-    const latestWeight = chartData.length > 0 ? chartData[chartData.length - 1].weight : 0;
-    const firstWeight = chartData.length > 0 ? chartData[0].weight : 0;
-    const progress = latestWeight - firstWeight;
+    const latestValue = chartData.length > 0 ? chartData[chartData.length - 1].value : 0;
+    const firstValue = chartData.length > 0 ? chartData[0].value : 0;
+    const progress = latestValue - firstValue;
+
+    // 3. Personal Records Hall of Fame
+    const personalRecords = useMemo(() => {
+        const prs = {};
+        
+        history.forEach(session => {
+            if (!session.exercises) return;
+            
+            session.exercises.forEach(ex => {
+                const normalizedName = normalizeExercise(ex.name, ex.originalId);
+                
+                Object.keys(session.detailedSets || {}).forEach(key => {
+                    if (key.startsWith(ex.id) && session.detailedSets[key].completed) {
+                        const weight = parseFloat(session.detailedSets[key].weight);
+                        const reps = parseInt(session.detailedSets[key].reps || 0);
+                        
+                        if (!isNaN(weight)) {
+                            if (!prs[normalizedName] || weight > prs[normalizedName].weight) {
+                                prs[normalizedName] = { weight, reps, date: session.date };
+                            }
+                        }
+                    }
+                });
+            });
+        });
+        
+        return Object.entries(prs)
+            .sort((a, b) => b[1].weight - a[1].weight)
+            .slice(0, 5); // Top 5 PRs
+    }, [history]);
 
     // 4. Process weight history data
     const weightChartData = useMemo(() => {
@@ -202,6 +235,42 @@ const Analytics = () => {
                 )}
             </div>
 
+            {/* PR Hall of Fame */}
+            <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-xl">
+                <div className="flex items-center gap-3 mb-8">
+                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center text-amber-400 shadow-inner">
+                        <Trophy size={20} />
+                    </div>
+                    <div>
+                        <h3 className="text-xl font-black italic text-white uppercase tracking-tight">
+                            Hall of Fame
+                        </h3>
+                        <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-0.5">Your All-Time Best Lifts</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {personalRecords.length > 0 ? (
+                        personalRecords.map(([name, data]) => (
+                            <div key={name} className="p-4 bg-slate-800/30 rounded-2xl border border-white/5 flex items-center justify-between">
+                                <div className="min-w-0 pr-2">
+                                    <h4 className="font-bold text-white truncate">{name}</h4>
+                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest">{new Date(data.date).toLocaleDateString()}</p>
+                                </div>
+                                <div className="text-right shrink-0">
+                                    <p className="text-2xl font-black italic text-amber-400">{data.weight}<span className="text-xs not-italic text-slate-600 ml-1">kg</span></p>
+                                    <p className="text-[9px] text-slate-500 font-bold uppercase">for {data.reps} reps</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="col-span-2 text-center py-8">
+                            <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">No PRs recorded yet</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+
             {/* Performance Progress Section */}
             <div className="bg-slate-900/40 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/5 shadow-xl">
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
@@ -239,6 +308,7 @@ const Analytics = () => {
                             >
                                 <option value="weight">{t('analytics.maxWeight')}</option>
                                 <option value="volume">{t('analytics.maxVolume')}</option>
+                                <option value="1rm">Est. 1RM</option>
                             </select>
                             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 pointer-events-none" size={14} />
                         </div>
@@ -266,13 +336,13 @@ const Analytics = () => {
                                 <div>
                                     <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mb-1">{t('analytics.currentMax')}</p>
                                     <p className="text-4xl font-black italic text-white leading-none">
-                                        {latestWeight} <span className="text-sm not-italic text-slate-600 uppercase font-bold ml-1">{metric === 'weight' ? 'kg' : 'vol'}</span>
+                                        {latestValue.toFixed(1)} <span className="text-sm not-italic text-slate-600 uppercase font-bold ml-1">{metric === 'weight' ? 'kg' : metric === '1rm' ? 'kg' : 'vol'}</span>
                                     </p>
                                 </div>
                                 <div className={clsx("text-right px-3 py-2 rounded-2xl border", 
                                     progress >= 0 ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" : "text-red-400 bg-red-500/10 border-red-500/20")}>
                                     <p className="text-sm font-black flex items-center justify-end gap-1">
-                                        {progress >= 0 ? '+' : ''}{progress}
+                                        {progress >= 0 ? '+' : ''}{progress.toFixed(1)}
                                         <ArrowUpRight size={16} className={progress < 0 ? "rotate-180" : ""} />
                                     </p>
                                     <p className="text-[8px] font-black uppercase tracking-tighter opacity-60">{t('analytics.sinceFirstLog')}</p>
@@ -303,7 +373,7 @@ const Analytics = () => {
                                         <Tooltip content={<CustomTooltip metric={metric} />} cursor={{ stroke: '#0ea5e9', strokeWidth: 1, strokeDasharray: '4 4' }} />
                                         <Line
                                             type="monotone"
-                                            dataKey="weight"
+                                            dataKey="value"
                                             stroke="#0ea5e9"
                                             strokeWidth={4}
                                             dot={{ fill: '#020617', stroke: '#0ea5e9', strokeWidth: 2, r: 4 }}

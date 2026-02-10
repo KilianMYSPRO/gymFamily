@@ -60,3 +60,19 @@ export const getSuggestedWeight = (exerciseName, history, increment = 2.5) => {
         return lastWeight;
     }
 };
+
+/**
+ * Calculates estimated 1-Rep Max using Epley formula: weight * (1 + reps/30)
+ */
+export const calculate1RM = (weight, reps) => {
+    if (reps === 1) return weight;
+    if (reps === 0) return 0;
+    return weight * (1 + reps / 30);
+};
+
+/**
+ * Calculates total volume for a set
+ */
+export const calculateVolume = (weight, reps) => {
+    return (weight || 0) * (reps || 0);
+};
