@@ -14,6 +14,7 @@ export const DuoProvider = ({ children }) => {
     const roomIdRef = React.useRef(null); // Ref to access current roomId in callbacks
     const [partner, setPartner] = useState(null); // { id: '...' }
     const [partnerWorkout, setPartnerWorkout] = useState(null); // { exercise: '...', sets: [...], ... }
+    const [lastNudge, setLastNudge] = useState(null); // { emoji: '🔥' }
 
     useEffect(() => {
         const newSocket = io(SOCKET_URL, {
@@ -47,6 +48,12 @@ export const DuoProvider = ({ children }) => {
             setPartnerWorkout(data);
         });
 
+        newSocket.on('nudge_received', (data) => {
+            setLastNudge(data);
+            // Clear nudge after animation
+            setTimeout(() => setLastNudge(null), 3000);
+        });
+
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setSocket(newSocket);
 
@@ -74,12 +81,19 @@ export const DuoProvider = ({ children }) => {
             roomIdRef.current = null;
             setPartner(null);
             setPartnerWorkout(null);
+            setLastNudge(null);
         }
     }, [socket]);
 
     const broadcastUpdate = useCallback((data) => {
         if (socket && isConnected && roomId) {
             socket.emit('workout_update', { roomId, ...data });
+        }
+    }, [socket, isConnected, roomId]);
+
+    const sendNudge = useCallback((emoji) => {
+        if (socket && isConnected && roomId) {
+            socket.emit('nudge_partner', { roomId, emoji });
         }
     }, [socket, isConnected, roomId]);
 
@@ -90,9 +104,11 @@ export const DuoProvider = ({ children }) => {
             roomId,
             partner,
             partnerWorkout,
+            lastNudge,
             connectToRoom,
             disconnectFromRoom,
-            broadcastUpdate
+            broadcastUpdate,
+            sendNudge
         }}>
             {children}
         </DuoContext.Provider>
