@@ -6,6 +6,7 @@ import clsx from 'clsx';
 import { useLanguage } from '../../context/LanguageContext';
 
 import { normalizeExercise } from '../../utils/exerciseNormalization';
+import exercisesData from '../../data/exercises.json';
 
 const CustomTooltip = ({ active, payload, label, metric }) => {
     if (active && payload && payload.length) {
@@ -31,6 +32,7 @@ const Analytics = () => {
     const { t } = useLanguage();
     const { history, weightHistory } = useStore();
     const [selectedExercise, setSelectedExercise] = useState('');
+    const [showAllExercises, setShowAllExercises] = useState(false);
     const [metric, setMetric] = useState('weight'); // 'weight' or 'volume'
 
     // 1. Extract all unique exercise names from history
