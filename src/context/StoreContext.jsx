@@ -26,6 +26,44 @@ const INITIAL_DATA = {
     }
 };
 
+/**
+ * Migrates old session format to new format with detailedSets.
+ * This ensures backward compatibility with sessions saved before the fix.
+ * @param {Array} history - Array of session objects
+ * @returns {Array} Migrated session objects with detailedSets
+ */
+const migrateSessionData = (history) => {
+    if (!Array.isArray(history)) return [];
+
+    return history.map(session => {
+        // Skip if already has detailedSets
+        if (session.detailedSets) return session;
+
+        // Build detailedSets from exercises
+        const detailedSets = {};
+        if (session.exercises) {
+            session.exercises.forEach(ex => {
+                if (ex.sets) {
+                    ex.sets.forEach((set, idx) => {
+                        // Use existing set.id or generate one
+                        const setId = set.id || `${ex.id}-set-${idx}`;
+                        if (set.completed) {
+                            detailedSets[setId] = {
+                                weight: set.weight,
+                                reps: set.reps,
+                                completed: set.completed
+                            };
+                        }
+                    });
+                }
+            });
+        }
+
+        return { ...session, detailedSets };
+    });
+};
+
+
 export const StoreProvider = ({ children }) => {
     const { token, logout } = useAuth();
 
@@ -42,7 +80,7 @@ export const StoreProvider = ({ children }) => {
                     profiles: Array.isArray(parsed.profiles) ? parsed.profiles : INITIAL_DATA.profiles,
                     workouts: { ...INITIAL_DATA.workouts, ...(parsed.workouts || {}) },
                     profileDetails: { ...INITIAL_DATA.profileDetails, ...(parsed.profileDetails || {}) },
-                    history: Array.isArray(parsed.history) ? parsed.history : INITIAL_DATA.history,
+                    history: migrateSessionData(Array.isArray(parsed.history) ? parsed.history : INITIAL_DATA.history),
                     weightHistory: Array.isArray(parsed.weightHistory) ? parsed.weightHistory : INITIAL_DATA.weightHistory
                 };
             }
@@ -249,7 +287,7 @@ export const StoreProvider = ({ children }) => {
                             return mergedDetails;
                         })(),
                         history: Array.isArray(serverData.history)
-                            ? mergeArrays(prev.history, serverData.history)
+                            ? migrateSessionData(mergeArrays(prev.history, serverData.history))
                             : prev.history,
                         weightHistory: Array.isArray(serverData.weightHistory)
                             ? mergeArrays(prev.weightHistory, serverData.weightHistory)
