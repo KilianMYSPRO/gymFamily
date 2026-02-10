@@ -13,6 +13,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getSuggestedWeight } from '../../utils/progression';
 import DuoPanel from '../Duo/DuoPanel';
 import { useDuo } from '../../context/DuoContext';
+import { NudgeOverlay, NudgeControls } from '../Duo/DuoInteractions';
 
 const Tracker = ({ initialWorkoutId, onViewChange }) => {
     const { t } = useLanguage();
@@ -293,6 +294,7 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
 
     return (
         <div className="max-w-3xl mx-auto relative">
+            <NudgeOverlay />
             <ConfirmModal isOpen={showCancelModal} onClose={() => setShowCancelModal(false)} onConfirm={() => { setActiveWorkout(null); setIsRunning(false); releaseWakeLock(); }} title={t('tracker.cancel')} message="Are you sure you want to cancel? Progress will be lost." confirmText="Yes, Cancel" cancelText={t('tracker.cancel')} isDestructive={true} />
             <RestTimer isOpen={showRestTimer} onClose={handleCloseRestTimer} defaultDuration={restTimerDuration} nextExercise={nextExerciseName} />
             {showSelector && <ExerciseSelector onSelect={handleAddExerciseFromSelector} onClose={() => setShowSelector(false)} />}
@@ -329,7 +331,12 @@ const Tracker = ({ initialWorkoutId, onViewChange }) => {
                     </div>
                 </header>
 
-                {showDuo && <div className="px-4 animate-slide-down"><DuoPanel /></div>}
+                {showDuo && (
+                    <div className="px-4 animate-slide-down space-y-4">
+                        <DuoPanel />
+                        <NudgeControls />
+                    </div>
+                )}
 
                 <div className="space-y-4 px-4">
                     {workoutData.exercises.map((ex, exIdx) => {

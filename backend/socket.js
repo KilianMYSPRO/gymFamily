@@ -24,6 +24,11 @@ function setupSocket(server) {
             socket.to(roomId).emit('workout_update', workoutData);
         });
 
+        socket.on('nudge_partner', (data) => {
+            const { roomId, emoji } = data;
+            socket.to(roomId).emit('nudge_received', { emoji, from: socket.id });
+        });
+
         socket.on('partner_sync', (data) => {
             console.log('Server received partner_sync:', data);
             const { roomId, ...syncData } = data;
