@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { generateUUID } from '../utils/uuid';
 import { useAuth } from './AuthContext';
 
@@ -67,8 +67,7 @@ const migrateSessionData = (history) => {
 export const StoreProvider = ({ children }) => {
     const { token, logout } = useAuth();
 
-    // eslint-disable-next-line no-unused-vars
-    const [activeProfileId, setActiveProfileId] = useState('user1');
+    const activeProfileId = 'user1';
     const [data, setData] = useState(() => {
         try {
             const saved = localStorage.getItem('duogym-data');
@@ -493,31 +492,34 @@ export const StoreProvider = ({ children }) => {
     };
 
 
+    const contextValue = useMemo(() => ({
+        activeProfileId,
+        activeProfile,
+        profiles: data.profiles || [],
+        workouts: (data.workouts && data.workouts[activeProfileId]) ? data.workouts[activeProfileId] : [],
+        history: Array.isArray(data.history) ? data.history.filter(h => h.profileId === activeProfileId) : [],
+        addWorkout,
+        updateWorkout,
+        deleteWorkout,
+        logSession,
+        deleteLog,
+        logWeight,
+        deleteWeightLog,
+        weightHistory: Array.isArray(data.weightHistory) ? data.weightHistory.filter(h => h.profileId === activeProfileId) : [],
+        profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
+        updateProfileDetails,
+        updateProfileName,
+        exportData,
+        importData,
+        syncStatus,
+        syncData,
+        activeWorkout,
+        setActiveWorkout
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }), [data, activeProfile, syncStatus, activeWorkout]);
+
     return (
-        <StoreContext.Provider value={{
-            activeProfileId,
-            activeProfile,
-            profiles: data.profiles || [],
-            workouts: (data.workouts && data.workouts[activeProfileId]) ? data.workouts[activeProfileId] : [],
-            history: Array.isArray(data.history) ? data.history.filter(h => h.profileId === activeProfileId) : [],
-            addWorkout,
-            updateWorkout,
-            deleteWorkout,
-            logSession,
-            deleteLog,
-            logWeight,
-            deleteWeightLog,
-            weightHistory: Array.isArray(data.weightHistory) ? data.weightHistory.filter(h => h.profileId === activeProfileId) : [],
-            profileDetails: (data.profileDetails && data.profileDetails[activeProfileId]) ? data.profileDetails[activeProfileId] : {},
-            updateProfileDetails,
-            updateProfileName,
-            exportData,
-            importData,
-            syncStatus,
-            syncData,
-            activeWorkout,
-            setActiveWorkout
-        }}>
+        <StoreContext.Provider value={contextValue}>
             {children}
         </StoreContext.Provider>
     );
