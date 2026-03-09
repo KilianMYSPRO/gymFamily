@@ -1,42 +1,20 @@
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { PrismaClient } = require('@prisma/client');
+const rateLimit = require('express-rate-limit');
+const prisma = require('../prisma/client');
+const { authenticateToken, JWT_SECRET } = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
-// Use same logic as server.js - fallback only in test environment
-const isTest = process.env.NODE_ENV === 'test';
-const JWT_SECRET = process.env.JWT_SECRET || (isTest ? 'test-secret-for-jest' : null);
-if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET environment variable is required');
-}
-
-// Middleware to verify JWT (copied for local use if needed, but usually this is for protected routes. 
-// The auth routes (login/register) don't strictly need it unless for specific updates)
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) return res.sendStatus(401);
-
-    jwt.verify(token, JWT_SECRET, async (err, user) => {
-        if (err) return res.sendStatus(403);
-
-        try {
-            const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-            if (!dbUser) {
-                return res.sendStatus(401);
-            }
-            req.user = user;
-            next();
-        } catch (dbError) {
-            console.error('Auth verification error:', dbError);
-            res.sendStatus(500);
-        }
-    });
-};
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+    skip: () => process.env.NODE_ENV === 'test',
+});
 
 
 router.post('/register', async (req, res) => {
@@ -72,10 +50,9 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
     try {
         const { username, password } = req.body;
-        console.log(`[AUTH] Login attempt for user: ${username}`);
         const user = await prisma.user.findUnique({ where: { username } });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -110,7 +87,7 @@ router.get('/get-security-question/:username', async (req, res) => {
     }
 });
 
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', authLimiter, async (req, res) => {
     try {
         const { username, securityAnswer, newPassword } = req.body;
 

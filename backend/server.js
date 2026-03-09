@@ -1,19 +1,19 @@
 /* eslint-env node */
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const http = require('http');
 const setupSocket = require('./socket');
 const authRoutes = require('./routes/auth');
+const prisma = require('./prisma/client');
+const { authenticateToken } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
 setupSocket(server);
 
-const prisma = new PrismaClient();
 const PORT = process.env.PORT || 3002;
 
 // In test environment, use a fallback secret. In production, require the env var.
@@ -22,9 +22,9 @@ if (!process.env.JWT_SECRET && !isTest) {
     console.error('FATAL: JWT_SECRET environment variable is required');
     process.exit(1);
 }
-const JWT_SECRET = process.env.JWT_SECRET || 'test-secret-for-jest';
 
-app.use(cors());
+const allowedOrigin = process.env.CORS_ORIGIN;
+app.use(cors(allowedOrigin ? { origin: allowedOrigin } : {}));
 app.use((req, res, next) => {
     console.log(`[REQ] ${req.method} ${req.path}`);
     next();
@@ -37,31 +37,6 @@ app.get('/api/health', (req, res) => {
 
 // Use Auth Routes
 app.use('/api/auth', authRoutes);
-
-// Middleware to verify JWT
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (!token) return res.sendStatus(401);
-
-    jwt.verify(token, JWT_SECRET, async (err, user) => {
-        if (err) return res.sendStatus(403);
-
-        try {
-            // Verify user exists in DB to prevent orphaned tokens
-            const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-            if (!dbUser) {
-                return res.sendStatus(401); // Invalid/Deleted user
-            }
-            req.user = user;
-            next();
-        } catch (dbError) {
-            console.error('Auth verification error:', dbError);
-            res.sendStatus(500);
-        }
-    });
-};
 
 // Sync Routes
 app.get('/api/sync', authenticateToken, async (req, res) => {
