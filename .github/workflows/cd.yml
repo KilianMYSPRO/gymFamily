@@ -87,8 +87,8 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
             # We are running directly ON the Raspberry Pi now
-            mkdir -p ~/duo-gym
-            cd ~/duo-gym
+            mkdir -p ~/stacks/duo-gym
+            cd ~/stacks/duo-gym
             
             # Export env vars explicitly for the heredoc
             export REPO_LOWER=$REPO_LOWER
