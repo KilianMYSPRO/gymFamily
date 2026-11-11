@@ -86,7 +86,7 @@ jobs:
           REPO_LOWER: ${{ steps.string.outputs.repo_lower }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
         run: |
-            # We are running directly ON the Raspberry Pi now
+            # Runs ON the Optiflex (self-hosted runner optiflex-runner)
             mkdir -p ~/projects/duo-gym/deploy
             cd ~/projects/duo-gym/deploy
             

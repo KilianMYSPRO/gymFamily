@@ -60,7 +60,7 @@ gymFamily/
 │   └── e2e/                    # Playwright end-to-end tests
 ├── .github/workflows/
 │   ├── ci.yml                  # Lint → test → build
-│   └── cd.yml                  # Build Docker images → deploy to Raspberry Pi
+│   └── cd.yml                  # Build Docker images → deploy on the Optiflex (self-hosted runner)
 ├── public/                     # PWA icons, favicon
 ├── Dockerfile                  # Frontend: multi-stage (Node build → Nginx serve)
 ├── backend/Dockerfile          # Backend: Node 20
@@ -372,7 +372,13 @@ Ports: frontend on `8081`, backend on `3002`. Nginx proxies `/api` and `/socket.
 
 ### CI/CD (GitHub Actions)
 - **CI** (`ci.yml`): Triggered on push/PR → frontend lint + test + build, backend test, E2E tests
-- **CD** (`cd.yml`): Triggered on push to `main` → build multi-arch Docker images (amd64/arm64) → push to `ghcr.io` → deploy to self-hosted Raspberry Pi runner
+- **CD** (`cd.yml`): Triggered on push to `main` → build multi-arch Docker images (amd64/arm64) → push to `ghcr.io` → deploy with the self-hosted runner `optiflex-runner` (Optiflex host, `~/actions-runner`, user kikoflexo)
+
+### Live production on the Optiflex
+- Prod lives in **`~/projects/duo-gym/deploy/`** (gitignored, excluded from the Docker build context). Before 11/11/2026 it was `~/stacks/duo-gym`; that folder no longer exists. See `deploy/README.md`.
+- `deploy/docker-compose.prod.yml` is **rewritten by `cd.yml` on every deploy**: edit the heredoc in `cd.yml`, not the file. Keep its `name: duo-gym` line, otherwise compose derives the project name `deploy` and clashes with the existing `container_name`s.
+- `deploy/data/dev.db` = **the real users' SQLite database**. Never delete, overwrite or commit it; back it up before any schema change.
+- Manual ops: `cd ~/projects/duo-gym/deploy && docker compose -f docker-compose.prod.yml ps|logs|up -d`. `duogym.home` goes through Nginx Proxy Manager (`~/projects/nginx-proxy-manager`). Map of all host projects: `~/projects/README.md`.
 
 ---
 
