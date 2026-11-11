@@ -10,3 +10,6 @@ dist-ssr
 *.db
 *.db-journal
 playwright-report/
+
+# Deploiement de prod (compose genere par cd.yml + base SQLite reelle) : jamais versionne
+deploy/
