@@ -98,6 +98,8 @@ jobs:
             
             # Create/Update docker-compose.prod.yml content
             cat > docker-compose.prod.yml <<EOF
+            # Project name pinned: the folder is "deploy", not "duo-gym"
+            name: duo-gym
             services:
               duo-gym:
                 image: ghcr.io/$REPO_LOWER/duo-gym:latest
