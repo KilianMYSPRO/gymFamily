@@ -119,7 +119,7 @@ jobs:
                 ports:
                   - "3002:3002"
                 volumes:
-                  - ./data:/app/data
+                  - /srv/duo-gym/data:/app/data   # base SQLite reelle, hors du dossier de deploiement
                 environment:
                   - DATABASE_URL=file:/app/data/dev.db
                   - JWT_SECRET=$JWT_SECRET
